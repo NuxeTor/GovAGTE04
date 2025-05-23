@@ -70,7 +70,11 @@ with app.app_context():
 @app.route('/')
 def index():
     """Main page showing the Mais Agentes da Educação program"""
-    return render_template('index.html')
+    # Get program data from database
+    program = Program.query.filter_by(title='Mais Agentes da Educação').first()
+    positions = Position.query.filter_by(program_id=1).all() if program else []
+    
+    return render_template('index.html', program=program, positions=positions)
 
 @app.route('/acesso-informacao')
 def acesso_informacao():
