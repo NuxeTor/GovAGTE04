@@ -76,26 +76,25 @@
         </div>
 
         <!-- Breadcrumb -->
-        <nav class="breadcrumb-nav px-4 py-3 text-sm" aria-label="Navegação estrutural">
-            <div class="w-full">
-                <div class="flex items-center mb-2">
-                    <a href="{{ url_for('index') }}" class="text-blue-800 hover:text-blue-600">
-                        <i class="fas fa-home"></i>
-                    </a>
-                </div>
-                <div class="flex flex-wrap items-center gap-1 text-xs leading-relaxed">
-                    <a href="{{ url_for('acesso_informacao') }}" class="text-blue-600 hover:text-blue-800 whitespace-nowrap">Acesso à Informação</a>
-                    <span class="text-gray-500">></span>
-                    <a href="{{ url_for('acoes_programas') }}" class="text-blue-600 hover:text-blue-800 whitespace-nowrap">Ações e Programas</a>
-                    <span class="text-gray-500">></span>
-                    <a href="{{ url_for('programas') }}" class="text-blue-600 hover:text-blue-800 whitespace-nowrap">Programas</a>
-                    <span class="text-gray-500">></span>
-                    <a href="{{ url_for('bolsas_auxilios') }}" class="text-blue-600 hover:text-blue-800 whitespace-nowrap">Bolsas e Auxílios</a>
-                    <span class="text-gray-500">></span>
-                    <a href="{{ url_for('lista_programas') }}" class="text-blue-600 hover:text-blue-800 whitespace-nowrap">Lista de Programas</a>
-                    <span class="text-gray-500">></span>
-                    <span class="text-gray-700 whitespace-nowrap">Mais Agentes da Educação</span>
-                </div>
+        <nav class="breadcrumb-nav px-4 py-2 text-sm border-b border-gray-100" aria-label="Navegação estrutural">
+            <div class="flex items-center mb-1">
+                <a href="{{ url_for('index') }}" class="text-blue-800 hover:text-blue-600 mr-2">
+                    <i class="fas fa-home text-base"></i>
+                </a>
+                <span class="text-gray-500 text-xs">></span>
+                <a href="{{ url_for('acesso_informacao') }}" class="text-blue-600 hover:text-blue-800 text-xs ml-2">Acesso à Informação</a>
+                <span class="text-gray-500 text-xs mx-2">></span>
+                <a href="{{ url_for('acoes_programas') }}" class="text-blue-600 hover:text-blue-800 text-xs">Ações e Programas</a>
+                <span class="text-gray-500 text-xs mx-2">></span>
+                <a href="{{ url_for('programas') }}" class="text-blue-600 hover:text-blue-800 text-xs">Programas</a>
+            </div>
+            <div class="flex items-center text-xs ml-6">
+                <span class="text-gray-500">></span>
+                <a href="{{ url_for('bolsas_auxilios') }}" class="text-blue-600 hover:text-blue-800 ml-2">Bolsas e Auxílios</a>
+                <span class="text-gray-500 mx-2">></span>
+                <a href="{{ url_for('lista_programas') }}" class="text-blue-600 hover:text-blue-800">Lista de Programas</a>
+                <span class="text-gray-500 mx-2">></span>
+                <span class="text-gray-700 font-medium">Mais Agentes da Educação</span>
             </div>
         </nav>
     </header>
