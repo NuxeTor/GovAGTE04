@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title or "Mais Agentes da Educação - gov.br" }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl text-blue-800 font-medium mb-4">Mais Agentes da Educação</h1>
+    
+    <div class="border-t border-b border-gray-200 py-3">
+        <div class="flex items-center mb-2">
+            <span class="text-gray-600 mr-2">Compartilhe:</span>
+            <button class="share-btn text-blue-600 mx-1" data-platform="facebook" aria-label="Compartilhar no Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </button>
+            <button class="share-btn text-blue-600 mx-1" data-platform="twitter" aria-label="Compartilhar no Twitter">
+                <i class="fab fa-twitter"></i>
+            </button>
+            <button class="share-btn text-blue-600 mx-1" data-platform="whatsapp" aria-label="Compartilhar no WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </button>
+            <button class="share-btn text-blue-600 mx-1" data-platform="link" aria-label="Copiar link">
+                <i class="fas fa-link"></i>
+            </button>
+        </div>
+        <div class="text-gray-600 text-sm">
+            <p>Publicado em 24/05/2025 17h37</p>
+            <p>Atualizado em 24/05/2025 18h29</p>
+        </div>
+    </div>
+
+    <article class="py-4 content-text">
+        <h2 class="text-2xl font-bold mb-4">GOVERNO FEDERAL — MINISTÉRIO DA EDUCAÇÃO</h2>
+        <h3 class="text-xl font-semibold mb-2">PROGRAMA NACIONAL DE AGENTES DA EDUCAÇÃO — PNAE</h3>
+        <h4 class="text-lg font-medium mb-4">COMUNICADO OFICIAL — LANÇAMENTO NACIONAL</h4>
+
+        <p class="mb-4">Em cumprimento à agenda estratégica de valorização da educação pública e fortalecimento da gestão escolar nos municípios, o Governo Federal, em articulação com as Prefeituras Municipais, institui o Programa Nacional de Agentes da Educação (PNAE).</p>
+
+        <p class="mb-4">A iniciativa visa preencher, em caráter oficial e regulamentado, vagas para funções de apoio técnico-operacional nas unidades escolares municipais, com objetivo de garantir eficiência administrativa, segurança, alimentação escolar e manutenção das instituições de ensino.</p>
+
+        <section class="mb-6">
+            <h5 class="text-lg font-semibold mb-2">PERFIL DAS VAGAS</h5>
+            <p class="font-medium">Requisitos mínimos:</p>
+            <ul class="list-disc list-inside mb-4">
+                <li>Ensino Médio completo;</li>
+                <li>Idade mínima de 18 anos na data da contratação;</li>
+                <li>Participação em curso técnico preparatório disponibilizado gratuitamente nas escolas de atuação.</li>
+            </ul>
+
+            <p class="font-medium">Cargos previstos:</p>
+            <ul class="list-disc list-inside mb-4">
+                <li>Auxiliar Administrativo</li>
+                <li>Auxiliar de Produção Escolar</li>
+                <li>Auxiliar de Secretaria</li>
+                <li>Auxiliar de Segurança Escolar</li>
+                <li>Auxiliar de Serviços de Limpeza</li>
+                <li>Auxiliar de Cozinha Escolar</li>
+                <li>Técnico em Manutenção Predial</li>
+                <li>Secretário Escolar (modalidade home office)</li>
+            </ul>
+        </section>
+
+        <section class="mb-6">
+            <h5 class="text-lg font-semibold mb-2">REMUNERAÇÃO E BENEFÍCIOS</h5>
+            <ul class="list-disc list-inside mb-4">
+                <li>Faixa salarial entre R$ 2.149,35 e R$ 3.412,32, conforme função e carga horária;</li>
+                <li>Carga horária semanal de 30 a 40 horas, com base na legislação vigente para profissionais da educação;</li>
+                <li>Benefícios garantidos conforme Consolidação das Leis do Trabalho (CLT) e regulamentações do Ministério do Trabalho:
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Vale-alimentação;</li>
+                        <li>Vale-transporte;</li>
+                        <li>Férias remuneradas;</li>
+                        <li>13º salário;</li>
+                        <li>Contribuição previdenciária ao INSS.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section class="mb-6">
+            <h5 class="text-lg font-semibold mb-2">ALCANCE NACIONAL</h5>
+            <p class="mb-4">O programa terá abrangência em todos os municípios brasileiros, conforme adesão das Prefeituras, com previsão de início do processo seletivo ainda neste semestre. Todas as vagas serão ocupadas por meio de processo público classificatório, com etapas de avaliação objetiva, comprovação de requisitos e participação obrigatória no curso técnico de ambientação e formação básica.</p>
+        </section>
+
+        <section class="mb-6">
+            <h5 class="text-lg font-semibold mb-2">IMPACTO SOCIAL E FUNCIONAL</h5>
+            <p class="mb-4">O PNAE visa não apenas ampliar o quadro funcional das escolas públicas municipais, mas também gerar emprego formal, qualificado e inclusivo para milhares de brasileiros, contribuindo para a redução da informalidade e o fortalecimento do vínculo entre a comunidade e a educação básica.</p>
+        </section>
+
+        <section class="mb-6">
+            <h5 class="text-lg font-semibold mb-2">COMO PARTICIPAR</h5>
+            <p class="mb-4">A abertura das inscrições será divulgada em canais oficiais do Governo Federal, portais das prefeituras e sites de instituições parceiras da execução do programa. O processo será 100% gratuito, público e transparente, com base em critérios objetivos e ampla concorrência.</p>
+        </section>
+
+        <blockquote class="font-bold mb-4 text-center text-blue-800 text-lg border-l-4 border-blue-600 pl-4 italic">
+            "Educação é compromisso de todos. Trabalho com dignidade é direito de cada um."
+        </blockquote>
+
+        <p class="mb-4">Com o Programa Nacional de Agentes da Educação, o Governo Federal reafirma seu compromisso com o futuro da educação brasileira e a valorização dos cidadãos em todos os municípios.</p>
+
+        <p class="mb-4">Para mais informações, acesse o portal oficial: <a href="http://www.gov.br/educacao" class="text-blue-600 hover:text-blue-800 underline">www.gov.br/educacao</a></p>
+    </article>
+</div>
+
+<!-- Success notification (hidden by default) -->
+<div id="share-notification" class="share-notification hidden">
+    <div class="notification-content">
+        <i class="fas fa-check-circle text-green-500"></i>
+        <span>Link copiado com sucesso!</span>
+    </div>
+</div>
+{% endblock %}
