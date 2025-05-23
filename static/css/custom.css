@@ -291,10 +291,21 @@ body, .content-text {
     color: var(--gray-700);
 }
 
+/* Breadcrumb navigation styling */
+.breadcrumb-nav {
+    overflow-x: hidden !important;
+    white-space: normal !important;
+}
+
+.breadcrumb-nav .flex {
+    flex-wrap: wrap !important;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .breadcrumb-nav {
         font-size: 0.75rem;
+        padding: 8px 16px;
     }
     
     .gov-logo {
