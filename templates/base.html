@@ -69,8 +69,26 @@
                 <button class="header-btn" id="voice-search-btn" aria-label="Busca por voz">
                     <i class="fas fa-microphone text-blue-900 mx-2"></i>
                 </button>
-                <button class="header-btn" id="search-btn" aria-label="Pesquisar">
+                <button class="header-btn" id="search-toggle-btn" aria-label="Pesquisar">
                     <i class="fas fa-search text-blue-900 mx-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Bar (hidden by default) -->
+        <div id="search-bar" class="hidden bg-white border-b border-gray-300 px-4 py-3">
+            <div class="flex items-center max-w-md mx-auto">
+                <div class="relative flex-1">
+                    <input type="text" 
+                           id="header-search-input" 
+                           placeholder="Buscar programas, vagas, ministérios..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200">
+                    <button id="header-search-btn" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <button id="search-close-btn" class="ml-3 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
         </div>

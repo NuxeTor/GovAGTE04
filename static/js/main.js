@@ -20,29 +20,59 @@ document.addEventListener('DOMContentLoaded', function() {
  * Search functionality
  */
 function initializeSearch() {
-    const searchBtn = document.getElementById('search-btn');
-    const searchModal = document.getElementById('search-modal');
-    const closeSearchModal = document.getElementById('close-search-modal');
-    const searchForm = document.getElementById('search-form');
-    const searchInput = document.getElementById('search-input');
+    const searchToggleBtn = document.getElementById('search-toggle-btn');
+    const searchBar = document.getElementById('search-bar');
+    const searchCloseBtn = document.getElementById('search-close-btn');
+    const headerSearchInput = document.getElementById('header-search-input');
+    const headerSearchBtn = document.getElementById('header-search-btn');
     const voiceSearchBtn = document.getElementById('voice-search-btn');
 
-    // Open search modal
-    if (searchBtn && searchModal) {
-        searchBtn.addEventListener('click', function() {
-            searchModal.classList.remove('hidden');
-            searchInput.focus();
+    // Toggle search bar
+    if (searchToggleBtn && searchBar) {
+        searchToggleBtn.addEventListener('click', function() {
+            searchBar.classList.toggle('hidden');
+            if (!searchBar.classList.contains('hidden')) {
+                headerSearchInput.focus();
+            }
         });
     }
 
-    // Close search modal
-    if (closeSearchModal && searchModal) {
-        closeSearchModal.addEventListener('click', function() {
-            searchModal.classList.add('hidden');
+    // Close search bar
+    if (searchCloseBtn && searchBar) {
+        searchCloseBtn.addEventListener('click', function() {
+            searchBar.classList.add('hidden');
+            headerSearchInput.value = '';
         });
     }
 
-    // Close modal when clicking outside
+    // Perform search
+    function performSearch() {
+        const query = headerSearchInput.value.trim();
+        if (query) {
+            window.location.href = `/busca?q=${encodeURIComponent(query)}`;
+        }
+    }
+
+    // Search button click
+    if (headerSearchBtn) {
+        headerSearchBtn.addEventListener('click', performSearch);
+    }
+
+    // Search on Enter key
+    if (headerSearchInput) {
+        headerSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+
+    // Voice search (placeholder functionality)
+    if (voiceSearchBtn) {
+        voiceSearchBtn.addEventListener('click', function() {
+            showNotification('Busca por voz ainda não implementada', 'info');
+        });
+    }
     if (searchModal) {
         searchModal.addEventListener('click', function(e) {
             if (e.target === searchModal) {
