@@ -35,9 +35,10 @@
         
         <!-- Segunda imagem do programa -->
         <div class="mb-4">
-            <img src="{{ url_for('static', filename='images/programa-educacao.jpeg') }}" 
+            <img src="/static/images/programa-educacao.jpeg" 
                  alt="Programa Nacional de Agentes da Educação - PNAE" 
-                 class="w-full max-w-2xl mx-auto rounded-lg shadow-md">
+                 class="w-full max-w-2xl mx-auto rounded-lg shadow-md"
+                 onerror="console.log('Erro ao carregar imagem')">
         </div>
         
         <h4 class="text-lg font-medium mb-4">COMUNICADO OFICIAL — LANÇAMENTO NACIONAL</h4>
