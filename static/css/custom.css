@@ -38,13 +38,13 @@ body, .content-text {
     opacity: 0.8;
 }
 
-/* Half circle element */
+/* Half circle element - Gov.br style */
 .half-circle {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: linear-gradient(90deg, var(--gov-blue-primary) 50%, #FFFFFF 50%);
-    border: 1px solid var(--gov-blue-primary);
+    background: linear-gradient(90deg, #1351B4 50%, #FFFFFF 50%);
+    border: 1px solid #1351B4;
     display: inline-block;
     vertical-align: middle;
 }
