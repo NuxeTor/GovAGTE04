@@ -103,10 +103,77 @@ def lista_programas():
 
 @app.route('/search')
 def search():
-    """Search functionality"""
-    query = request.args.get('q', '')
-    # In a real implementation, this would search through content
-    return jsonify({'query': query, 'results': []})
+    """Search API endpoint"""
+    query = request.args.get('q', '').strip()
+    results = []
+    
+    if query:
+        # Search in programs
+        programs = Program.query.filter(
+            db.or_(
+                Program.title.ilike(f'%{query}%'),
+                Program.description.ilike(f'%{query}%'),
+                Program.ministry.ilike(f'%{query}%'),
+                Program.program_type.ilike(f'%{query}%')
+            )
+        ).filter_by(status='active').all()
+        
+        # Search in positions
+        positions = Position.query.filter(
+            db.or_(
+                Position.name.ilike(f'%{query}%'),
+                Position.description.ilike(f'%{query}%'),
+                Position.requirements.ilike(f'%{query}%'),
+                Position.work_type.ilike(f'%{query}%')
+            )
+        ).all()
+        
+        # Format results
+        for program in programs:
+            results.append({
+                'type': 'program',
+                'title': program.title,
+                'description': program.description[:200] + '...' if len(program.description) > 200 else program.description,
+                'ministry': program.ministry,
+                'url': '/',
+                'date': program.published_date.strftime('%d/%m/%Y') if program.published_date else ''
+            })
+        
+        for position in positions:
+            results.append({
+                'type': 'position',
+                'title': position.name,
+                'description': position.description[:200] + '...' if position.description and len(position.description) > 200 else position.description or '',
+                'salary': f'R$ {position.salary_min} - R$ {position.salary_max}' if position.salary_min and position.salary_max else '',
+                'work_type': position.work_type,
+                'url': '/',
+                'workload': f'{position.workload_hours}h' if position.workload_hours else ''
+            })
+    
+    return jsonify({
+        'query': query,
+        'total_results': len(results),
+        'results': results
+    })
+
+@app.route('/busca')
+def busca():
+    """Search results page"""
+    query = request.args.get('q', '').strip()
+    results = []
+    total_results = 0
+    
+    if query:
+        # Get search results using the same logic as the API
+        search_response = search()
+        search_data = search_response.get_json()
+        results = search_data['results']
+        total_results = search_data['total_results']
+    
+    return render_template('search_results.html', 
+                         query=query, 
+                         results=results, 
+                         total_results=total_results)
 
 @app.route('/login')
 def login():
