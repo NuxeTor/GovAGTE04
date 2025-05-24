@@ -297,7 +297,11 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ cpf: cpfLimpo })
+            body: JSON.stringify({ 
+                cpf: cpfLimpo,
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value
+            })
         })
         .then(response => response.json())
         .then(data => {
@@ -308,7 +312,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            if (data.sucesso) {
+            if (data.sucesso && data.redirect_url) {
+                // Redirecionar para o checkout com os dados
+                window.location.href = data.redirect_url;
+            } else if (data.sucesso) {
                 // Simular processo de login
                 setTimeout(() => {
                     btnContinuar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Autenticando...';

