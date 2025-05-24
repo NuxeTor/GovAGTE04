@@ -222,34 +222,269 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Botão validar carteira
     document.getElementById('validar-carteira').addEventListener('click', function() {
-        const botaoValidar = this;
-        const botaoEmail = document.getElementById('receber-email');
-        
-        // Simular processo de validação
-        botaoValidar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Validando...';
-        botaoValidar.disabled = true;
-        
-        setTimeout(() => {
-            alert('Carteira Digital de Trabalho validada com sucesso!\n\nAgora você pode receber o comprovante por e-mail.');
-            
-            // Habilitar botão de e-mail
-            botaoEmail.disabled = false;
-            botaoEmail.classList.remove('bg-gray-400', 'text-gray-600', 'cursor-not-allowed', 'opacity-50');
-            botaoEmail.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white', 'cursor-pointer');
-            
-            // Atualizar botão de validar
-            botaoValidar.innerHTML = '<i class="fas fa-check mr-2"></i>Carteira Validada';
-            botaoValidar.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
-            botaoValidar.classList.add('bg-green-600');
-        }, 3000);
+        mostrarValidacaoCarteira();
     });
     
     // Botão receber por e-mail
     document.getElementById('receber-email').addEventListener('click', function() {
         if (!this.disabled) {
-            alert('Comprovante enviado para o seu e-mail cadastrado!\n\nVerifique sua caixa de entrada em alguns minutos.');
+            mostrarFormularioEmail();
         }
     });
+
+    function mostrarValidacaoCarteira() {
+        const dados = JSON.parse(localStorage.getItem('dadosInscricao'));
+        
+        // Criar overlay azul com logo da carteira
+        const overlay = document.createElement('div');
+        overlay.id = 'carteira-overlay';
+        overlay.className = 'fixed inset-0 bg-blue-600 z-50 flex flex-col items-center justify-center';
+        overlay.style.background = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)';
+        
+        overlay.innerHTML = `
+            <!-- Logo transparente de fundo -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                <img src="https://www.gov.br/pt-br/apps/ctps-digital/@@images/imagem/mini" 
+                     alt="Carteira Digital" 
+                     class="w-96 h-96 object-contain">
+            </div>
+            
+            <!-- Conteúdo principal -->
+            <div class="relative z-10 bg-white bg-opacity-95 rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
+                <div class="text-center mb-6">
+                    <img src="https://www.gov.br/pt-br/apps/ctps-digital/@@images/imagem/mini" 
+                         alt="Carteira Digital" 
+                         class="w-16 h-16 mx-auto mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Carteira Digital de Trabalho</h2>
+                    <p class="text-sm text-gray-600 mt-2">Validação de Identidade Profissional</p>
+                </div>
+                
+                <div id="carteira-loading" class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p class="text-gray-700">Conectando ao Ministério do Trabalho...</p>
+                    <div class="mt-4 bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%" id="progress-bar"></div>
+                    </div>
+                </div>
+                
+                <div id="carteira-quiz" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Confirme sua Data de Nascimento</h3>
+                    <p class="text-sm text-gray-600 mb-6">Por segurança, selecione sua data de nascimento correta:</p>
+                    
+                    <div class="space-y-3" id="opcoes-data">
+                        <!-- Opções serão inseridas aqui -->
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="fechar-carteira" class="text-gray-500 hover:text-gray-700 text-sm">
+                            Cancelar validação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Animar barra de progresso
+        setTimeout(() => {
+            document.getElementById('progress-bar').style.width = '100%';
+        }, 500);
+        
+        // Após 3 segundos, mostrar quiz
+        setTimeout(() => {
+            document.getElementById('carteira-loading').classList.add('hidden');
+            document.getElementById('carteira-quiz').classList.remove('hidden');
+            
+            // Gerar opções de data
+            gerarQuizData(dados);
+        }, 3000);
+        
+        // Botão fechar
+        document.getElementById('fechar-carteira').addEventListener('click', function() {
+            document.body.removeChild(overlay);
+        });
+    }
+    
+    function gerarQuizData(dados) {
+        const dataCorreta = dados.dataNascimento;
+        const opcoesContainer = document.getElementById('opcoes-data');
+        
+        // Gerar datas falsas
+        const datasFalsas = [
+            '1980-03-15 00:00:00',
+            '1985-07-22 00:00:00',
+            '1990-11-08 00:00:00',
+            '1975-12-03 00:00:00',
+            '1988-09-12 00:00:00'
+        ];
+        
+        // Criar array com 3 opções (2 falsas + 1 correta)
+        const opcoes = [dataCorreta, ...datasFalsas.slice(0, 2)];
+        
+        // Embaralhar array
+        for (let i = opcoes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [opcoes[i], opcoes[j]] = [opcoes[j], opcoes[i]];
+        }
+        
+        // Criar botões
+        opcoes.forEach((data, index) => {
+            const dataFormatada = new Date(data).toLocaleDateString('pt-BR');
+            const botao = document.createElement('button');
+            botao.className = 'w-full p-3 border border-gray-300 rounded-md text-left hover:bg-blue-50 hover:border-blue-500 transition-colors';
+            botao.innerHTML = `<span class="font-medium">${dataFormatada}</span>`;
+            
+            botao.addEventListener('click', function() {
+                if (data === dataCorreta) {
+                    validacaoSucesso();
+                } else {
+                    validacaoErro(this);
+                }
+            });
+            
+            opcoesContainer.appendChild(botao);
+        });
+    }
+    
+    function validacaoErro(botao) {
+        botao.classList.add('bg-red-50', 'border-red-500', 'text-red-700');
+        botao.innerHTML += ' <span class="text-red-600 ml-2">✗</span>';
+        
+        setTimeout(() => {
+            botao.classList.remove('bg-red-50', 'border-red-500', 'text-red-700');
+            botao.innerHTML = botao.innerHTML.replace(' <span class="text-red-600 ml-2">✗</span>', '');
+        }, 2000);
+    }
+    
+    function validacaoSucesso() {
+        const overlay = document.getElementById('carteira-overlay');
+        const conteudo = overlay.querySelector('.bg-white');
+        
+        conteudo.innerHTML = `
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-2xl text-green-600"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Validação Concluída!</h2>
+                <p class="text-gray-600 mb-6">Sua Carteira Digital de Trabalho foi validada com sucesso.</p>
+                
+                <button id="continuar-validacao" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                    Continuar
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('continuar-validacao').addEventListener('click', function() {
+            document.body.removeChild(overlay);
+            habilitarBotaoEmail();
+        });
+    }
+    
+    function habilitarBotaoEmail() {
+        const botaoValidar = document.getElementById('validar-carteira');
+        const botaoEmail = document.getElementById('receber-email');
+        
+        // Atualizar botão de validar
+        botaoValidar.innerHTML = '<i class="fas fa-check mr-2"></i>Carteira Validada';
+        botaoValidar.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+        botaoValidar.classList.add('bg-green-600');
+        botaoValidar.disabled = true;
+        
+        // Habilitar botão de e-mail
+        botaoEmail.disabled = false;
+        botaoEmail.classList.remove('bg-gray-400', 'text-gray-600', 'cursor-not-allowed', 'opacity-50');
+        botaoEmail.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white', 'cursor-pointer');
+    }
+    
+    function mostrarFormularioEmail() {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+        
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-envelope mr-2 text-blue-600"></i>
+                    Receber Comprovante por E-mail
+                </h3>
+                
+                <form id="form-email">
+                    <div class="mb-4">
+                        <label for="email-usuario" class="block text-sm font-medium text-gray-700 mb-2">
+                            Endereço de E-mail *
+                        </label>
+                        <input type="email" 
+                               id="email-usuario" 
+                               required
+                               placeholder="seu@email.com"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-blue-700">
+                            O comprovante será enviado em formato PDF e terá validade legal para comprovação da sua inscrição.
+                        </p>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="button" id="cancelar-email" 
+                                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            Finalizar Inscrição
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Eventos
+        document.getElementById('cancelar-email').addEventListener('click', function() {
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('form-email').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email-usuario').value;
+            
+            if (email) {
+                document.body.removeChild(modal);
+                mostrarSucessoFinal(email);
+            }
+        });
+    }
+    
+    function mostrarSucessoFinal(email) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-green-600 z-50 flex items-center justify-center p-4';
+        
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-8 max-w-md w-full text-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-3xl text-green-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Inscrição Finalizada!</h2>
+                <p class="text-gray-600 mb-4">
+                    Seu comprovante foi enviado para:<br>
+                    <strong class="text-blue-600">${email}</strong>
+                </p>
+                <p class="text-sm text-gray-500 mb-6">
+                    Verifique sua caixa de entrada em alguns minutos. Se não encontrar, verifique a pasta de spam.
+                </p>
+                
+                <button onclick="window.location.href='/'" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                    Voltar ao Início
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    }
 });
 
 function formatarCPF(cpf) {
