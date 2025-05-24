@@ -175,6 +175,42 @@ def busca():
                          results=results, 
                          total_results=total_results)
 
+@app.route('/cadastro')
+def cadastro():
+    """Registration page for PNAE program"""
+    return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
+
+@app.route('/buscar-escolas')
+def buscar_escolas():
+    """Search for schools near a given CEP"""
+    cep = request.args.get('cep', '').strip()
+    if not cep:
+        return jsonify({'error': 'CEP é obrigatório'}), 400
+    
+    # For now, return mock data - we'll need Google Places API key for real data
+    escolas = [
+        {
+            'nome': 'Escola Municipal João Silva',
+            'endereco': 'Rua das Flores, 123 - Centro',
+            'distancia': '0.5 km',
+            'telefone': '(11) 3456-7890'
+        },
+        {
+            'nome': 'Escola Municipal Maria Santos',
+            'endereco': 'Av. Principal, 456 - Bairro Novo', 
+            'distancia': '1.2 km',
+            'telefone': '(11) 3456-7891'
+        },
+        {
+            'nome': 'Escola Municipal Pedro Oliveira',
+            'endereco': 'Rua da Educação, 789 - Vila Esperança',
+            'distancia': '2.1 km', 
+            'telefone': '(11) 3456-7892'
+        }
+    ]
+    
+    return jsonify({'escolas': escolas})
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
