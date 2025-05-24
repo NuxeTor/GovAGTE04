@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title or "Resultados da Busca - Mais Agentes da Educação - gov.br" }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Resultados da Busca - Mais Agentes da Educação</h1>
+    
+    <div class="border-t border-b border-gray-300 py-3 mb-6">
+        <div class="text-gray-700 text-sm">
+            <p>Publicado em 24/05/2025 17h37</p>
+            <p>Atualizado em 24/05/2025 18h29</p>
+        </div>
+    </div>
+
+    <!-- Loading Animation (inicial) -->
+    <div id="loading-section" class="text-center py-16">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Carregando dados...</h2>
+        <p class="text-gray-600">Consultando disponibilidade na região CEP: {{ cep }}</p>
+    </div>
+
+    <!-- Resultados (aparecem após loading) -->
+    <div id="results-section" class="hidden">
+        <!-- Campo Verde de Disponibilidade -->
+        <div class="bg-green-100 border-l-4 border-green-500 p-6 mb-8 rounded-r-lg shadow-sm">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-bold text-green-800 mb-3">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        Disponibilidade Confirmada na sua Região
+                    </h2>
+                    <div class="bg-white p-4 rounded-lg border border-green-200 mb-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">CEP Consultado:</p>
+                                <p class="font-semibold text-gray-800">{{ cep }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">Código da Região:</p>
+                                <p class="font-semibold text-green-700 text-lg">{{ region_code }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">Status:</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check mr-1"></i>
+                                    VAGAS DISPONÍVEIS
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-700">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Foram encontradas oportunidades de emprego na sua região. Selecione abaixo o cargo de seu interesse.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quadrado Verde com Cargos -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-semibold text-green-800 mb-6">
+                <i class="fas fa-briefcase mr-2"></i>
+                Cargos Disponíveis para sua Região
+            </h3>
+            
+            <div class="grid gap-4">
+                <!-- Cargo 1 -->
+                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="agente-alimentacao">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-green-700 mb-2">Agente de Alimentação Escolar</h4>
+                            <p class="text-sm text-gray-600 mb-3">Responsável pela preparação e distribuição da alimentação nas escolas municipais.</p>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Remuneração:</span>
+                                    <p class="font-semibold text-green-600" id="salario-agente">R$ 2.142,24 - R$ 2.987,15</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Carga Horária:</span>
+                                    <p class="font-semibold">40h semanais</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Modalidade:</span>
+                                    <p class="font-semibold">Presencial</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                                Selecionar Cargo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cargo 2 -->
+                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-educacao">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-green-700 mb-2">Auxiliar de Educação Infantil</h4>
+                            <p class="text-sm text-gray-600 mb-3">Apoio pedagógico e cuidados com crianças de 0 a 5 anos em creches e pré-escolas.</p>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Remuneração:</span>
+                                    <p class="font-semibold text-green-600" id="salario-auxiliar">R$ 2.287,89 - R$ 3.156,47</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Carga Horária:</span>
+                                    <p class="font-semibold">40h semanais</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Modalidade:</span>
+                                    <p class="font-semibold">Presencial</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                                Selecionar Cargo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cargo 3 -->
+                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="monitor-transporte">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-green-700 mb-2">Monitor de Transporte Escolar</h4>
+                            <p class="text-sm text-gray-600 mb-3">Acompanhamento e segurança dos estudantes durante o transporte escolar.</p>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Remuneração:</span>
+                                    <p class="font-semibold text-green-600" id="salario-monitor">R$ 1.987,65 - R$ 2.743,28</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Carga Horária:</span>
+                                    <p class="font-semibold">30h semanais</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Modalidade:</span>
+                                    <p class="font-semibold">Presencial</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                                Selecionar Cargo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cargo 4 -->
+                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="assistente-admin">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-green-700 mb-2">Assistente Administrativo Educacional</h4>
+                            <p class="text-sm text-gray-600 mb-3">Apoio administrativo e secretarial nas unidades de ensino municipais.</p>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Remuneração:</span>
+                                    <p class="font-semibold text-green-600" id="salario-assistente">R$ 2.456,33 - R$ 3.398,76</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Carga Horária:</span>
+                                    <p class="font-semibold">40h semanais</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Modalidade:</span>
+                                    <p class="font-semibold">Presencial</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                                Selecionar Cargo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Iniciar Inscrição (aparece após seleção) -->
+        <div id="botao-inscricao" class="text-center py-8 hidden">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-blue-800 mb-2">Cargo Selecionado</h3>
+                <p id="cargo-selecionado-texto" class="text-gray-700 mb-4"></p>
+                <div class="bg-white p-4 rounded border border-blue-200">
+                    <p class="text-sm text-gray-600 mb-1">Remuneração prevista para sua região:</p>
+                    <p id="salario-selecionado" class="text-lg font-semibold text-blue-700"></p>
+                </div>
+            </div>
+            
+            <button id="iniciar-inscricao" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-12 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300">
+                <i class="fas fa-pen mr-3"></i>
+                INICIAR INSCRIÇÃO
+                <i class="fas fa-arrow-right ml-3"></i>
+            </button>
+            
+            <p class="text-blue-600 font-medium mt-4 text-sm">
+                <i class="fas fa-info-circle mr-1"></i>
+                Próximo passo: Preenchimento dos dados pessoais e documentação
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loadingSection = document.getElementById('loading-section');
+    const resultsSection = document.getElementById('results-section');
+    const cargoOptions = document.querySelectorAll('.cargo-option');
+    const botaoInscricao = document.getElementById('botao-inscricao');
+    const cargoSelecionadoTexto = document.getElementById('cargo-selecionado-texto');
+    const salarioSelecionado = document.getElementById('salario-selecionado');
+
+    // Gerar salários aleatórios para cada usuário
+    function gerarSalarioAleatorio(min, max) {
+        const minimo = Math.floor(Math.random() * (2300 - 1900) + 1900);
+        const maximo = Math.floor(Math.random() * (3400 - 2500) + 2500);
+        return `R$ ${minimo.toLocaleString('pt-BR', {minimumFractionDigits: 2})} - R$ ${maximo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+
+    // Atualizar salários na página
+    document.getElementById('salario-agente').textContent = gerarSalarioAleatorio(2000, 3000);
+    document.getElementById('salario-auxiliar').textContent = gerarSalarioAleatorio(2200, 3200);
+    document.getElementById('salario-monitor').textContent = gerarSalarioAleatorio(1900, 2800);
+    document.getElementById('salario-assistente').textContent = gerarSalarioAleatorio(2400, 3400);
+
+    // Simular carregamento
+    setTimeout(() => {
+        loadingSection.classList.add('hidden');
+        resultsSection.classList.remove('hidden');
+    }, 3000);
+
+    // Seleção de cargo
+    cargoOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remover seleção anterior
+            cargoOptions.forEach(opt => {
+                opt.classList.remove('ring-2', 'ring-green-500', 'bg-green-50');
+            });
+
+            // Selecionar cargo atual
+            this.classList.add('ring-2', 'ring-green-500', 'bg-green-50');
+
+            // Obter dados do cargo
+            const cargoNome = this.querySelector('h4').textContent;
+            const cargoSalario = this.querySelector('.text-green-600').textContent;
+
+            // Atualizar informações
+            cargoSelecionadoTexto.textContent = cargoNome;
+            salarioSelecionado.textContent = cargoSalario;
+
+            // Mostrar botão de inscrição
+            botaoInscricao.classList.remove('hidden');
+
+            // Scroll automático para o botão
+            setTimeout(() => {
+                botaoInscricao.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
+        });
+    });
+
+    // Botão iniciar inscrição
+    document.getElementById('iniciar-inscricao').addEventListener('click', function() {
+        alert('Redirecionando para o formulário de inscrição...\n\nEm breve você preencherá seus dados pessoais e fará o upload da documentação necessária.');
+    });
+});
+</script>
+{% endblock %}
