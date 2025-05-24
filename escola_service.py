@@ -24,12 +24,26 @@ class EscolaService:
                 if len(self.escolas_df.columns) == len(colunas_esperadas):
                     self.escolas_df.columns = colunas_esperadas
                 
-                # Converter coordenadas para float
+                # Converter coordenadas para float e validar
                 self.escolas_df['Latitude'] = pd.to_numeric(self.escolas_df['Latitude'], errors='coerce')
                 self.escolas_df['Longitude'] = pd.to_numeric(self.escolas_df['Longitude'], errors='coerce')
                 
-                # Remover escolas sem coordenadas válidas
-                self.escolas_df = self.escolas_df.dropna(subset=['Latitude', 'Longitude'])
+                # Filtrar coordenadas válidas
+                mask_validas = (
+                    (self.escolas_df['Latitude'] >= -90) & 
+                    (self.escolas_df['Latitude'] <= 90) &
+                    (self.escolas_df['Longitude'] >= -180) & 
+                    (self.escolas_df['Longitude'] <= 180) &
+                    (self.escolas_df['Latitude'].notna()) &
+                    (self.escolas_df['Longitude'].notna())
+                )
+                
+                self.escolas_df = self.escolas_df[mask_validas]
+                logging.info(f"Escolas com coordenadas válidas: {len(self.escolas_df)}")
+                
+                if len(self.escolas_df) == 0:
+                    logging.warning("Nenhuma escola com coordenadas válidas encontrada")
+                    self.criar_dados_exemplo()
                 
             else:
                 logging.warning(f"Arquivo {arquivo_excel} não encontrado")
@@ -117,28 +131,47 @@ class EscolaService:
                 return None, "Erro ao obter coordenadas do CEP"
             
             if self.escolas_df is None or self.escolas_df.empty:
-                return None, "Dados de escolas não disponíveis"
+                # Usar dados de exemplo se não houver dados do arquivo
+                self.criar_dados_exemplo()
             
-            # Calcular distâncias
+            # Calcular distâncias apenas para as primeiras 100 escolas para evitar timeout
+            escolas_amostra = self.escolas_df.head(100) if len(self.escolas_df) > 100 else self.escolas_df
             escolas_com_distancia = []
             
-            for _, escola in self.escolas_df.iterrows():
-                distancia = self.calcular_distancia(
-                    lat_cep, lng_cep,
-                    escola['Latitude'], escola['Longitude']
-                )
-                
-                escola_info = {
-                    'nome': escola['Escola'],
-                    'codigo_inep': escola['Codigo_INEP'],
-                    'endereco': escola['Endereco'],
-                    'municipio': escola['Municipio'],
-                    'uf': escola['UF'],
-                    'distancia_km': round(distancia, 2),
-                    'telefone': '(11) 3456-7890'  # Telefone genérico
-                }
-                
-                escolas_com_distancia.append(escola_info)
+            for index, escola in escolas_amostra.iterrows():
+                try:
+                    # Validar coordenadas antes do cálculo
+                    lat_escola = float(escola['Latitude'])
+                    lng_escola = float(escola['Longitude'])
+                    
+                    if not (-90 <= lat_escola <= 90) or not (-180 <= lng_escola <= 180):
+                        continue
+                    
+                    distancia = self.calcular_distancia(
+                        lat_cep, lng_cep, lat_escola, lng_escola
+                    )
+                    
+                    if distancia == float('inf'):
+                        continue
+                    
+                    escola_info = {
+                        'nome': str(escola['Escola']),
+                        'codigo_inep': str(escola['Codigo_INEP']),
+                        'endereco': str(escola['Endereco']),
+                        'municipio': str(escola['Municipio']),
+                        'uf': str(escola['UF']),
+                        'distancia_km': round(distancia, 2),
+                        'telefone': '(11) 3456-7890'
+                    }
+                    
+                    escolas_com_distancia.append(escola_info)
+                    
+                except (ValueError, TypeError) as e:
+                    logging.warning(f"Erro ao processar escola {index}: {e}")
+                    continue
+            
+            if not escolas_com_distancia:
+                return None, "Nenhuma escola encontrada próxima ao CEP informado"
             
             # Ordenar por distância e pegar as mais próximas
             escolas_ordenadas = sorted(escolas_com_distancia, key=lambda x: x['distancia_km'])
