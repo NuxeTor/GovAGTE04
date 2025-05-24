@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title or "Comprovante de Inscrição - Mais Agentes da Educação - gov.br" }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Comprovante de Inscrição</h1>
+    
+    <div class="border-t border-b border-gray-300 py-3 mb-6">
+        <div class="text-gray-700 text-sm">
+            <p>Gerado em <span id="data-geracao"></span></p>
+        </div>
+    </div>
+
+    <!-- Progress Bar Final -->
+    <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-6 mb-6 md:mb-8">
+        <h2 class="text-base md:text-lg font-semibold text-gray-800 mb-3 md:mb-4">Progresso da Inscrição</h2>
+        
+        <!-- Desktop Progress -->
+        <div class="hidden md:flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium">✓</div>
+                <span class="ml-2 text-sm font-medium text-green-600">Dados Pessoais</span>
+            </div>
+            <div class="flex-1 mx-3 h-1 bg-green-600 rounded"></div>
+            <div class="flex items-center">
+                <div class="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium">✓</div>
+                <span class="ml-2 text-sm font-medium text-green-600">Documentação</span>
+            </div>
+            <div class="flex-1 mx-3 h-1 bg-green-600 rounded"></div>
+            <div class="flex items-center">
+                <div class="w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-medium">✓</div>
+                <span class="ml-2 text-sm font-medium text-green-600">Finalização</span>
+            </div>
+        </div>
+
+        <!-- Mobile Progress -->
+        <div class="md:hidden">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs text-gray-600">Etapa 3 de 3</span>
+                <span class="text-xs font-medium text-green-600">100% concluído</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+            </div>
+            <div class="flex justify-between text-xs">
+                <span class="font-medium text-green-600">• Dados Pessoais</span>
+                <span class="font-medium text-green-600">• Documentação</span>
+                <span class="font-medium text-green-600">• Finalização</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comprovante -->
+    <div class="bg-white border-2 border-green-500 rounded-lg p-6 mb-8 shadow-lg">
+        <div class="text-center mb-6">
+            <div class="flex items-center justify-center mb-4">
+                <img src="/static/img/gov-logo.svg" alt="Gov.br" class="h-12 mr-4" onerror="this.style.display='none'">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">GOVERNO FEDERAL</h2>
+                    <p class="text-sm text-gray-600">Ministério da Educação</p>
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-green-700 mb-2">COMPROVANTE DE INSCRIÇÃO</h3>
+            <p class="text-sm text-gray-600">Programa Nacional de Agentes da Educação - PNAE</p>
+        </div>
+
+        <div class="border-t border-b border-gray-200 py-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <span class="text-sm font-medium text-gray-600">Protocolo:</span>
+                    <p class="font-mono text-lg font-bold text-blue-600" id="protocolo-inscricao">-</p>
+                </div>
+                <div>
+                    <span class="text-sm font-medium text-gray-600">Status:</span>
+                    <p class="font-medium text-green-600">INSCRIÇÃO REALIZADA</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Dados Pessoais -->
+            <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-user mr-2 text-blue-600"></i>
+                    Dados Pessoais
+                </h4>
+                <div class="space-y-3">
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Nome Completo:</span>
+                        <p class="font-medium" id="nome-completo">-</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">CPF:</span>
+                        <p class="font-medium font-mono" id="cpf-usuario">-</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Data de Nascimento:</span>
+                        <p class="font-medium" id="data-nascimento">-</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Nome da Mãe:</span>
+                        <p class="font-medium" id="nome-mae">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados da Vaga -->
+            <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-briefcase mr-2 text-blue-600"></i>
+                    Dados da Vaga
+                </h4>
+                <div class="space-y-3">
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Cargo Pretendido:</span>
+                        <p class="font-medium" id="cargo-pretendido">-</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Unidade Escolar:</span>
+                        <p class="font-medium" id="unidade-escolar">-</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Remuneração:</span>
+                        <p class="font-medium text-green-600" id="remuneracao">-</p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Localização:</span>
+                        <p class="font-medium" id="localizacao">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code e Validação -->
+        <div class="mt-6 pt-6 border-t border-gray-200 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <div class="bg-gray-100 w-24 h-24 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-qrcode text-4xl text-gray-400"></i>
+                </div>
+                <div class="text-left">
+                    <p class="text-sm font-medium text-gray-700">Código de Validação:</p>
+                    <p class="font-mono text-lg font-bold text-blue-600" id="codigo-validacao">-</p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Utilize este código para consultar o status da sua inscrição
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Próximos Passos -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-semibold text-yellow-800 mb-4 flex items-center">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            Próximo Passo: Validação da Carteira Digital de Trabalho
+        </h3>
+        <div class="text-yellow-700 mb-4">
+            <p class="mb-3">
+                Para concluir a inscrição, é necessário que você valide sua carteira digital de trabalho 
+                para que o INEP possa registrar sua requisição de cargo de forma online, seguindo todas as normas legais.
+            </p>
+            <ul class="text-sm space-y-1 ml-4 list-disc">
+                <li>Validação obrigatória para finalizar o processo</li>
+                <li>Processo 100% digital e seguro</li>
+                <li>Conformidade com regulamentações do Ministério do Trabalho</li>
+                <li>Integração direta com sistemas do INEP</li>
+            </ul>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button id="validar-carteira" 
+                    class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                <i class="fas fa-id-card mr-2"></i>
+                Validar com Carteira Digital de Trabalho
+            </button>
+            <button onclick="window.print()" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                <i class="fas fa-print mr-2"></i>
+                Imprimir Comprovante
+            </button>
+        </div>
+    </div>
+
+    <!-- Informações Importantes -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-blue-800 mb-3">Informações Importantes</h3>
+        <div class="text-blue-700 text-sm space-y-2">
+            <p>• Guarde este comprovante para consultas futuras sobre sua inscrição</p>
+            <p>• O processo seletivo seguirá as etapas previstas no edital oficial</p>
+            <p>• Acompanhe as comunicações através do seu email cadastrado</p>
+            <p>• Em caso de dúvidas, entre em contato através dos canais oficiais</p>
+            <p>• Este documento possui validade legal e comprova sua participação no programa</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Carregar dados do localStorage
+    const dadosInscricao = localStorage.getItem('dadosInscricao');
+    
+    if (dadosInscricao) {
+        const dados = JSON.parse(dadosInscricao);
+        
+        // Preencher dados pessoais
+        document.getElementById('nome-completo').textContent = dados.nome || '-';
+        document.getElementById('cpf-usuario').textContent = formatarCPF(dados.cpf) || '-';
+        document.getElementById('data-nascimento').textContent = formatarData(dados.dataNascimento) || '-';
+        document.getElementById('nome-mae').textContent = dados.nomeMae || '-';
+        
+        // Preencher dados da vaga
+        document.getElementById('cargo-pretendido').textContent = dados.cargo || '-';
+        document.getElementById('unidade-escolar').textContent = dados.escola || '-';
+        document.getElementById('remuneracao').textContent = dados.salario || '-';
+        document.getElementById('localizacao').textContent = dados.cidade || '-';
+        
+        // Preencher protocolo e código
+        document.getElementById('protocolo-inscricao').textContent = dados.protocoloInscricao || '-';
+        document.getElementById('codigo-validacao').textContent = dados.protocoloInscricao || '-';
+    }
+    
+    // Data de geração
+    const agora = new Date();
+    document.getElementById('data-geracao').textContent = agora.toLocaleString('pt-BR');
+    
+    // Botão validar carteira
+    document.getElementById('validar-carteira').addEventListener('click', function() {
+        alert('Redirecionando para validação da Carteira Digital de Trabalho...\n\nEsta funcionalidade será integrada com os sistemas oficiais do Ministério do Trabalho.');
+    });
+});
+
+function formatarCPF(cpf) {
+    if (!cpf) return '';
+    const limpo = cpf.replace(/\D/g, '');
+    return limpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
+function formatarData(data) {
+    if (!data) return '';
+    try {
+        const date = new Date(data);
+        return date.toLocaleDateString('pt-BR');
+    } catch {
+        return data;
+    }
+}
+</script>
+
+<style>
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
+}
+</style>
+{% endblock %}

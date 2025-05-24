@@ -344,6 +344,11 @@ def validar_cpf():
         app.logger.error(f"Erro inesperado: {e}")
         return jsonify({'error': 'Erro interno do servidor'}), 500
 
+@app.route('/comprovante-inscricao')
+def comprovante_inscricao():
+    """Proof of registration page"""
+    return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - Mais Agentes da Educação")
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
