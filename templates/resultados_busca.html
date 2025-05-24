@@ -381,19 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mostrar botão de inscrição
             botaoInscricao.classList.remove('hidden');
 
-            // Scroll automático para o final da página onde está o botão
+            // Scroll automático para mostrar o botão no centro da tela
             setTimeout(() => {
                 botaoInscricao.scrollIntoView({ 
                     behavior: 'smooth', 
-                    block: 'end'
+                    block: 'center' 
                 });
-                // Garantir que a página role até o final
-                setTimeout(() => {
-                    window.scrollTo({
-                        top: document.body.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }, 500);
             }, 300);
         });
     });
