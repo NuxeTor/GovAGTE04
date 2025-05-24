@@ -172,6 +172,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.checked) {
             secaoCep.classList.remove('opacity-50', 'pointer-events-none');
             secaoCep.classList.add('opacity-100');
+            
+            // Scroll automático para o campo de CEP com delay para permitir a animação
+            setTimeout(() => {
+                secaoCep.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                // Focar no campo de CEP após o scroll
+                setTimeout(() => {
+                    cepInput.focus();
+                }, 800);
+            }, 300);
         } else {
             secaoCep.classList.add('opacity-50', 'pointer-events-none');
             secaoCep.classList.remove('opacity-100');
