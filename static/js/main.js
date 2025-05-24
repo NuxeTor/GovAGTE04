@@ -7,6 +7,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Gov.br clone initialized');
     
+    // Detect mobile device
+    const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        console.log('Mobile view activated');
+        document.body.classList.add('mobile-device');
+    }
+    
     // Initialize all functionality
     initializeSearch();
     initializeSharing();
@@ -15,6 +22,17 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeCookieSettings();
     initializeFooterInteractions();
     initializeLibrasButton();
+    
+    // Mobile-specific optimizations
+    if (isMobile) {
+        initializeMobileOptimizations();
+    }
+    
+    console.log('Ready for service worker registration');
+    
+    // Performance timing
+    const loadTime = performance.now();
+    console.log(`Page loaded in ${loadTime}ms`);
 });
 
 /**
@@ -133,6 +151,7 @@ function initializeSearch() {
 
     // Escape key to close modal
     document.addEventListener('keydown', function(e) {
+        const searchModal = document.getElementById('search-modal');
         if (e.key === 'Escape' && searchModal && !searchModal.classList.contains('hidden')) {
             searchModal.classList.add('hidden');
         }
@@ -648,3 +667,133 @@ window.addEventListener('error', (event) => {
     console.error('Global error:', event.error);
     // Don't show notification for every error to avoid spam
 });
+
+/**
+ * Mobile-specific optimizations
+ */
+function initializeMobileOptimizations() {
+    // Touch-friendly interactions
+    addTouchSupport();
+    
+    // Optimize viewport for mobile
+    optimizeViewport();
+    
+    // Add mobile gestures
+    addMobileGestures();
+    
+    // Lazy loading for better performance
+    initializeLazyLoading();
+}
+
+/**
+ * Add touch support for better mobile interaction
+ */
+function addTouchSupport() {
+    // Add touch feedback to all buttons
+    const buttons = document.querySelectorAll('button, .btn, a[role="button"]');
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        button.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Prevent double-tap zoom on buttons
+    const clickables = document.querySelectorAll('button, input, select, textarea');
+    clickables.forEach(element => {
+        element.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            element.click();
+        });
+    });
+}
+
+/**
+ * Optimize viewport for mobile devices
+ */
+function optimizeViewport() {
+    // Prevent zoom on orientation change
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    }
+    
+    // Handle orientation changes
+    window.addEventListener('orientationchange', function() {
+        // Small delay to allow for orientation change
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 100);
+    });
+}
+
+/**
+ * Add mobile gesture support
+ */
+function addMobileGestures() {
+    let startX, startY, distX, distY;
+    
+    // Add swipe support to modals
+    const modals = document.querySelectorAll('.fixed, .modal');
+    modals.forEach(modal => {
+        modal.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+        
+        modal.addEventListener('touchmove', function(e) {
+            if (!startX || !startY) return;
+            
+            distX = e.touches[0].clientX - startX;
+            distY = e.touches[0].clientY - startY;
+            
+            // Swipe down to close modal
+            if (distY > 100 && Math.abs(distX) < 100) {
+                if (modal.classList.contains('hidden') === false) {
+                    modal.classList.add('hidden');
+                }
+            }
+        });
+        
+        modal.addEventListener('touchend', function() {
+            startX = null;
+            startY = null;
+        });
+    });
+}
+
+/**
+ * Initialize lazy loading for better performance
+ */
+function initializeLazyLoading() {
+    // Lazy load images
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+    
+    // Lazy load content sections
+    const sections = document.querySelectorAll('[data-lazy]');
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('loaded');
+                sectionObserver.unobserve(entry.target);
+            }
+        });
+    });
+    
+    sections.forEach(section => sectionObserver.observe(section));
+}
