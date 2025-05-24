@@ -170,10 +170,11 @@
                 <i class="fas fa-id-card mr-2"></i>
                 Validar com Carteira Digital de Trabalho
             </button>
-            <button onclick="window.print()" 
-                    class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
-                <i class="fas fa-print mr-2"></i>
-                Imprimir Comprovante
+            <button id="receber-email" 
+                    disabled
+                    class="bg-gray-400 text-gray-600 font-medium py-3 px-6 rounded-md cursor-not-allowed transition-colors opacity-50">
+                <i class="fas fa-envelope mr-2"></i>
+                Receber Comprovante por E-mail
             </button>
         </div>
     </div>
@@ -221,7 +222,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Botão validar carteira
     document.getElementById('validar-carteira').addEventListener('click', function() {
-        alert('Redirecionando para validação da Carteira Digital de Trabalho...\n\nEsta funcionalidade será integrada com os sistemas oficiais do Ministério do Trabalho.');
+        const botaoValidar = this;
+        const botaoEmail = document.getElementById('receber-email');
+        
+        // Simular processo de validação
+        botaoValidar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Validando...';
+        botaoValidar.disabled = true;
+        
+        setTimeout(() => {
+            alert('Carteira Digital de Trabalho validada com sucesso!\n\nAgora você pode receber o comprovante por e-mail.');
+            
+            // Habilitar botão de e-mail
+            botaoEmail.disabled = false;
+            botaoEmail.classList.remove('bg-gray-400', 'text-gray-600', 'cursor-not-allowed', 'opacity-50');
+            botaoEmail.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white', 'cursor-pointer');
+            
+            // Atualizar botão de validar
+            botaoValidar.innerHTML = '<i class="fas fa-check mr-2"></i>Carteira Validada';
+            botaoValidar.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+            botaoValidar.classList.add('bg-green-600');
+        }, 3000);
+    });
+    
+    // Botão receber por e-mail
+    document.getElementById('receber-email').addEventListener('click', function() {
+        if (!this.disabled) {
+            alert('Comprovante enviado para o seu e-mail cadastrado!\n\nVerifique sua caixa de entrada em alguns minutos.');
+        }
     });
 });
 
