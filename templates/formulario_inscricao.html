@@ -642,48 +642,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.concluirVerificacao = function() {
         if (window.quizState.acertos >= 2) {
-            // Buscar dados reais da escola baseado no CEP
-            buscarEscolasPorCEP().then(dadosEscola => {
-                const dadosCompletos = {
-                    cpf: window.quizState.dados.dados_originais.cpf,
-                    nome: window.quizState.dados.dados_originais.nome,
-                    nomeMae: window.quizState.dados.dados_originais.nome_mae,
-                    dataNascimento: window.quizState.dados.dados_originais.data_nascimento,
-                    cep: dadosEscola.cep,
-                    endereco: dadosEscola.endereco,
-                    cidade: dadosEscola.cidade,
-                    escola: dadosEscola.escola,
-                    cargo: 'Auxiliar Administrativo',
-                    salario: 'R$ 2.149,00',
-                    protocoloInscricao: 'PNAE' + Date.now().toString().slice(-8)
-                };
-                
-                localStorage.setItem('dadosInscricao', JSON.stringify(dadosCompletos));
-                
-                alert('Identidade verificada com sucesso!\n\nVocê será redirecionado para o comprovante de inscrição.');
-                window.location.href = '/comprovante-inscricao';
-            }).catch(error => {
-                console.error('Erro ao buscar escola:', error);
-                // Fallback com dados básicos se a API falhar
-                const dadosCompletos = {
-                    cpf: window.quizState.dados.dados_originais.cpf,
-                    nome: window.quizState.dados.dados_originais.nome,
-                    nomeMae: window.quizState.dados.dados_originais.nome_mae,
-                    dataNascimento: window.quizState.dados.dados_originais.data_nascimento,
-                    cep: 'Não informado',
-                    endereco: 'Informações da escola serão confirmadas posteriormente',
-                    cidade: 'Brasil',
-                    escola: 'Escola será definida conforme disponibilidade',
-                    cargo: 'Auxiliar Administrativo',
-                    salario: 'R$ 2.149,00',
-                    protocoloInscricao: 'PNAE' + Date.now().toString().slice(-8)
-                };
-                
-                localStorage.setItem('dadosInscricao', JSON.stringify(dadosCompletos));
-                
-                alert('Identidade verificada com sucesso!\n\nVocê será redirecionado para o comprovante de inscrição.');
-                window.location.href = '/comprovante-inscricao';
-            });
+            // Salvar dados no localStorage para usar na próxima página
+            const dadosCompletos = {
+                cpf: window.quizState.dados.dados_originais.cpf,
+                nome: window.quizState.dados.dados_originais.nome,
+                nomeMae: window.quizState.dados.dados_originais.nome_mae,
+                dataNascimento: window.quizState.dados.dados_originais.data_nascimento,
+                // Dados fictícios para demonstração do comprovante
+                cep: '01234-567',
+                endereco: 'Rua das Flores, 123 - Centro',
+                cidade: 'São Paulo - SP',
+                escola: 'EMEF Prof. João Silva',
+                cargo: 'Auxiliar Administrativo',
+                salario: 'R$ 2.149,00',
+                protocoloInscricao: 'PNAE' + Date.now().toString().slice(-8)
+            };
+            
+            localStorage.setItem('dadosInscricao', JSON.stringify(dadosCompletos));
+            
+            alert('Identidade verificada com sucesso!\n\nVocê será redirecionado para o comprovante de inscrição.');
+            window.location.href = '/comprovante-inscricao';
         } else {
             alert('Verificação falhou. As informações não conferem.\n\nTente novamente ou entre em contato com o suporte.');
             location.reload();
@@ -691,38 +669,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
 
-
-    async function buscarEscolasPorCEP() {
-        // Tentar obter CEP salvo de etapas anteriores ou usar um padrão
-        const cepSalvo = localStorage.getItem('cepUsuario') || '01310-100'; // CEP de São Paulo como padrão
-        
-        try {
-            const response = await fetch('/buscar-escolas-cep', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cep: cepSalvo })
-            });
-            
-            const data = await response.json();
-            
-            if (data.sucesso && data.escolas && data.escolas.length > 0) {
-                const escolaMaisProxima = data.escolas[0];
-                return {
-                    cep: cepSalvo,
-                    endereco: escolaMaisProxima.endereco,
-                    cidade: `${data.localizacao.cidade} - ${data.localizacao.estado}`,
-                    escola: escolaMaisProxima.nome
-                };
-            } else {
-                throw new Error('Nenhuma escola encontrada');
-            }
-        } catch (error) {
-            console.error('Erro na busca:', error);
-            throw error;
-        }
-    }
 
     window.voltarFormulario = function() {
         location.reload();
