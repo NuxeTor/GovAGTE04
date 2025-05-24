@@ -180,6 +180,21 @@ def cadastro():
     """Registration page for PNAE program"""
     return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
 
+@app.route('/resultados-busca')
+def resultados_busca():
+    """Results page showing available positions in the region"""
+    cep = request.args.get('cep', '').strip()
+    if not cep:
+        return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
+    
+    # Generate region code based on CEP
+    region_code = f"REG-{cep[:2]}-{cep[2:5]}"
+    
+    return render_template('resultados_busca.html', 
+                         page_title="Resultados da Busca - Mais Agentes da Educação",
+                         cep=cep,
+                         region_code=region_code)
+
 @app.route('/buscar-escolas')
 def buscar_escolas():
     """Search for schools near a given CEP"""

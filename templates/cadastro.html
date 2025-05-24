@@ -219,72 +219,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         buscarBtn.disabled = true;
-        buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Buscando...';
+        buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Consultando região...';
 
-        fetch(`/buscar-escolas?cep=${cep}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-
-                // Mostrar resultados
-                resultadosBusca.classList.remove('hidden');
-                listaEscolas.innerHTML = '';
-
-                data.escolas.forEach(escola => {
-                    const escolaDiv = document.createElement('div');
-                    escolaDiv.className = 'bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow';
-                    escolaDiv.innerHTML = `
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <h4 class="font-semibold text-gray-800 mb-2">${escola.nome}</h4>
-                                <p class="text-sm text-gray-600 mb-1">
-                                    <i class="fas fa-map-marker-alt mr-1"></i>
-                                    ${escola.endereco}
-                                </p>
-                                <p class="text-sm text-gray-600 mb-1">
-                                    <i class="fas fa-phone mr-1"></i>
-                                    ${escola.telefone}
-                                </p>
-                                <p class="text-sm text-blue-600 font-medium">
-                                    <i class="fas fa-route mr-1"></i>
-                                    Distância: ${escola.distancia}
-                                </p>
-                            </div>
-                            <div class="ml-4">
-                                <button class="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-medium hover:bg-blue-200 transition-colors">
-                                    Selecionar
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Adicionar evento de seleção
-                    escolaDiv.querySelector('button').addEventListener('click', function() {
-                        // Destacar escola selecionada
-                        document.querySelectorAll('#lista-escolas > div').forEach(div => {
-                            div.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-                        });
-                        escolaDiv.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
-                        
-                        // Mostrar quiz de cargo
-                        quizCargo.classList.remove('hidden');
-                        quizCargo.scrollIntoView({ behavior: 'smooth' });
-                    });
-                    
-                    listaEscolas.appendChild(escolaDiv);
-                });
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Erro ao buscar escolas. Tente novamente.');
-            })
-            .finally(() => {
-                buscarBtn.disabled = false;
-                buscarBtn.innerHTML = '<i class="fas fa-search mr-2"></i>Buscar';
-            });
+        // Simular delay de busca
+        setTimeout(() => {
+            // Redirecionar para página de resultados
+            window.location.href = `/resultados-busca?cep=${cep}`;
+        }, 2000);
     });
 
     // Confirmar cadastro
