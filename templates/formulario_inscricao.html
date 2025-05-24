@@ -348,8 +348,10 @@ document.addEventListener('DOMContentLoaded', function() {
             behavior: 'smooth'
         });
         
-        // Esconder formulário atual
-        document.getElementById('form-cpf').style.display = 'none';
+        // Delay de 2 segundos antes de mostrar o quiz
+        setTimeout(() => {
+            // Esconder formulário atual
+            document.getElementById('form-cpf').style.display = 'none';
         
         // Estado do quiz
         window.quizState = {
@@ -399,8 +401,20 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        // Iniciar primeira pergunta
-        mostrarPergunta(1);
+            // Iniciar primeira pergunta
+            mostrarPergunta(1);
+            
+            // Após mostrar o quiz, rolar para a seção do quiz
+            setTimeout(() => {
+                const quizContainer = document.querySelector('.bg-white.border.border-gray-200.rounded-lg.p-6.mb-8');
+                if (quizContainer) {
+                    quizContainer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 500);
+        }, 2000);
     }
 
     function mostrarPergunta(etapa) {
