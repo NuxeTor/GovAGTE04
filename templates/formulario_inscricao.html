@@ -345,8 +345,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Esconder formulário atual
         document.getElementById('form-cpf').style.display = 'none';
         
-        // Criar quiz de verificação
-        const quizHTML = `
+        // Estado do quiz
+        window.quizState = {
+            etapaAtual: 1,
+            dados: dados,
+            acertos: 0,
+            tentativas: {1: 0, 2: 0, 3: 0}
+        };
+        
+        // Inserir container do quiz
+        const container = document.querySelector('.bg-white.border.border-gray-200.rounded-lg.p-6.mb-8');
+        container.innerHTML = `
+            <h3 class="text-xl font-semibold text-gray-800 mb-6">
+                <i class="fas fa-user-shield mr-2"></i>
+                Verificação de Identidade
+            </h3>
+            
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
                 <div class="flex items-center mb-4">
                     <i class="fas fa-shield-alt text-yellow-600 text-xl mr-3"></i>
@@ -355,110 +369,187 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="text-sm text-yellow-700 mb-4">
                     Para sua segurança, confirme as informações abaixo selecionando as opções corretas:
                 </p>
+                <div class="text-xs text-yellow-600">
+                    <span>Etapa <span id="etapa-atual">1</span> de 3</span>
+                </div>
             </div>
 
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
-                        1. Qual é o seu nome completo?
-                    </label>
-                    <div class="space-y-2">
-                        ${dados.quiz.nomes.map((nome, index) => `
-                            <label class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-blue-50">
-                                <input type="radio" name="quiz-nome" value="${nome}" class="mr-3">
-                                <span>${nome}</span>
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
+            <!-- Área de mensagens -->
+            <div id="quiz-message" class="mb-4 hidden"></div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
-                        2. Qual é o nome da sua mãe?
-                    </label>
-                    <div class="space-y-2">
-                        ${dados.quiz.maes.map((mae, index) => `
-                            <label class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-blue-50">
-                                <input type="radio" name="quiz-mae" value="${mae}" class="mr-3">
-                                <span>${mae}</span>
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
+            <!-- Container das perguntas -->
+            <div id="quiz-container"></div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
-                        3. Qual é a sua data de nascimento?
-                    </label>
-                    <div class="space-y-2">
-                        ${dados.quiz.datas.map((data, index) => {
-                            const dataFormatada = new Date(data).toLocaleDateString('pt-BR');
-                            return `
-                                <label class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-blue-50">
-                                    <input type="radio" name="quiz-data" value="${data}" class="mr-3">
-                                    <span>${dataFormatada}</span>
-                                </label>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center pt-6 border-t border-gray-200">
-                    <button type="button" onclick="voltarFormulario()" 
-                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        Voltar
-                    </button>
-                    
-                    <button type="button" id="confirmar-quiz"
-                            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                        Confirmar Identidade
-                        <i class="fas fa-check ml-2"></i>
-                    </button>
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <button type="button" onclick="voltarFormulario()" 
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Voltar
+                </button>
+                
+                <div id="quiz-progress" class="text-sm text-gray-600">
+                    Responda às perguntas para continuar
                 </div>
             </div>
         `;
 
-        // Inserir quiz na página
-        const container = document.querySelector('.bg-white.border.border-gray-200.rounded-lg.p-6.mb-8');
-        container.innerHTML = `
-            <h3 class="text-xl font-semibold text-gray-800 mb-6">
-                <i class="fas fa-user-shield mr-2"></i>
-                Verificação de Identidade
-            </h3>
-            ${quizHTML}
+        // Iniciar primeira pergunta
+        mostrarPergunta(1);
+    }
+
+    function mostrarPergunta(etapa) {
+        const container = document.getElementById('quiz-container');
+        const dados = window.quizState.dados;
+        
+        let pergunta, opcoes, respostaCorreta;
+        
+        switch(etapa) {
+            case 1:
+                pergunta = "1. Qual é o seu nome completo?";
+                opcoes = dados.quiz.nomes;
+                respostaCorreta = dados.dados_originais.nome;
+                break;
+            case 2:
+                pergunta = "2. Qual é o nome da sua mãe?";
+                opcoes = dados.quiz.maes;
+                respostaCorreta = dados.dados_originais.nome_mae;
+                break;
+            case 3:
+                pergunta = "3. Qual é a sua data de nascimento?";
+                opcoes = dados.quiz.datas.map(data => {
+                    return {
+                        valor: data,
+                        texto: new Date(data).toLocaleDateString('pt-BR')
+                    };
+                });
+                respostaCorreta = dados.dados_originais.data_nascimento;
+                break;
+        }
+
+        const perguntaHTML = `
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        ${pergunta}
+                    </label>
+                    <div class="space-y-2">
+                        ${(etapa === 3 ? opcoes : opcoes.map(op => ({valor: op, texto: op}))).map((opcao, index) => `
+                            <label class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-blue-50 quiz-option" 
+                                   data-value="${opcao.valor}" data-correct="${opcao.valor === respostaCorreta}">
+                                <input type="radio" name="quiz-etapa-${etapa}" value="${opcao.valor}" class="mr-3">
+                                <span>${opcao.texto}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
         `;
 
-        // Adicionar evento ao botão de confirmação
-        document.getElementById('confirmar-quiz').addEventListener('click', function() {
-            validarQuiz(dados);
+        container.innerHTML = perguntaHTML;
+        document.getElementById('etapa-atual').textContent = etapa;
+
+        // Adicionar eventos aos radio buttons
+        const radios = container.querySelectorAll('input[type="radio"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                verificarResposta(etapa, this.value, respostaCorreta);
+            });
         });
     }
 
-    function validarQuiz(dados) {
-        const nomeEscolhido = document.querySelector('input[name="quiz-nome"]:checked')?.value;
-        const maeEscolhida = document.querySelector('input[name="quiz-mae"]:checked')?.value;
-        const dataEscolhida = document.querySelector('input[name="quiz-data"]:checked')?.value;
+    function verificarResposta(etapa, resposta, respostaCorreta) {
+        const isCorrect = resposta === respostaCorreta;
+        const opcoes = document.querySelectorAll('.quiz-option');
+        
+        window.quizState.tentativas[etapa]++;
 
-        if (!nomeEscolhido || !maeEscolhida || !dataEscolhida) {
-            alert('Por favor, responda todas as perguntas.');
-            return;
+        if (isCorrect) {
+            // Resposta correta
+            opcoes.forEach(opcao => {
+                if (opcao.dataset.value === resposta) {
+                    opcao.classList.add('bg-green-50', 'border-green-500');
+                    opcao.querySelector('span').classList.add('text-green-700', 'font-medium');
+                }
+                opcao.style.pointerEvents = 'none';
+            });
+
+            mostrarMensagem('Correto! 👍', 'success');
+            window.quizState.acertos++;
+
+            // Próxima pergunta após delay
+            setTimeout(() => {
+                if (etapa < 3) {
+                    window.quizState.etapaAtual = etapa + 1;
+                    mostrarPergunta(etapa + 1);
+                    esconderMensagem();
+                } else {
+                    finalizarQuiz();
+                }
+            }, 1500);
+
+        } else {
+            // Resposta incorreta
+            opcoes.forEach(opcao => {
+                if (opcao.dataset.value === resposta) {
+                    opcao.classList.add('bg-red-50', 'border-red-500');
+                    opcao.querySelector('span').classList.add('text-red-700');
+                }
+            });
+
+            mostrarMensagem('Informação incorreta. Tente novamente.', 'error');
+
+            // Permitir nova tentativa após delay
+            setTimeout(() => {
+                opcoes.forEach(opcao => {
+                    if (opcao.dataset.value === resposta) {
+                        opcao.classList.remove('bg-red-50', 'border-red-500');
+                        opcao.querySelector('span').classList.remove('text-red-700');
+                        opcao.querySelector('input').checked = false;
+                    }
+                });
+                esconderMensagem();
+            }, 2000);
         }
+    }
 
-        const acertos = [
-            nomeEscolhido === dados.dados_originais.nome,
-            maeEscolhida === dados.dados_originais.nome_mae,
-            dataEscolhida === dados.dados_originais.data_nascimento
-        ].filter(Boolean).length;
+    function mostrarMensagem(texto, tipo) {
+        const messageDiv = document.getElementById('quiz-message');
+        messageDiv.className = `mb-4 p-4 rounded-lg ${tipo === 'success' ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`;
+        messageDiv.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-${tipo === 'success' ? 'check-circle' : 'exclamation-triangle'} mr-2"></i>
+                <span>${texto}</span>
+            </div>
+        `;
+        messageDiv.classList.remove('hidden');
+    }
 
-        if (acertos >= 2) {
+    function esconderMensagem() {
+        document.getElementById('quiz-message').classList.add('hidden');
+    }
+
+    function finalizarQuiz() {
+        const progressDiv = document.getElementById('quiz-progress');
+        progressDiv.innerHTML = `
+            <button type="button" onclick="concluirVerificacao()" 
+                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                Finalizar Verificação
+                <i class="fas fa-check ml-2"></i>
+            </button>
+        `;
+    }
+
+    window.concluirVerificacao = function() {
+        if (window.quizState.acertos >= 2) {
             alert('Identidade verificada com sucesso!\n\nVocê será redirecionado para a próxima etapa.');
             // Aqui redirecionaria para a próxima página
         } else {
             alert('Verificação falhou. As informações não conferem.\n\nTente novamente ou entre em contato com o suporte.');
             location.reload();
         }
-    }
+    };
+
+
 
     window.voltarFormulario = function() {
         location.reload();
