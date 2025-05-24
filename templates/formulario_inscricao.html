@@ -476,6 +476,9 @@ document.addEventListener('DOMContentLoaded', function() {
             mostrarMensagem('Correto! 👍', 'success');
             window.quizState.acertos++;
 
+            // Atualizar barra de progresso conforme a etapa
+            atualizarBarraProgresso(etapa);
+
             // Próxima pergunta após delay de 2 segundos
             setTimeout(() => {
                 if (etapa < 3) {
@@ -537,6 +540,84 @@ document.addEventListener('DOMContentLoaded', function() {
                 <i class="fas fa-check ml-2"></i>
             </button>
         `;
+    }
+
+    function atualizarBarraProgresso(etapa) {
+        // Atualizar progresso desktop
+        const desktopProgress = document.querySelector('.hidden.md\\:flex');
+        if (desktopProgress) {
+            const circulos = desktopProgress.querySelectorAll('.w-7.h-7');
+            const barras = desktopProgress.querySelectorAll('.flex-1.mx-3.h-1.bg-gray-200.rounded div');
+            const textos = desktopProgress.querySelectorAll('span');
+            
+            if (etapa >= 2) {
+                // Ativar etapa 2 (Documentação)
+                if (circulos[1]) {
+                    circulos[1].classList.remove('bg-gray-300', 'text-gray-600');
+                    circulos[1].classList.add('bg-blue-600', 'text-white');
+                }
+                if (textos[3]) {
+                    textos[3].classList.remove('text-gray-600');
+                    textos[3].classList.add('text-blue-600', 'font-medium');
+                }
+                if (barras[0]) {
+                    barras[0].style.width = '66%';
+                }
+            }
+            
+            if (etapa >= 3) {
+                // Ativar etapa 3 (Finalização)
+                if (circulos[2]) {
+                    circulos[2].classList.remove('bg-gray-300', 'text-gray-600');
+                    circulos[2].classList.add('bg-blue-600', 'text-white');
+                }
+                if (textos[5]) {
+                    textos[5].classList.remove('text-gray-600');
+                    textos[5].classList.add('text-blue-600', 'font-medium');
+                }
+                if (barras[1]) {
+                    barras[1].classList.add('bg-blue-600');
+                    barras[1].style.width = '100%';
+                }
+                if (barras[0]) {
+                    barras[0].style.width = '100%';
+                }
+            }
+        }
+
+        // Atualizar progresso mobile
+        const mobileProgress = document.querySelector('.md\\:hidden');
+        if (mobileProgress) {
+            const porcentagem = document.querySelector('.text-xs.font-medium.text-blue-600');
+            const barraMobile = document.querySelector('.bg-blue-600.h-2.rounded-full');
+            const etapas = mobileProgress.querySelectorAll('.flex.justify-between.text-xs span');
+            
+            if (etapa >= 2) {
+                // Atualizar para 66%
+                if (porcentagem) porcentagem.textContent = '66% concluído';
+                if (barraMobile) barraMobile.style.width = '66%';
+                
+                // Ativar etapa Documentação
+                if (etapas[1]) {
+                    etapas[1].classList.remove('text-gray-500');
+                    etapas[1].classList.add('font-medium', 'text-blue-600');
+                    etapas[1].textContent = '• Documentação';
+                }
+            }
+            
+            if (etapa >= 3) {
+                // Atualizar para 100%
+                if (porcentagem) porcentagem.textContent = '100% concluído';
+                if (barraMobile) barraMobile.style.width = '100%';
+                
+                // Ativar etapa Finalização
+                if (etapas[2]) {
+                    etapas[2].classList.remove('text-gray-500');
+                    etapas[2].classList.add('font-medium', 'text-blue-600');
+                    etapas[2].textContent = '• Finalização';
+                }
+            }
+        }
     }
 
     window.concluirVerificacao = function() {
