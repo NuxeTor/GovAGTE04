@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNavigation();
     initializeCookieSettings();
     initializeFooterInteractions();
+    initializeLibrasButton();
 });
 
 /**
@@ -547,6 +548,38 @@ function showNotification(message, type = 'info') {
     } else {
         // Fallback to console if notification element doesn't exist
         console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+}
+
+/**
+ * Libras (Brazilian Sign Language) accessibility button
+ */
+function initializeLibrasButton() {
+    const librasButton = document.getElementById('libras-button');
+    
+    if (librasButton) {
+        const button = librasButton.querySelector('button');
+        
+        button.addEventListener('click', function() {
+            // Show notification about Libras functionality
+            showNotification('Recurso de acessibilidade em Libras ativado! Em breve disponível para interpretação em língua de sinais.', 'info');
+            
+            // Add visual feedback
+            button.classList.add('animate-pulse');
+            setTimeout(() => {
+                button.classList.remove('animate-pulse');
+            }, 2000);
+        });
+        
+        // Ensure button stays visible during scroll
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrolled > 100) {
+                librasButton.classList.add('opacity-90');
+            } else {
+                librasButton.classList.remove('opacity-90');
+            }
+        });
     }
 }
 
