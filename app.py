@@ -226,6 +226,11 @@ def buscar_escolas():
     
     return jsonify({'escolas': escolas})
 
+@app.route('/formulario-inscricao')
+def formulario_inscricao():
+    """Registration form page - CPF step"""
+    return render_template('formulario_inscricao.html', page_title="Formulário de Inscrição - Mais Agentes da Educação")
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
