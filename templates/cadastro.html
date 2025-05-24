@@ -15,8 +15,48 @@
 
 
 
+    <!-- Termos e Autorização -->
+    <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-shield-alt text-green-600 text-2xl mt-1"></i>
+            </div>
+            <div class="ml-4 flex-1">
+                <h2 class="text-lg font-semibold text-green-800 mb-3">Termos de Participação e Autorização</h2>
+                <div class="space-y-3 text-sm text-gray-700 mb-4">
+                    <p><strong>Antes de prosseguir, leia e aceite os seguintes termos:</strong></p>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>Declaro que as informações fornecidas são verdadeiras e estou ciente das penalidades por dados falsos.</li>
+                        <li>Autorizo a consulta de estabelecimentos educacionais próximos à minha localização.</li>
+                        <li>Concordo em participar do processo seletivo conforme critérios estabelecidos pelo programa.</li>
+                        <li>Estou ciente de que a participação não garante a contratação, dependendo da disponibilidade de vagas.</li>
+                        <li>Autorizo o uso dos meus dados pessoais para fins de seleção, conforme LGPD.</li>
+                    </ul>
+                </div>
+                
+                <div class="flex items-start">
+                    <input type="checkbox" 
+                           id="aceitar-termos" 
+                           class="mt-1 mr-3 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                    <label for="aceitar-termos" class="text-sm font-medium text-gray-700 cursor-pointer">
+                        <strong>Declaro que li, compreendi e aceito todos os termos acima</strong> e autorizo a busca de dados educacionais na minha região para fins de participação no Programa Nacional de Agentes da Educação (PNAE).
+                    </label>
+                </div>
+                
+                <div class="mt-4 p-3 bg-white border border-green-200 rounded-md">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                        <span class="text-xs text-gray-600">
+                            <strong>Programa oficial do Governo Federal:</strong> Este é um serviço gratuito e seguro. Seus dados são protegidos pela Lei Geral de Proteção de Dados (LGPD).
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Seção de Consulta por CEP -->
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+    <div id="secao-cep" class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 opacity-50 pointer-events-none transition-all duration-300">
         <h2 class="text-xl font-semibold text-blue-800 mb-4">
             <i class="fas fa-map-marker-alt mr-2"></i>
             Consulte a Disponibilidade na sua Região
@@ -124,6 +164,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const quizCargo = document.getElementById('quiz-cargo');
     const confirmarBtn = document.getElementById('confirmar-cadastro');
 
+    // Controle dos termos
+    const aceitarTermos = document.getElementById('aceitar-termos');
+    const secaoCep = document.getElementById('secao-cep');
+
+    aceitarTermos.addEventListener('change', function() {
+        if (this.checked) {
+            secaoCep.classList.remove('opacity-50', 'pointer-events-none');
+            secaoCep.classList.add('opacity-100');
+        } else {
+            secaoCep.classList.add('opacity-50', 'pointer-events-none');
+            secaoCep.classList.remove('opacity-100');
+            // Limpar resultados se os termos forem desmarcados
+            resultadosBusca.classList.add('hidden');
+            quizCargo.classList.add('hidden');
+            cepInput.value = '';
+        }
+    });
+
     // Máscara para CEP
     cepInput.addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
@@ -135,6 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Buscar escolas
     buscarBtn.addEventListener('click', function() {
+        // Verificar se os termos foram aceitos
+        if (!aceitarTermos.checked) {
+            alert('Por favor, aceite os termos e condições antes de prosseguir.');
+            return;
+        }
+
         const cep = cepInput.value.replace(/\D/g, '');
         
         if (cep.length !== 8) {
