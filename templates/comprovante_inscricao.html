@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </h3>
                 
                 <form id="form-email">
-                    <div class="mb-4">
+                    <div class="mb-4 relative">
                         <label for="email-usuario" class="block text-sm font-medium text-gray-700 mb-2">
                             Endereço de E-mail *
                         </label>
@@ -417,7 +417,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                id="email-usuario" 
                                required
                                placeholder="seu@email.com"
+                               autocomplete="off"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        
+                        <!-- Dropdown de sugestões de e-mail -->
+                        <div id="email-suggestions" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
+                            <!-- Sugestões serão inseridas aqui -->
+                        </div>
                     </div>
                     
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
@@ -456,6 +462,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 mostrarTermosFinais(email);
             }
         });
+        
+        // Configurar sugestões de e-mail
+        configurarSugestoesEmail();
     }
     
     function mostrarTermosFinais(email) {
@@ -609,6 +618,134 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         document.body.appendChild(modal);
+    }
+    
+    function configurarSugestoesEmail() {
+        const emailInput = document.getElementById('email-usuario');
+        const suggestionsDiv = document.getElementById('email-suggestions');
+        
+        // Domínios de e-mail mais populares no Brasil
+        const dominiosPopulares = [
+            '@gmail.com',
+            '@hotmail.com',
+            '@yahoo.com.br',
+            '@outlook.com',
+            '@terra.com.br',
+            '@uol.com.br',
+            '@ig.com.br',
+            '@globo.com',
+            '@bol.com.br',
+            '@r7.com',
+            '@live.com',
+            '@icloud.com',
+            '@msn.com',
+            '@yahoo.com',
+            '@oi.com.br',
+            '@zipmail.com.br',
+            '@designmail.com.br',
+            '@superig.com.br'
+        ];
+        
+        emailInput.addEventListener('input', function() {
+            const valor = this.value;
+            const atIndex = valor.indexOf('@');
+            
+            // Se digitou @ e não tem nada depois ou está digitando o domínio
+            if (atIndex !== -1 && (valor.length === atIndex + 1 || !valor.includes('.', atIndex))) {
+                const parteLocal = valor.substring(0, atIndex);
+                
+                if (parteLocal.length > 0) {
+                    mostrarSugestoes(parteLocal, dominiosPopulares, suggestionsDiv);
+                } else {
+                    ocultarSugestoes(suggestionsDiv);
+                }
+            } else {
+                ocultarSugestoes(suggestionsDiv);
+            }
+        });
+        
+        // Fechar sugestões quando clicar fora
+        document.addEventListener('click', function(e) {
+            if (!emailInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                ocultarSugestoes(suggestionsDiv);
+            }
+        });
+        
+        // Navegação por teclado
+        emailInput.addEventListener('keydown', function(e) {
+            const itens = suggestionsDiv.querySelectorAll('.suggestion-item');
+            const ativo = suggestionsDiv.querySelector('.suggestion-item.active');
+            
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                navegarSugestoes(itens, ativo, e.key === 'ArrowDown');
+            } else if (e.key === 'Enter' && ativo) {
+                e.preventDefault();
+                ativo.click();
+            } else if (e.key === 'Escape') {
+                ocultarSugestoes(suggestionsDiv);
+            }
+        });
+    }
+    
+    function mostrarSugestoes(parteLocal, dominios, container) {
+        container.innerHTML = '';
+        
+        dominios.forEach((dominio, index) => {
+            const emailCompleto = parteLocal + dominio;
+            const item = document.createElement('div');
+            item.className = 'suggestion-item px-3 py-2 cursor-pointer hover:bg-blue-50 text-sm border-b border-gray-100 last:border-b-0';
+            if (index === 0) item.classList.add('active', 'bg-blue-50');
+            
+            item.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-envelope text-gray-400 mr-2"></i>
+                    <span class="font-medium">${emailCompleto}</span>
+                </div>
+            `;
+            
+            item.addEventListener('click', function() {
+                document.getElementById('email-usuario').value = emailCompleto;
+                ocultarSugestoes(container);
+                document.getElementById('email-usuario').focus();
+            });
+            
+            item.addEventListener('mouseenter', function() {
+                container.querySelectorAll('.suggestion-item').forEach(i => {
+                    i.classList.remove('active', 'bg-blue-50');
+                });
+                this.classList.add('active', 'bg-blue-50');
+            });
+            
+            container.appendChild(item);
+        });
+        
+        container.classList.remove('hidden');
+    }
+    
+    function ocultarSugestoes(container) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+    }
+    
+    function navegarSugestoes(itens, ativo, paraAbaixo) {
+        if (itens.length === 0) return;
+        
+        let novoIndice = 0;
+        
+        if (ativo) {
+            const indiceAtual = Array.from(itens).indexOf(ativo);
+            ativo.classList.remove('active', 'bg-blue-50');
+            
+            if (paraAbaixo) {
+                novoIndice = (indiceAtual + 1) % itens.length;
+            } else {
+                novoIndice = indiceAtual === 0 ? itens.length - 1 : indiceAtual - 1;
+            }
+        }
+        
+        itens[novoIndice].classList.add('active', 'bg-blue-50');
+        itens[novoIndice].scrollIntoView({ block: 'nearest' });
     }
 });
 
