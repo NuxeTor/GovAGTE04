@@ -118,15 +118,11 @@
                     </div>
                     <div>
                         <span class="text-sm font-medium text-gray-600">Unidade Escolar:</span>
-                        <p class="font-medium" id="unidade-escolar">-</p>
+                        <p class="font-medium text-gray-500" id="unidade-escolar">Será selecionada após a seleção de aptidão</p>
                     </div>
                     <div>
                         <span class="text-sm font-medium text-gray-600">Remuneração:</span>
                         <p class="font-medium text-green-600" id="remuneracao">-</p>
-                    </div>
-                    <div>
-                        <span class="text-sm font-medium text-gray-600">Localização:</span>
-                        <p class="font-medium" id="localizacao">-</p>
                     </div>
                 </div>
             </div>
@@ -211,9 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Preencher dados da vaga
         document.getElementById('cargo-pretendido').textContent = dados.cargo || '-';
-        document.getElementById('unidade-escolar').textContent = dados.escola || '-';
+        // Unidade escolar mantém o texto padrão: "Será selecionada após a seleção de aptidão"
         document.getElementById('remuneracao').textContent = dados.salario || '-';
-        document.getElementById('localizacao').textContent = dados.cidade || '-';
         
         // Preencher protocolo e código
         document.getElementById('protocolo-inscricao').textContent = dados.protocoloInscricao || '-';
