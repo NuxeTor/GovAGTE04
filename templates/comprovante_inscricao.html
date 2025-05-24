@@ -521,17 +521,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (termo1Checked) {
                 termo1.parentElement.classList.add('bg-green-50', 'border-green-200');
                 termo1.parentElement.classList.remove('bg-red-50');
+                termo1.parentElement.querySelector('label').classList.remove('text-red-700');
+                termo1.parentElement.querySelector('label').classList.add('text-green-700');
             } else {
                 termo1.parentElement.classList.remove('bg-green-50', 'border-green-200');
                 termo1.parentElement.classList.add('bg-red-50');
+                termo1.parentElement.querySelector('label').classList.add('text-red-700');
+                termo1.parentElement.querySelector('label').classList.remove('text-green-700');
             }
             
             if (termo2Checked) {
                 termo2.parentElement.classList.add('bg-green-50', 'border-green-200');
                 termo2.parentElement.classList.remove('bg-red-50');
+                termo2.parentElement.querySelector('label').classList.remove('text-red-700');
+                termo2.parentElement.querySelector('label').classList.add('text-green-700');
             } else {
                 termo2.parentElement.classList.remove('bg-green-50', 'border-green-200');
                 termo2.parentElement.classList.add('bg-red-50');
+                termo2.parentElement.querySelector('label').classList.add('text-red-700');
+                termo2.parentElement.querySelector('label').classList.remove('text-green-700');
             }
             
             // Habilitar/desabilitar botão
