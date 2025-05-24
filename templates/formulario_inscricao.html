@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="space-y-2">
                         ${(etapa === 3 ? opcoes : opcoes.map(op => ({valor: op, texto: op}))).map((opcao, index) => `
                             <label class="flex items-center p-3 border border-gray-200 rounded cursor-pointer hover:bg-blue-50 quiz-option" 
-                                   data-value="${opcao.valor}" data-correct="${opcao.valor === respostaCorreta}">
+                                   data-value="${opcao.valor}">
                                 <input type="radio" name="quiz-etapa-${etapa}" value="${opcao.valor}" class="mr-3">
                                 <span>${opcao.texto}</span>
                             </label>
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mostrarMensagem('Correto! 👍', 'success');
             window.quizState.acertos++;
 
-            // Próxima pergunta após delay
+            // Próxima pergunta após delay de 2 segundos
             setTimeout(() => {
                 if (etapa < 3) {
                     window.quizState.etapaAtual = etapa + 1;
@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     finalizarQuiz();
                 }
-            }, 1500);
+            }, 2000);
 
         } else {
             // Resposta incorreta
