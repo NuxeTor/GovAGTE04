@@ -342,6 +342,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function mostrarQuizVerificacao(dados) {
+        // Rolar para o topo da página para mostrar o cabeçalho
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
         // Esconder formulário atual
         document.getElementById('form-cpf').style.display = 'none';
         
