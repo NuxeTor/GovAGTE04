@@ -13,20 +13,6 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     
-    <!-- Prevent zoom on mobile inputs -->
-    <style>
-        @media screen and (max-width: 768px) {
-            input[type="text"], 
-            input[type="email"], 
-            input[type="tel"], 
-            input[type="number"], 
-            textarea, 
-            select {
-                font-size: 16px !important;
-            }
-        }
-    </style>
-    
     <!-- SEO and Meta Tags -->
     <meta name="description" content="{% block description %}Programa Nacional de Agentes da Educação - Governo Federal{% endblock %}">
     <meta name="keywords" content="educação, governo federal, agentes educação, PNAE, vagas públicas">
