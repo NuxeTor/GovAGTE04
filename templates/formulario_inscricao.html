@@ -318,8 +318,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const entrarBtn = document.querySelector('a[href*="login"]');
         if (entrarBtn) {
             entrarBtn.innerHTML = `<i class="fas fa-user mr-1"></i>${primeiroNome}`;
-            entrarBtn.classList.remove('hover:bg-blue-700');
-            entrarBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+            // Manter a cor azul oficial do gov.br
+            entrarBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
         }
     }
 
