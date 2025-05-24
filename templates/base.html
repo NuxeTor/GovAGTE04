@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Mais Agentes da Educação - gov.br{% endblock %}</title>
     
     <!-- External CSS -->
@@ -12,6 +12,20 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    <!-- Prevent zoom on mobile inputs -->
+    <style>
+        @media screen and (max-width: 768px) {
+            input[type="text"], 
+            input[type="email"], 
+            input[type="tel"], 
+            input[type="number"], 
+            textarea, 
+            select {
+                font-size: 16px !important;
+            }
+        }
+    </style>
     
     <!-- SEO and Meta Tags -->
     <meta name="description" content="{% block description %}Programa Nacional de Agentes da Educação - Governo Federal{% endblock %}">
