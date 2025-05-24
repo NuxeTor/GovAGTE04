@@ -13,4 +13,7 @@ dependencies = [
     "openai>=1.82.0",
     "sqlalchemy>=2.0.41",
     "requests>=2.32.3",
+    "pandas>=2.2.3",
+    "openpyxl>=3.1.5",
+    "geopy>=2.4.1",
 ]

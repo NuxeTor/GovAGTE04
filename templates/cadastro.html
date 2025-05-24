@@ -221,11 +221,32 @@ document.addEventListener('DOMContentLoaded', function() {
         buscarBtn.disabled = true;
         buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Consultando região...';
 
-        // Simular delay de busca
-        setTimeout(() => {
-            // Redirecionar para página de resultados
-            window.location.href = `/resultados-busca?cep=${cep}`;
-        }, 2000);
+        fetch(`/buscar-escolas?cep=${cep}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(`Erro: ${data.error}`);
+                    return;
+                }
+
+                // Verificar se encontrou escolas
+                if (data.escolas && data.escolas.length > 0) {
+                    // Redirecionar para página de resultados com delay
+                    setTimeout(() => {
+                        window.location.href = `/resultados-busca?cep=${cep}`;
+                    }, 1000);
+                } else {
+                    alert('Nenhuma escola encontrada próxima ao CEP informado. Tente novamente com outro CEP.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao consultar escolas na região. Verifique sua conexão e tente novamente.');
+            })
+            .finally(() => {
+                buscarBtn.disabled = false;
+                buscarBtn.innerHTML = '<i class="fas fa-search mr-2"></i>Buscar';
+            });
     });
 
     // Confirmar cadastro
