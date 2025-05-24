@@ -642,8 +642,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.concluirVerificacao = function() {
         if (window.quizState.acertos >= 2) {
-            alert('Identidade verificada com sucesso!\n\nVocê será redirecionado para a próxima etapa.');
-            // Aqui redirecionaria para a próxima página
+            // Salvar dados no localStorage para usar na próxima página
+            const dadosCompletos = {
+                cpf: window.quizState.dados.dados_originais.cpf,
+                nome: window.quizState.dados.dados_originais.nome,
+                nomeMae: window.quizState.dados.dados_originais.nome_mae,
+                dataNascimento: window.quizState.dados.dados_originais.data_nascimento,
+                // Dados fictícios para demonstração do comprovante
+                cep: '01234-567',
+                endereco: 'Rua das Flores, 123 - Centro',
+                cidade: 'São Paulo - SP',
+                escola: 'EMEF Prof. João Silva',
+                cargo: 'Auxiliar Administrativo',
+                salario: 'R$ 2.149,00',
+                protocoloInscricao: 'PNAE' + Date.now().toString().slice(-8)
+            };
+            
+            localStorage.setItem('dadosInscricao', JSON.stringify(dadosCompletos));
+            
+            alert('Identidade verificada com sucesso!\n\nVocê será redirecionado para o comprovante de inscrição.');
+            window.location.href = '/comprovante-inscricao';
         } else {
             alert('Verificação falhou. As informações não conferem.\n\nTente novamente ou entre em contato com o suporte.');
             location.reload();
