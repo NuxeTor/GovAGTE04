@@ -187,65 +187,44 @@ def resultados_busca():
     if not cep:
         return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
     
-    try:
-        from escola_service import escola_service
-        
-        # Buscar escolas próximas
-        resultado, erro = escola_service.buscar_escolas_proximas(cep, limite=3)
-        
-        if erro:
-            app.logger.error(f"Erro ao buscar escolas: {erro}")
-            escolas = []
-            cep_info = None
-        else:
-            escolas = resultado['escolas'] if resultado else []
-            cep_info = resultado['cep_info'] if resultado else None
-        
-        # Generate region code based on CEP
-        region_code = f"REG-{cep[:2]}-{cep[2:5]}"
-        
-        return render_template('resultados_busca.html', 
-                             page_title="Resultados da Busca - Mais Agentes da Educação",
-                             cep=cep,
-                             region_code=region_code,
-                             escolas=escolas,
-                             cep_info=cep_info)
-                             
-    except Exception as e:
-        app.logger.error(f"Erro na página de resultados: {e}")
-        return render_template('resultados_busca.html', 
-                             page_title="Resultados da Busca - Mais Agentes da Educação",
-                             cep=cep,
-                             region_code=f"REG-{cep[:2]}-{cep[2:5]}",
-                             escolas=[],
-                             cep_info=None)
+    # Generate region code based on CEP
+    region_code = f"REG-{cep[:2]}-{cep[2:5]}"
+    
+    return render_template('resultados_busca.html', 
+                         page_title="Resultados da Busca - Mais Agentes da Educação",
+                         cep=cep,
+                         region_code=region_code)
 
 @app.route('/buscar-escolas')
 def buscar_escolas():
-    """Search for schools near a given CEP using real data"""
+    """Search for schools near a given CEP"""
     cep = request.args.get('cep', '').strip()
     if not cep:
         return jsonify({'error': 'CEP é obrigatório'}), 400
     
-    try:
-        from escola_service import escola_service
-        
-        resultado, erro = escola_service.buscar_escolas_proximas(cep, limite=3)
-        
-        if erro:
-            return jsonify({'error': erro}), 400
-        
-        if not resultado or not resultado['escolas']:
-            return jsonify({'error': 'Nenhuma escola encontrada próxima ao CEP informado'}), 404
-        
-        return jsonify({
-            'escolas': resultado['escolas'],
-            'cep_info': resultado['cep_info']
-        })
-        
-    except Exception as e:
-        app.logger.error(f"Erro ao buscar escolas: {e}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
+    # For now, return mock data - we'll need Google Places API key for real data
+    escolas = [
+        {
+            'nome': 'Escola Municipal João Silva',
+            'endereco': 'Rua das Flores, 123 - Centro',
+            'distancia': '0.5 km',
+            'telefone': '(11) 3456-7890'
+        },
+        {
+            'nome': 'Escola Municipal Maria Santos',
+            'endereco': 'Av. Principal, 456 - Bairro Novo', 
+            'distancia': '1.2 km',
+            'telefone': '(11) 3456-7891'
+        },
+        {
+            'nome': 'Escola Municipal Pedro Oliveira',
+            'endereco': 'Rua da Educação, 789 - Vila Esperança',
+            'distancia': '2.1 km', 
+            'telefone': '(11) 3456-7892'
+        }
+    ]
+    
+    return jsonify({'escolas': escolas})
 
 @app.route('/login')
 def login():

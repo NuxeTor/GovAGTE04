@@ -51,82 +51,14 @@
                                 </span>
                             </div>
                         </div>
-                        {% if cep_info %}
-                        <div class="mt-4 pt-4 border-t border-green-200">
-                            <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                <div>
-                                    <p class="text-gray-600 mb-1">Localidade:</p>
-                                    <p class="font-semibold">{{ cep_info.city }}, {{ cep_info.state }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600 mb-1">Endereço:</p>
-                                    <p class="font-semibold">{{ cep_info.address }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
                     </div>
                     <p class="text-sm text-green-700">
                         <i class="fas fa-info-circle mr-2"></i>
-                        {% if escolas %}
-                        Foram encontradas {{ escolas|length }} unidades escolares próximas à sua localização.
-                        {% else %}
                         Foram encontradas oportunidades de emprego na sua região. Selecione abaixo o cargo de seu interesse.
-                        {% endif %}
                     </p>
                 </div>
             </div>
         </div>
-
-        <!-- Escolas Encontradas -->
-        {% if escolas %}
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <h3 class="text-xl font-semibold text-blue-800 mb-6">
-                <i class="fas fa-school mr-2"></i>
-                Unidades Escolares Próximas
-            </h3>
-            
-            <div class="grid gap-6">
-                {% for escola in escolas %}
-                <div class="bg-white border border-blue-200 rounded-lg p-5 shadow-sm">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-blue-700 mb-2">{{ escola.nome }}</h4>
-                            <div class="grid md:grid-cols-2 gap-4 text-sm mb-3">
-                                <div>
-                                    <p class="text-gray-500 mb-1">Endereço:</p>
-                                    <p class="font-medium">{{ escola.endereco }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 mb-1">Município/UF:</p>
-                                    <p class="font-medium">{{ escola.municipio }}, {{ escola.uf }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 mb-1">Distância:</p>
-                                    <p class="font-medium text-blue-600">{{ escola.distancia }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-500 mb-1">Código INEP:</p>
-                                    <p class="font-medium">{{ escola.codigo_inep }}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-phone text-gray-400 mr-2"></i>
-                                <span class="text-sm text-gray-600">{{ escola.telefone }}</span>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <i class="fas fa-map-marker-alt mr-1"></i>
-                                {{ escola.distancia }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
 
         <!-- Quadrado Verde com Cargos -->
         <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
