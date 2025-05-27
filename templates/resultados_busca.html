@@ -560,6 +560,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Obter dados do cargo
             const cargoNome = this.querySelector('h4').textContent;
             const cargoSalario = this.querySelector('.text-blue-600').textContent;
+            
+            // Extrair valor máximo da remuneração (sempre usar o maior valor)
+            const salarioMaximo = cargoSalario.split(' - ')[1] || cargoSalario;
+
+            // Salvar dados do cargo no localStorage
+            localStorage.setItem('cargoSelecionado', JSON.stringify({
+                nome: cargoNome,
+                salario: cargoSalario,
+                salarioMaximo: salarioMaximo
+            }));
 
             // Atualizar informações
             cargoSelecionadoTexto.textContent = cargoNome;
