@@ -270,6 +270,29 @@
                     </div>
                 </div>
                 
+                <!-- Dados Pessoais Validados -->
+                <div class="border-t border-blue-200 pt-4 mt-4 mb-4">
+                    <h5 class="font-medium text-blue-800 mb-3">Dados Pessoais Confirmados</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                        <div class="bg-white rounded p-3 border border-blue-100">
+                            <span class="text-xs text-gray-500">Nome Completo:</span>
+                            <p id="dado-nome-usuario" class="font-medium text-gray-800">-</p>
+                        </div>
+                        <div class="bg-white rounded p-3 border border-blue-100">
+                            <span class="text-xs text-gray-500">CPF:</span>
+                            <p id="dado-cpf-usuario" class="font-medium text-gray-800">-</p>
+                        </div>
+                        <div class="bg-white rounded p-3 border border-blue-100">
+                            <span class="text-xs text-gray-500">Data de Nascimento:</span>
+                            <p id="dado-nascimento-usuario" class="font-medium text-gray-800">-</p>
+                        </div>
+                        <div class="bg-white rounded p-3 border border-blue-100">
+                            <span class="text-xs text-gray-500">Nome da Mãe:</span>
+                            <p id="dado-mae-usuario" class="font-medium text-gray-800">-</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Informações de Localização -->
                 <div class="border-t border-blue-200 pt-4 mt-4">
                     <h5 class="font-medium text-blue-800 mb-2">Localização Confirmada</h5>
@@ -480,19 +503,20 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error) {
+            if (data.error || !data.DADOS) {
                 // Mostrar erro na etapa CPF
-                mostrarErroEtapa('cpf', data.error);
+                mostrarErroEtapa('cpf', data.error || 'CPF não encontrado');
                 btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
                 btnContinuar.disabled = false;
                 return;
             }
             
-            // CPF válido - salvar dados globalmente e passar para próxima etapa
-            window.dadosCpfValidado = data;
+            // CPF válido - extrair dados do objeto DADOS e salvar globalmente
+            const dadosUsuario = data.DADOS;
+            window.dadosCpfValidado = dadosUsuario;
             concluirEtapa('cpf', 'CPF validado com sucesso');
             atualizarProgresso(40); // 40% após validar CPF
-            iniciarEtapaNome(data);
+            iniciarEtapaNome(dadosUsuario);
         })
         .catch(error => {
             console.error('Erro:', error);
@@ -611,6 +635,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.dadosCpfValidado) {
             localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
             
+            // Preencher dados na seção "Autenticado com o GOV.BR"
+            document.getElementById('dado-nome-usuario').textContent = window.dadosCpfValidado.nome;
+            document.getElementById('dado-cpf-usuario').textContent = formatarCPF(window.dadosCpfValidado.cpf);
+            
+            // Formatar data de nascimento
+            const dataNascimento = new Date(window.dadosCpfValidado.data_nascimento);
+            document.getElementById('dado-nascimento-usuario').textContent = dataNascimento.toLocaleDateString('pt-BR');
+            
+            document.getElementById('dado-mae-usuario').textContent = window.dadosCpfValidado.nome_mae;
+            
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalho(window.dadosCpfValidado.nome);
         }
@@ -632,6 +666,12 @@ document.addEventListener('DOMContentLoaded', function() {
         btnFinalizar.addEventListener('click', function() {
             window.location.href = '/comprovante-inscricao';
         });
+    }
+
+    function formatarCPF(cpf) {
+        // Formatar CPF no padrão 000.000.000-00
+        if (!cpf) return '-';
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
 
     function atualizarCabecalho(nomeCompleto) {
