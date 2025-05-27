@@ -36,18 +36,24 @@
                         Consulta de Disponibilidade - Região Confirmada
                     </h2>
                     <div class="bg-white p-4 rounded border border-gray-200 mb-4">
-                        <div class="grid md:grid-cols-3 gap-4 mb-3">
+                        <div class="grid md:grid-cols-2 gap-4 mb-3">
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">CEP:</p>
                                 <p class="font-medium text-gray-800" id="cep-info">{{ cep }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500 mb-1">Localidade:</p>
-                                <p class="font-medium text-gray-800" id="localidade-info">{{ localidade }}</p>
+                                <p class="text-sm text-gray-500 mb-1">Logradouro:</p>
+                                <p class="font-medium text-gray-800" id="logradouro-info">{{ logradouro }}</p>
                             </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 mb-3">
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">Bairro:</p>
                                 <p class="font-medium text-gray-800" id="bairro-info">{{ bairro }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Localidade:</p>
+                                <p class="font-medium text-gray-800" id="localidade-info">{{ localidade }}</p>
                             </div>
                         </div>
                         <div class="grid md:grid-cols-3 gap-4">
