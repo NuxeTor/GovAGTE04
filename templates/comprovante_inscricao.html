@@ -261,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function carregarDadosUsuario() {
         const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+        const cargoSelecionado = JSON.parse(localStorage.getItem('cargoSelecionado') || '{}');
         
         if (dadosCpf.nome) {
             document.getElementById('nome-completo').textContent = dadosCpf.nome;
@@ -271,9 +272,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Gerar protocolo baseado no CPF
             const protocolo = `PNAE-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
             document.getElementById('protocolo-inscricao').textContent = protocolo;
+            document.getElementById('codigo-validacao').textContent = protocolo;
             
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalhoComprovante(dadosCpf.nome);
+        }
+        
+        // Carregar dados do cargo selecionado
+        if (cargoSelecionado.nome) {
+            document.getElementById('cargo-pretendido').textContent = cargoSelecionado.nome;
+            // Usar sempre o valor máximo da remuneração
+            document.getElementById('remuneracao').textContent = cargoSelecionado.salarioMaximo || cargoSelecionado.salario;
         }
     }
     
