@@ -145,37 +145,61 @@
         </div>
     </div>
 
-    <!-- Próximos Passos -->
-    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-        <h3 class="text-lg font-semibold text-yellow-800 mb-4 flex items-center">
-            <i class="fas fa-exclamation-triangle mr-2"></i>
-            Próximo Passo: Validação da Carteira Digital de Trabalho
+    <!-- Informativo sobre Validação -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            Informações sobre Validação da Carteira Digital
         </h3>
-        <div class="text-yellow-700 mb-4">
-            <p class="mb-3">
-                Para concluir a inscrição, é necessário que você valide sua carteira digital de trabalho 
-                para que o INEP possa registrar sua requisição de cargo de forma online, seguindo todas as normas legais.
-            </p>
-            <ul class="text-sm space-y-1 ml-4 list-disc">
-                <li>Validação obrigatória para finalizar o processo</li>
-                <li>Processo 100% digital e seguro</li>
-                <li>Conformidade com regulamentações do Ministério do Trabalho</li>
-                <li>Integração direta com sistemas do INEP</li>
-            </ul>
+        <div class="text-blue-700 mb-4">
+            <div class="flex items-start">
+                <input type="checkbox" id="ciente-validacao" class="mt-1 mr-3 h-4 w-4 text-blue-600 border-blue-300 rounded">
+                <label for="ciente-validacao" class="text-sm cursor-pointer">
+                    <p class="mb-2">
+                        Estou ciente de que para concluir a inscrição, é necessário que eu valide minha carteira digital de trabalho 
+                        para que o INEP possa registrar minha requisição de cargo de forma online, seguindo todas as normas legais.
+                    </p>
+                    <ul class="text-sm space-y-1 ml-4 list-disc">
+                        <li>Validação obrigatória para finalizar o processo</li>
+                        <li>Processo 100% digital e seguro</li>
+                        <li>Conformidade com regulamentações do Ministério do Trabalho</li>
+                        <li>Integração direta com sistemas do INEP</li>
+                    </ul>
+                </label>
+            </div>
         </div>
+    </div>
+
+    <!-- Envio do Comprovante por Email -->
+    <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-semibold text-green-800 mb-4 flex items-center">
+            <i class="fas fa-envelope mr-2"></i>
+            Receber Comprovante por E-mail
+        </h3>
+        <p class="text-green-700 mb-4 text-sm">
+            Digite seu e-mail para receber uma cópia do comprovante de inscrição:
+        </p>
         
-        <div class="flex flex-col sm:flex-row gap-3">
-            <button id="validar-carteira" 
-                    class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
-                <i class="fas fa-id-card mr-2"></i>
-                Validar com Carteira Digital de Trabalho
+        <div class="space-y-4">
+            <div>
+                <label for="email-comprovante" class="block text-sm font-medium text-gray-700 mb-2">
+                    E-mail para recebimento:
+                </label>
+                <input type="email" 
+                       id="email-comprovante" 
+                       placeholder="seu.email@exemplo.com"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500">
+            </div>
+            
+            <button id="enviar-email" 
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                <i class="fas fa-paper-plane mr-2"></i>
+                Enviar Comprovante por E-mail
             </button>
-            <button id="receber-email" 
-                    disabled
-                    class="bg-gray-400 text-gray-600 font-medium py-3 px-6 rounded-md cursor-not-allowed transition-colors opacity-50">
-                <i class="fas fa-envelope mr-2"></i>
-                Receber Comprovante por E-mail
-            </button>
+            
+            <div id="status-email" class="hidden text-center p-3 rounded-md">
+                <!-- Status será inserido aqui -->
+            </div>
         </div>
     </div>
 
@@ -220,109 +244,60 @@ document.addEventListener('DOMContentLoaded', function() {
     const agora = new Date();
     document.getElementById('data-geracao').textContent = agora.toLocaleString('pt-BR');
     
-    // Botão validar carteira
-    document.getElementById('validar-carteira').addEventListener('click', function() {
-        mostrarValidacaoCarteira();
-    });
-    
-    // Botão receber por e-mail
-    document.getElementById('receber-email').addEventListener('click', function() {
-        if (!this.disabled) {
-            mostrarFormularioEmail();
-        }
+    // Botão enviar por e-mail
+    document.getElementById('enviar-email').addEventListener('click', function() {
+        enviarComprovanteEmail();
     });
 
-    function mostrarValidacaoCarteira() {
-        const dados = JSON.parse(localStorage.getItem('dadosInscricao'));
+    function enviarComprovanteEmail() {
+        const email = document.getElementById('email-comprovante').value;
+        const statusDiv = document.getElementById('status-email');
+        const botaoEnviar = document.getElementById('enviar-email');
         
-        // Criar overlay azul com logo da carteira
-        const overlay = document.createElement('div');
-        overlay.id = 'carteira-overlay';
-        overlay.className = 'fixed inset-0 bg-blue-600 z-50 flex flex-col items-center justify-center';
-        overlay.style.background = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)';
-        
-        overlay.innerHTML = `
-            <!-- Logo transparente de fundo -->
-            <div class="absolute inset-0 flex items-center justify-center opacity-10">
-                <img src="https://www.gov.br/pt-br/apps/ctps-digital/@@images/imagem/mini" 
-                     alt="Carteira Digital" 
-                     class="w-96 h-96 object-contain">
-            </div>
-            
-            <!-- Conteúdo principal -->
-            <div class="relative z-10 bg-white bg-opacity-95 rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
-                <div class="text-center mb-6">
-                    <img src="https://www.gov.br/pt-br/apps/ctps-digital/@@images/imagem/mini" 
-                         alt="Carteira Digital" 
-                         class="w-16 h-16 mx-auto mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Carteira Digital de Trabalho</h2>
-                    <p class="text-sm text-gray-600 mt-2">Validação de Identidade Profissional</p>
-                </div>
-                
-                <div id="carteira-loading" class="text-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p id="loading-message" class="text-gray-700 font-medium">Conectando ao Ministério do Trabalho...</p>
-                    <p id="loading-details" class="text-gray-500 text-sm mt-1">Estabelecendo conexão segura</p>
-                    <div class="mt-4 bg-gray-200 rounded-full h-2">
-                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%" id="progress-bar"></div>
-                    </div>
-                    <div class="mt-3 flex items-center justify-center text-xs text-gray-500">
-                        <i class="fas fa-shield-alt mr-1"></i>
-                        <span>Conexão criptografada SSL 256-bit</span>
-                    </div>
-                </div>
-                
-                <div id="carteira-quiz" class="hidden">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Confirme sua Data de Nascimento</h3>
-                    <p class="text-sm text-gray-600 mb-6">Por segurança, selecione sua data de nascimento correta:</p>
-                    
-                    <div class="space-y-3" id="opcoes-data">
-                        <!-- Opções serão inseridas aqui -->
-                    </div>
-                    
-                    <div class="mt-6 text-center">
-                        <button id="fechar-carteira" class="text-gray-500 hover:text-gray-700 text-sm">
-                            Cancelar validação
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(overlay);
-        
-        // Sequência de etapas de validação
-        iniciarSequenciaValidacao();
-        
-        // Botão fechar
-        document.getElementById('fechar-carteira').addEventListener('click', function() {
-            document.body.removeChild(overlay);
-        });
-    }
-    
-    function gerarQuizData(dados) {
-        const dataCorreta = dados.dataNascimento;
-        const opcoesContainer = document.getElementById('opcoes-data');
-        
-        // Gerar datas falsas
-        const datasFalsas = [
-            '1980-03-15 00:00:00',
-            '1985-07-22 00:00:00',
-            '1990-11-08 00:00:00',
-            '1975-12-03 00:00:00',
-            '1988-09-12 00:00:00'
-        ];
-        
-        // Criar array com 3 opções (2 falsas + 1 correta)
-        const opcoes = [dataCorreta, ...datasFalsas.slice(0, 2)];
-        
-        // Embaralhar array
-        for (let i = opcoes.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [opcoes[i], opcoes[j]] = [opcoes[j], opcoes[i]];
+        // Validar email
+        if (!email || !email.includes('@')) {
+            statusDiv.className = 'text-center p-3 rounded-md bg-red-100 border border-red-300';
+            statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>Por favor, digite um e-mail válido.';
+            statusDiv.classList.remove('hidden');
+            return;
         }
         
-        // Criar botões
+        // Mostrar loading
+        botaoEnviar.disabled = true;
+        botaoEnviar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
+        
+        statusDiv.className = 'text-center p-3 rounded-md bg-blue-100 border border-blue-300';
+        statusDiv.innerHTML = '<i class="fas fa-info-circle text-blue-600 mr-2"></i>Preparando envio do comprovante...';
+        statusDiv.classList.remove('hidden');
+        
+        // Simular envio
+        setTimeout(() => {
+            statusDiv.className = 'text-center p-3 rounded-md bg-green-100 border border-green-300';
+            statusDiv.innerHTML = '<i class="fas fa-check-circle text-green-600 mr-2"></i>Comprovante enviado com sucesso para <strong>' + email + '</strong>';
+            
+            botaoEnviar.disabled = false;
+            botaoEnviar.innerHTML = '<i class="fas fa-check mr-2"></i>Enviado com Sucesso';
+            botaoEnviar.className = 'w-full bg-green-700 text-white font-medium py-3 px-6 rounded-md cursor-default';
+        }, 2000);
+    }
+    
+    // Função para formatar CPF
+    function formatarCPF(cpf) {
+        if (!cpf) return '';
+        const numerosCPF = cpf.replace(/\D/g, '');
+        return numerosCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+    
+    // Função para formatar data
+    function formatarData(data) {
+        if (!data) return '';
+        const date = new Date(data);
+        return date.toLocaleDateString('pt-BR');
+    }
+});
+</script>
+
+{% endblock %}
         opcoes.forEach((data, index) => {
             const dataFormatada = new Date(data).toLocaleDateString('pt-BR');
             const botao = document.createElement('button');
