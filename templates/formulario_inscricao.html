@@ -635,15 +635,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.dadosCpfValidado) {
             localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
             
-            // Preencher dados na seção "Autenticado com o GOV.BR"
-            document.getElementById('dado-nome-usuario').textContent = window.dadosCpfValidado.nome;
-            document.getElementById('dado-cpf-usuario').textContent = formatarCPF(window.dadosCpfValidado.cpf);
+            // Preencher dados na seção "Autenticado com o GOV.BR" com verificação de elementos
+            const nomeEl = document.getElementById('dado-nome-usuario');
+            const cpfEl = document.getElementById('dado-cpf-usuario');
+            const nascimentoEl = document.getElementById('dado-nascimento-usuario');
+            const maeEl = document.getElementById('dado-mae-usuario');
+            
+            if (nomeEl) nomeEl.textContent = window.dadosCpfValidado.nome;
+            if (cpfEl) cpfEl.textContent = formatarCPF(window.dadosCpfValidado.cpf);
             
             // Formatar data de nascimento
-            const dataNascimento = new Date(window.dadosCpfValidado.data_nascimento);
-            document.getElementById('dado-nascimento-usuario').textContent = dataNascimento.toLocaleDateString('pt-BR');
+            if (nascimentoEl && window.dadosCpfValidado.data_nascimento) {
+                const dataNascimento = new Date(window.dadosCpfValidado.data_nascimento);
+                nascimentoEl.textContent = dataNascimento.toLocaleDateString('pt-BR');
+            }
             
-            document.getElementById('dado-mae-usuario').textContent = window.dadosCpfValidado.nome_mae;
+            if (maeEl) maeEl.textContent = window.dadosCpfValidado.nome_mae;
             
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalho(window.dadosCpfValidado.nome);
@@ -675,12 +682,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function atualizarCabecalho(nomeCompleto) {
+        if (!nomeCompleto) return;
+        
         // Extrair primeiro nome
         const primeiroNome = nomeCompleto.split(' ')[0];
         
         // Procurar o botão "Entrar" no cabeçalho e substituir pelo nome
         const entrarBtn = document.querySelector('a[href*="login"]');
-        if (entrarBtn) {
+        if (entrarBtn && primeiroNome) {
             entrarBtn.innerHTML = `<i class="fas fa-user mr-1"></i>${primeiroNome}`;
             entrarBtn.href = '#';
             // Manter o estilo do gov.br
