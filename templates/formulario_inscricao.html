@@ -493,7 +493,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // CPF válido - passar para próxima etapa
+            // CPF válido - salvar dados globalmente e passar para próxima etapa
+            window.dadosCpfValidado = data;
             concluirEtapa('cpf', 'CPF validado com sucesso');
             iniciarEtapaNome(data);
         })
@@ -571,6 +572,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function finalizarValidacao() {
         // Mostrar dados carregados
         document.getElementById('dados-carregados').classList.remove('hidden');
+        
+        // Adicionar dados do CPF se disponível
+        if (window.dadosCpfValidado) {
+            document.getElementById('dado-nome').textContent = window.dadosCpfValidado.nome || 'Nome não disponível';
+            document.getElementById('dado-mae').textContent = window.dadosCpfValidado.nome_mae || 'Nome da mãe não disponível';
+            document.getElementById('dado-nascimento').textContent = window.dadosCpfValidado.data_nascimento || 'Data não disponível';
+            document.getElementById('dado-status').textContent = 'Elegível';
+        }
         
         // Adicionar dados do logradouro se disponível
         if (window.dadosLocalizacao) {
