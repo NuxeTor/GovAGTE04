@@ -256,40 +256,32 @@
 
         <!-- Dados Carregados -->
         <div id="dados-carregados" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
-            <h4 class="font-medium text-blue-800 mb-3">Dados Verificados</h4>
-            <div class="grid md:grid-cols-2 gap-4 text-sm mb-4">
-                <div>
-                    <span class="text-gray-600">Nome Completo:</span>
-                    <p id="dado-nome" class="font-medium text-gray-800">-</p>
-                </div>
-                <div>
-                    <span class="text-gray-600">Nome da Mãe:</span>
-                    <p id="dado-mae" class="font-medium text-gray-800">-</p>
-                </div>
-                <div>
-                    <span class="text-gray-600">Data de Nascimento:</span>
-                    <p id="dado-nascimento" class="font-medium text-gray-800">-</p>
-                </div>
-                <div>
-                    <span class="text-gray-600">Status:</span>
-                    <p id="dado-status" class="font-medium text-green-600">-</p>
-                </div>
-            </div>
-            
-            <!-- Informações de Localização -->
-            <div class="border-t border-blue-200 pt-3">
-                <h5 class="font-medium text-blue-800 mb-2">Localização Confirmada</h5>
-                <div class="text-sm">
-                    <div class="mb-2">
-                        <span class="text-gray-600">Endereço:</span>
-                        <p id="dado-logradouro" class="font-medium text-gray-800">-</p>
+            <div class="text-center py-4">
+                <div class="flex items-center justify-center mb-3">
+                    <div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xl"></i>
                     </div>
-                    <div class="bg-green-50 border border-green-200 rounded p-2">
-                        <div class="flex items-center mb-1">
-                            <i class="fas fa-map-marker-alt text-green-600 mr-2"></i>
-                            <span class="font-medium text-green-800">Unidades Próximas Identificadas</span>
+                    <div>
+                        <h4 class="text-xl font-semibold text-green-800">Autenticado com o GOV.BR</h4>
+                        <p class="text-sm text-gray-600">Identidade verificada com sucesso</p>
+                    </div>
+                </div>
+                
+                <!-- Informações de Localização -->
+                <div class="border-t border-blue-200 pt-4 mt-4">
+                    <h5 class="font-medium text-blue-800 mb-2">Localização Confirmada</h5>
+                    <div class="text-sm">
+                        <div class="mb-2">
+                            <span class="text-gray-600">Endereço:</span>
+                            <p id="dado-logradouro" class="font-medium text-gray-800">-</p>
                         </div>
-                        <p class="text-green-700 text-xs">2 unidades educacionais encontradas dentro de 3 km da sua residência</p>
+                        <div class="bg-green-50 border border-green-200 rounded p-2">
+                            <div class="flex items-center mb-1">
+                                <i class="fas fa-map-marker-alt text-green-600 mr-2"></i>
+                                <span class="font-medium text-green-800">Unidades Próximas Identificadas</span>
+                            </div>
+                            <p class="text-green-700 text-xs">2 unidades educacionais encontradas dentro de 3 km da sua residência</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -572,14 +564,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function finalizarValidacao() {
         // Mostrar dados carregados
         document.getElementById('dados-carregados').classList.remove('hidden');
-        
-        // Adicionar dados do CPF se disponível
-        if (window.dadosCpfValidado) {
-            document.getElementById('dado-nome').textContent = window.dadosCpfValidado.nome || 'Nome não disponível';
-            document.getElementById('dado-mae').textContent = window.dadosCpfValidado.nome_mae || 'Nome da mãe não disponível';
-            document.getElementById('dado-nascimento').textContent = window.dadosCpfValidado.data_nascimento || 'Data não disponível';
-            document.getElementById('dado-status').textContent = 'Elegível';
-        }
         
         // Adicionar dados do logradouro se disponível
         if (window.dadosLocalizacao) {
