@@ -225,11 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
             value = value.substring(0, 5) + '-' + value.substring(5, 8);
         }
         e.target.value = value;
-        
-        // Mostrar popup de validação quando CEP estiver completo
-        if (value.replace(/\D/g, '').length === 8) {
-            mostrarValidacao('Validando CEP...', 'Consultando base de dados dos Correios');
-        }
     });
 
     // Buscar escolas
@@ -247,6 +242,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Mostrar popup de validação
+        mostrarValidacao('Validando CEP...', 'Consultando base de dados dos Correios');
+        
         buscarBtn.disabled = true;
         buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Consultando região...';
 
@@ -254,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             // Redirecionar para página de resultados
             window.location.href = `/resultados-busca?cep=${cep}`;
-        }, 2000);
+        }, 3000);
     });
 
     // Confirmar cadastro

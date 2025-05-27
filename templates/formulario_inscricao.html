@@ -193,11 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         e.target.value = value;
         
-        // Mostrar popup de validação quando CPF estiver completo
-        if (value.replace(/\D/g, '').length === 11) {
-            mostrarValidacao('Validando CPF...', 'Consultando base de dados da Receita Federal');
-        }
-        
         // Validar CPF
         validarCPF(value);
         verificarFormulario();
@@ -284,6 +279,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Você deve aceitar os termos para continuar.');
             return;
         }
+        
+        // Mostrar popup de validação
+        mostrarValidacao('Validando CPF...', 'Consultando base de dados da Receita Federal');
         
         // Mostrar loading
         btnContinuar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Conectando ao gov.br...';
