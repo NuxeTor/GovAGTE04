@@ -593,9 +593,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar dados carregados
         document.getElementById('dados-carregados').classList.remove('hidden');
         
+        // Carregar dados de localização do localStorage
+        const dadosLocalizacao = JSON.parse(localStorage.getItem('dadosLocalizacao') || '{}');
+        
         // Adicionar dados do logradouro se disponível
-        if (window.dadosLocalizacao) {
-            const logradouroCompleto = `${window.dadosLocalizacao.logradouro}, ${window.dadosLocalizacao.bairro} - ${window.dadosLocalizacao.localidade}/${window.dadosLocalizacao.uf}`;
+        if (dadosLocalizacao.localidade) {
+            const logradouroCompleto = dadosLocalizacao.logradouro 
+                ? `${dadosLocalizacao.logradouro}, ${dadosLocalizacao.bairro} - ${dadosLocalizacao.localidade}/${dadosLocalizacao.uf}`
+                : `${dadosLocalizacao.bairro} - ${dadosLocalizacao.localidade}/${dadosLocalizacao.uf}`;
             document.getElementById('dado-logradouro').textContent = logradouroCompleto;
         } else {
             document.getElementById('dado-logradouro').textContent = 'Dados de localização não disponíveis';
