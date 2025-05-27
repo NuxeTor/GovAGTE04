@@ -248,11 +248,32 @@ document.addEventListener('DOMContentLoaded', function() {
         buscarBtn.disabled = true;
         buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Consultando região...';
 
-        // Simular delay de busca
-        setTimeout(() => {
-            // Redirecionar para página de resultados
-            window.location.href = `/resultados-busca?cep=${cep}`;
-        }, 3000);
+        // Consultar ViaCEP para obter dados reais
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.erro) {
+                    throw new Error('CEP não encontrado');
+                }
+                
+                // Atualizar popup com informações da localidade
+                setTimeout(() => {
+                    mostrarValidacaoSucesso(data.localidade, data.uf, data.estado);
+                    
+                    // Redirecionar após mostrar as informações
+                    setTimeout(() => {
+                        window.location.href = `/resultados-busca?cep=${cep}`;
+                    }, 2000);
+                }, 1500);
+            })
+            .catch(error => {
+                // Em caso de erro, ainda redirecionar mas com popup de erro
+                setTimeout(() => {
+                    mostrarValidacaoErro('CEP não encontrado', 'Verifique o CEP e tente novamente');
+                    buscarBtn.disabled = false;
+                    buscarBtn.innerHTML = '<i class="fas fa-search mr-2"></i>Buscar';
+                }, 1500);
+            });
     });
 
     // Confirmar cadastro
@@ -293,6 +314,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 popup.classList.add('hidden');
             }, 800);
         }, 2000);
+    }
+
+    function mostrarValidacaoSucesso(localidade, uf, estado) {
+        const popup = document.getElementById('validation-popup');
+        
+        // Atualizar conteúdo do popup para mostrar sucesso
+        popup.innerHTML = `
+            <div class="bg-white border-2 border-green-600 rounded-lg shadow-lg p-4 min-w-64">
+                <div class="flex items-center">
+                    <div class="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-green-800">CEP Validado com Sucesso</p>
+                        <p class="text-xs text-green-600">${localidade} - ${uf}, ${estado}</p>
+                    </div>
+                </div>
+                <div class="mt-2 bg-green-200 rounded-full h-1">
+                    <div class="bg-green-600 h-1 rounded-full w-full"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function mostrarValidacaoErro(mensagem, detalhes) {
+        const popup = document.getElementById('validation-popup');
+        
+        popup.innerHTML = `
+            <div class="bg-white border-2 border-red-600 rounded-lg shadow-lg p-4 min-w-64">
+                <div class="flex items-center">
+                    <div class="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-times text-white text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-red-800">${mensagem}</p>
+                        <p class="text-xs text-red-600">${detalhes}</p>
+                    </div>
+                </div>
+                <div class="mt-2 bg-red-200 rounded-full h-1">
+                    <div class="bg-red-600 h-1 rounded-full w-full"></div>
+                </div>
+            </div>
+        `;
+        
+        // Esconder popup de erro após 3 segundos
+        setTimeout(() => {
+            popup.classList.add('hidden');
+        }, 3000);
     }
 });
 </script>
