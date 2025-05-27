@@ -433,6 +433,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar área de validação
         document.getElementById('validacao-identidade').classList.remove('hidden');
         
+        // Rolar automaticamente para a área de validação
+        setTimeout(() => {
+            document.getElementById('validacao-identidade').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 500);
+        
         // Obter CPF limpo
         const cpfLimpo = cpfInput.value.replace(/\D/g, '');
         
@@ -497,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('status-nome').textContent = 'Verificando dados pessoais...';
         
         setTimeout(() => {
-            concluirEtapa('nome', `Nome: ${dadosCpf.nome}`);
+            concluirEtapa('nome', 'Validado com sucesso');
             document.getElementById('dado-nome').textContent = dadosCpf.nome;
             iniciarEtapaMae(dadosCpf);
         }, 1500);
@@ -508,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('status-mae').textContent = 'Verificando dados da filiação...';
         
         setTimeout(() => {
-            concluirEtapa('mae', `Nome da Mãe: ${dadosCpf.nome_mae}`);
+            concluirEtapa('mae', 'Validado com sucesso');
             document.getElementById('dado-mae').textContent = dadosCpf.nome_mae;
             iniciarEtapaNascimento(dadosCpf);
         }, 1500);
@@ -519,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('status-nascimento').textContent = 'Validando data de nascimento...';
         
         setTimeout(() => {
-            concluirEtapa('nascimento', `Data: ${dadosCpf.data_nascimento}`);
+            concluirEtapa('nascimento', 'Validado com sucesso');
             document.getElementById('dado-nascimento').textContent = dadosCpf.data_nascimento;
             iniciarEtapaElegibilidade(dadosCpf);
         }, 1500);
@@ -530,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('status-elegibilidade').textContent = 'Verificando critérios de elegibilidade...';
         
         setTimeout(() => {
-            concluirEtapa('elegibilidade', 'Elegível para participar do programa');
+            concluirEtapa('elegibilidade', 'Validado com sucesso');
             document.getElementById('dado-status').textContent = 'Elegível';
             finalizarValidacao();
         }, 2000);
