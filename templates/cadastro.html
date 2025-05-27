@@ -257,25 +257,46 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('CEP não encontrado');
                 }
                 
-                // Atualizar popup com informações da localidade
+                // Salvar dados de localização no localStorage
+                localStorage.setItem('dadosLocalizacao', JSON.stringify({
+                    cep: cep,
+                    logradouro: data.logradouro,
+                    bairro: data.bairro,
+                    localidade: data.localidade,
+                    uf: data.uf,
+                    estado: data.estado
+                }));
+                
+                // Primeira atualização do popup - região encontrada
                 setTimeout(() => {
                     mostrarValidacaoSucesso(data.localidade, data.uf, data.estado);
-                    
-                    // Salvar dados de localização no localStorage
-                    localStorage.setItem('dadosLocalizacao', JSON.stringify({
-                        cep: cep,
-                        logradouro: data.logradouro,
-                        bairro: data.bairro,
-                        localidade: data.localidade,
-                        uf: data.uf,
-                        estado: data.estado
-                    }));
-                    
-                    // Redirecionar após mostrar as informações
-                    setTimeout(() => {
-                        window.location.href = `/resultados-busca?cep=${cep}`;
-                    }, 2000);
                 }, 1500);
+                
+                // Segunda atualização - verificando disponibilidade
+                setTimeout(() => {
+                    const popup = document.getElementById('validation-popup');
+                    const messageEl = document.getElementById('validation-message');
+                    const detailsEl = document.getElementById('validation-details');
+                    const progressEl = document.getElementById('validation-progress');
+                    
+                    messageEl.textContent = 'Verificando disponibilidade';
+                    detailsEl.textContent = `Consultando vagas em ${data.localidade}/${data.uf}`;
+                    progressEl.style.width = '100%';
+                }, 3500);
+                
+                // Terceira atualização - carregando dados
+                setTimeout(() => {
+                    const messageEl = document.getElementById('validation-message');
+                    const detailsEl = document.getElementById('validation-details');
+                    
+                    messageEl.textContent = 'Carregando dados regionais';
+                    detailsEl.textContent = 'Preparando informações de vagas disponíveis';
+                }, 5000);
+                
+                // Redirecionar após mostrar todas as informações
+                setTimeout(() => {
+                    window.location.href = `/resultados-busca?cep=${cep}`;
+                }, 6500);
             })
             .catch(error => {
                 // Em caso de erro, ainda redirecionar mas com popup de erro
