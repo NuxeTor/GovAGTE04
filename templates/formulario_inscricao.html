@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 opcao.style.pointerEvents = 'none';
             });
 
-            mostrarMensagem('Correto! 👍', 'success');
+            mostrarMensagem('Correto!', 'success');
             window.quizState.acertos++;
 
             // Atualizar barra de progresso conforme a etapa
@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const progressDiv = document.getElementById('quiz-progress');
         progressDiv.innerHTML = `
             <button type="button" onclick="concluirVerificacao()" 
-                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                 Finalizar Verificação
                 <i class="fas fa-check ml-2"></i>
             </button>
