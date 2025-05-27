@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Primeira atualização do popup - região encontrada
                 setTimeout(() => {
                     mostrarValidacaoSucesso(data.localidade, data.uf, data.estado);
-                }, 1500);
+                }, 2000);
                 
                 // Segunda atualização - verificando disponibilidade
                 setTimeout(() => {
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     messageEl.textContent = 'Verificando disponibilidade';
                     detailsEl.textContent = `Consultando vagas em ${data.localidade}/${data.uf}`;
                     progressEl.style.width = '100%';
-                }, 3500);
+                }, 4500);
                 
                 // Terceira atualização - carregando dados
                 setTimeout(() => {
@@ -291,12 +291,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     messageEl.textContent = 'Carregando dados regionais';
                     detailsEl.textContent = 'Preparando informações de vagas disponíveis';
-                }, 5000);
+                }, 7000);
+                
+                // Quarta atualização - finalizando busca
+                setTimeout(() => {
+                    const messageEl = document.getElementById('validation-message');
+                    const detailsEl = document.getElementById('validation-details');
+                    
+                    messageEl.textContent = 'Finalizando busca';
+                    detailsEl.textContent = 'Carregando página de resultados...';
+                }, 9500);
                 
                 // Redirecionar após mostrar todas as informações
                 setTimeout(() => {
+                    // Salvar flag para controlar popup na próxima página
+                    localStorage.setItem('mostrarPopupResultados', 'true');
                     window.location.href = `/resultados-busca?cep=${cep}`;
-                }, 6500);
+                }, 11000);
             })
             .catch(error => {
                 // Em caso de erro, ainda redirecionar mas com popup de erro

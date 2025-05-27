@@ -368,11 +368,36 @@
     </div>
 </div>
 
+<!-- Popup de Validação Continuada -->
+<div id="validation-popup" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+            </div>
+            <h3 id="validation-message" class="text-lg font-semibold text-gray-800 mb-2">Carregando dados regionais</h3>
+            <p id="validation-details" class="text-sm text-gray-600 mb-4">Finalizando consulta de vagas disponíveis</p>
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div id="validation-progress" class="bg-green-600 h-2 rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const loadingSection = document.getElementById('loading-section');
     const resultsSection = document.getElementById('results-section');
     const cargoOptions = document.querySelectorAll('.cargo-option');
+    const validationPopup = document.getElementById('validation-popup');
+    
+    // Verificar se deve mostrar popup de continuação
+    const mostrarPopup = localStorage.getItem('mostrarPopupResultados');
+    if (mostrarPopup === 'true') {
+        validationPopup.classList.remove('hidden');
+        // Remover flag do localStorage
+        localStorage.removeItem('mostrarPopupResultados');
+    }
     const botaoInscricao = document.getElementById('botao-inscricao');
     const cargoSelecionadoTexto = document.getElementById('cargo-selecionado-texto');
     const salarioSelecionado = document.getElementById('salario-selecionado');
@@ -495,6 +520,21 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         loadingSection.classList.add('hidden');
         resultsSection.classList.remove('hidden');
+        
+        // Se popup estiver ativo, esconder após 1 segundo dos resultados aparecerem
+        if (!validationPopup.classList.contains('hidden')) {
+            setTimeout(() => {
+                const messageEl = document.getElementById('validation-message');
+                const detailsEl = document.getElementById('validation-details');
+                
+                messageEl.textContent = 'Busca finalizada com sucesso';
+                detailsEl.textContent = 'Dados carregados e disponíveis para visualização';
+                
+                setTimeout(() => {
+                    validationPopup.classList.add('hidden');
+                }, 1000);
+            }, 1000);
+        }
     }, 3000);
 
     // Seleção de cargo
