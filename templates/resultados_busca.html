@@ -61,36 +61,36 @@
         </div>
 
         <!-- Instrução de Seleção -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div class="bg-gray-50 border border-gray-300 rounded p-4 mb-6">
             <div class="flex items-center">
-                <i class="fas fa-hand-pointer text-blue-600 text-xl mr-3"></i>
-                <h3 class="text-lg font-semibold text-blue-800">
+                <i class="fas fa-arrow-down text-blue-600 text-lg mr-3"></i>
+                <h3 class="text-lg font-medium text-gray-800">
                     Selecione um cargo para prosseguir
                 </h3>
             </div>
-            <p class="text-sm text-blue-700 mt-2 ml-8">
-                Clique no cargo de seu interesse para visualizar mais detalhes e iniciar sua inscrição.
+            <p class="text-sm text-gray-600 mt-2 ml-7">
+                Escolha o cargo de seu interesse na lista abaixo para iniciar sua inscrição.
             </p>
         </div>
 
-        <!-- Quadrado Verde com Cargos -->
-        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-            <h3 class="text-xl font-semibold text-green-800 mb-6">
-                <i class="fas fa-briefcase mr-2"></i>
+        <!-- Lista de Cargos -->
+        <div class="bg-white border border-gray-300 rounded p-6 mb-8">
+            <h3 class="text-xl font-medium text-gray-800 mb-6">
+                <i class="fas fa-list mr-2"></i>
                 Cargos Disponíveis para sua Região
             </h3>
             
             <div class="grid gap-4">
                 <!-- Cargo 1 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-administrativo">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="auxiliar-administrativo">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-briefcase mr-2"></i>Auxiliar Administrativo</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-briefcase mr-2"></i>Auxiliar Administrativo</h4>
                             <p class="text-sm text-gray-600 mb-3">Apoio administrativo e organizacional nas unidades de ensino municipais.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
                                     <span class="text-gray-500">Remuneração:</span>
-                                    <p class="font-semibold text-green-600" id="salario-auxiliar-admin">R$ 2.142,24 - R$ 2.987,15</p>
+                                    <p class="font-medium text-blue-600" id="salario-auxiliar-admin">R$ 2.142,24 - R$ 2.987,15</p>
                                 </div>
                                 <div>
                                     <span class="text-gray-500">Carga Horária:</span>
@@ -103,7 +103,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -111,10 +111,10 @@
                 </div>
 
                 <!-- Cargo 2 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-producao">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="auxiliar-producao">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-utensils mr-2"></i>Auxiliar de Produção Escolar</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-utensils mr-2"></i>Auxiliar de Produção Escolar</h4>
                             <p class="text-sm text-gray-600 mb-3">Responsável pela preparação e distribuição da alimentação nas escolas municipais.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -132,7 +132,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -140,10 +140,10 @@
                 </div>
 
                 <!-- Cargo 3 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-secretaria">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="auxiliar-secretaria">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-clipboard mr-2"></i>Auxiliar de Secretaria</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-clipboard mr-2"></i>Auxiliar de Secretaria</h4>
                             <p class="text-sm text-gray-600 mb-3">Apoio nas atividades secretariais e atendimento ao público nas escolas.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -161,7 +161,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -169,10 +169,10 @@
                 </div>
 
                 <!-- Cargo 4 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-seguranca">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="auxiliar-seguranca">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-shield-alt mr-2"></i>Auxiliar de Segurança Escolar</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-shield-alt mr-2"></i>Auxiliar de Segurança Escolar</h4>
                             <p class="text-sm text-gray-600 mb-3">Responsável pela segurança e vigilância das unidades escolares.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -190,7 +190,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -198,10 +198,10 @@
                 </div>
 
                 <!-- Cargo 5 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-limpeza">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="auxiliar-limpeza">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-broom mr-2"></i>Auxiliar de Serviços de Limpeza</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-broom mr-2"></i>Auxiliar de Serviços de Limpeza</h4>
                             <p class="text-sm text-gray-600 mb-3">Manutenção da limpeza e higienização das unidades escolares.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -219,7 +219,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -227,10 +227,10 @@
                 </div>
 
                 <!-- Cargo 6 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="auxiliar-cozinha">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="auxiliar-cozinha">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-cookie-bite mr-2"></i>Auxiliar de Cozinha Escolar</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-cookie-bite mr-2"></i>Auxiliar de Cozinha Escolar</h4>
                             <p class="text-sm text-gray-600 mb-3">Apoio na preparação de refeições e manutenção da cozinha escolar.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -248,7 +248,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -256,10 +256,10 @@
                 </div>
 
                 <!-- Cargo 7 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="tecnico-manutencao">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="tecnico-manutencao">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-tools mr-2"></i>Técnico em Manutenção Predial</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-tools mr-2"></i>Técnico em Manutenção Predial</h4>
                             <p class="text-sm text-gray-600 mb-3">Manutenção preventiva e corretiva da infraestrutura escolar.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -277,7 +277,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
@@ -285,10 +285,10 @@
                 </div>
 
                 <!-- Cargo 8 -->
-                <div class="cargo-option bg-white border border-green-200 rounded-lg p-5 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-green-400" data-cargo="secretario-escolar">
+                <div class="cargo-option bg-gray-50 border border-gray-300 rounded p-4 cursor-pointer hover:border-blue-500" data-cargo="secretario-escolar">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-green-700 mb-2"><i class="fas fa-home mr-2"></i>Secretário Escolar (home office)</h4>
+                            <h4 class="text-lg font-medium text-gray-800 mb-2"><i class="fas fa-home mr-2"></i>Secretário Escolar (home office)</h4>
                             <p class="text-sm text-gray-600 mb-3">Gestão secretarial e administrativa das unidades escolares em modalidade remota.</p>
                             <div class="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
@@ -306,7 +306,7 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <button class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
                                 Selecionar Cargo
                             </button>
                         </div>
