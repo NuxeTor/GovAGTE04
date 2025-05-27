@@ -18,43 +18,48 @@
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <h2 class="text-xl font-semibold text-gray-800 mb-2">Carregando dados...</h2>
         <p class="text-gray-600">Consultando disponibilidade na região CEP: {{ cep }}</p>
+        <p class="text-sm text-gray-500 mt-1">Verificando oportunidades de emprego...</p>
     </div>
 
     <!-- Resultados (aparecem após loading) -->
     <div id="results-section" class="hidden">
-        <!-- Campo Verde de Disponibilidade -->
-        <div class="bg-green-100 border-l-4 border-green-500 p-6 mb-8 rounded-r-lg shadow-sm">
+        <!-- Confirmação de Disponibilidade -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
             <div class="flex items-start">
                 <div class="flex-shrink-0">
-                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                    <div class="w-12 h-12 bg-blue-600 rounded flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt text-white text-lg"></i>
+                    </div>
                 </div>
                 <div class="ml-4">
-                    <h2 class="text-xl font-bold text-green-800 mb-3">
-                        <i class="fas fa-map-marker-alt mr-2"></i>
-                        Disponibilidade Confirmada na sua Região
+                    <h2 class="text-xl font-semibold text-gray-800 mb-3">
+                        Consulta de Disponibilidade - Região Confirmada
                     </h2>
-                    <div class="bg-white p-4 rounded-lg border border-green-200 mb-4">
-                        <div class="flex items-center justify-between">
+                    <div class="bg-white p-4 rounded border border-gray-200 mb-4">
+                        <div class="grid md:grid-cols-4 gap-4">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">CEP Consultado:</p>
-                                <p class="font-semibold text-gray-800">{{ cep }}</p>
+                                <p class="text-sm text-gray-500 mb-1">CEP:</p>
+                                <p class="font-medium text-gray-800" id="cep-info">{{ cep }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Código da Região:</p>
-                                <p class="font-semibold text-green-700 text-lg">{{ region_code }}</p>
+                                <p class="text-sm text-gray-500 mb-1">Localidade:</p>
+                                <p class="font-medium text-gray-800" id="localidade-info">{{ localidade }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Status:</p>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="fas fa-check mr-1"></i>
-                                    VAGAS DISPONÍVEIS
+                                <p class="text-sm text-gray-500 mb-1">Estado:</p>
+                                <p class="font-medium text-gray-800" id="estado-info">{{ uf }} - {{ estado }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Status:</p>
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                    DISPONÍVEL
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <p class="text-sm text-green-700">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Foram encontradas oportunidades de emprego na sua região. Selecione abaixo o cargo de seu interesse.
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                        Vagas disponíveis para a região consultada. Selecione o cargo de interesse para prosseguir com a inscrição.
                     </p>
                 </div>
             </div>
@@ -413,6 +418,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function consultarViaCEP() {
+        // Obter CEP da URL ou elemento da página
+        const cepElement = document.getElementById('cep-info');
+        const cep = cepElement ? cepElement.textContent.replace(/\D/g, '') : '{{ cep }}'.replace(/\D/g, '');
+        
+        if (cep && cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        // Atualizar informações na página
+                        const localidadeElement = document.getElementById('localidade-info');
+                        const estadoElement = document.getElementById('estado-info');
+                        
+                        if (localidadeElement) {
+                            localidadeElement.textContent = data.localidade || 'Não informado';
+                        }
+                        
+                        if (estadoElement) {
+                            estadoElement.textContent = `${data.uf} - ${data.estado}` || 'Não informado';
+                        }
+                    } else {
+                        // CEP não encontrado
+                        const localidadeElement = document.getElementById('localidade-info');
+                        const estadoElement = document.getElementById('estado-info');
+                        
+                        if (localidadeElement) localidadeElement.textContent = 'CEP não encontrado';
+                        if (estadoElement) estadoElement.textContent = 'N/A';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao consultar ViaCEP:', error);
+                    // Em caso de erro, manter os valores padrão
+                    const localidadeElement = document.getElementById('localidade-info');
+                    const estadoElement = document.getElementById('estado-info');
+                    
+                    if (localidadeElement) localidadeElement.textContent = 'Erro na consulta';
+                    if (estadoElement) estadoElement.textContent = 'N/A';
+                });
+        }
+    }
+
     // Atualizar salários na página
     document.getElementById('salario-auxiliar-admin').textContent = gerarSalarioAleatorio(3300, 4600);
     document.getElementById('salario-auxiliar-producao').textContent = gerarSalarioAleatorio(3500, 4800);
@@ -425,6 +472,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Tornar um cargo aleatório indisponível (além do Secretário Escolar que já é fixo)
     tornarCargoAleatorioIndisponivel();
+
+    // Consultar API do ViaCEP para obter dados reais da localização
+    consultarViaCEP();
 
     // Simular carregamento
     setTimeout(() => {

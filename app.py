@@ -187,13 +187,35 @@ def resultados_busca():
     if not cep:
         return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
     
-    # Generate region code based on CEP
-    region_code = f"REG-{cep[:2]}-{cep[2:5]}"
+    # Validar e buscar dados do CEP via ViaCEP
+    try:
+        import requests
+        cep_limpo = cep.replace('-', '').replace('.', '').replace(' ', '')
+        response = requests.get(f'https://viacep.com.br/ws/{cep_limpo}/json/')
+        dados_cep = response.json()
+        
+        if 'erro' in dados_cep:
+            # CEP inválido
+            return render_template('cadastro.html', 
+                                 page_title="Cadastro - Mais Agentes da Educação",
+                                 error="CEP não encontrado. Verifique e tente novamente.")
+        
+        localidade = dados_cep.get('localidade', 'Não informado')
+        estado = dados_cep.get('estado', 'Não informado')
+        uf = dados_cep.get('uf', '')
+        
+    except Exception as e:
+        # Em caso de erro na API, continuar com dados básicos
+        localidade = 'Região Consultada'
+        estado = 'Brasil'
+        uf = ''
     
     return render_template('resultados_busca.html', 
                          page_title="Resultados da Busca - Mais Agentes da Educação",
                          cep=cep,
-                         region_code=region_code)
+                         localidade=localidade,
+                         estado=estado,
+                         uf=uf)
 
 @app.route('/buscar-escolas')
 def buscar_escolas():
