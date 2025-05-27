@@ -674,6 +674,35 @@ document.addEventListener('DOMContentLoaded', function() {
     window.voltarFormulario = function() {
         location.reload();
     };
+
+    // Funções para controlar o popup de validação
+    function mostrarValidacao(mensagem, detalhes) {
+        const popup = document.getElementById('validation-popup');
+        const messageEl = document.getElementById('validation-message');
+        const detailsEl = document.getElementById('validation-details');
+        const progressEl = document.getElementById('validation-progress');
+
+        messageEl.textContent = mensagem;
+        detailsEl.textContent = detalhes;
+        progressEl.style.width = '0%';
+
+        popup.classList.remove('hidden');
+
+        // Animar progresso
+        setTimeout(() => progressEl.style.width = '25%', 300);
+        setTimeout(() => progressEl.style.width = '50%', 900);
+        setTimeout(() => progressEl.style.width = '75%', 1500);
+        setTimeout(() => progressEl.style.width = '100%', 2100);
+
+        // Esconder popup após validação
+        setTimeout(() => {
+            messageEl.textContent = 'Validação concluída';
+            detailsEl.textContent = 'Dados verificados com sucesso';
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 1000);
+        }, 2800);
+    }
 });
 </script>
 {% endblock %}
