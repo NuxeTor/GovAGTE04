@@ -263,41 +263,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
         
         if (dadosCpf.nome) {
-            // Verificar se elementos existem antes de atualizar
-            const nomeEl = document.getElementById('nome-completo');
-            const cpfEl = document.getElementById('cpf-usuario');
-            const nascimentoEl = document.getElementById('data-nascimento');
-            const maeEl = document.getElementById('nome-mae');
-            const protocoloEl = document.getElementById('protocolo-inscricao');
-            
-            if (nomeEl) nomeEl.textContent = dadosCpf.nome;
-            if (cpfEl) cpfEl.textContent = formatarCPF(dadosCpf.cpf) || '-';
-            
-            // Formatar data de nascimento
-            if (nascimentoEl) {
-                if (dadosCpf.data_nascimento) {
-                    const dataNascimento = new Date(dadosCpf.data_nascimento);
-                    nascimentoEl.textContent = dataNascimento.toLocaleDateString('pt-BR');
-                } else {
-                    nascimentoEl.textContent = '-';
-                }
-            }
-            
-            if (maeEl) maeEl.textContent = dadosCpf.nome_mae || '-';
+            document.getElementById('nome-completo').textContent = dadosCpf.nome;
+            document.getElementById('cpf-usuario').textContent = dadosCpf.cpf || '-';
+            document.getElementById('data-nascimento').textContent = dadosCpf.data_nascimento || '-';
+            document.getElementById('nome-mae').textContent = dadosCpf.nome_mae || '-';
             
             // Gerar protocolo baseado no CPF
-            if (protocoloEl) {
-                const protocolo = `PNAE-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
-                protocoloEl.textContent = protocolo;
-            }
+            const protocolo = `PNAE-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
+            document.getElementById('protocolo-inscricao').textContent = protocolo;
             
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalhoComprovante(dadosCpf.nome);
-        }
-        
-        function formatarCPF(cpf) {
-            if (!cpf) return null;
-            return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         }
     }
     
