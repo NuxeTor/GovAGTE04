@@ -36,7 +36,7 @@
                         Consulta de Disponibilidade - Região Confirmada
                     </h2>
                     <div class="bg-white p-4 rounded border border-gray-200 mb-4">
-                        <div class="grid md:grid-cols-4 gap-4">
+                        <div class="grid md:grid-cols-5 gap-4">
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">CEP:</p>
                                 <p class="font-medium text-gray-800" id="cep-info">{{ cep }}</p>
@@ -48,6 +48,10 @@
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">Estado:</p>
                                 <p class="font-medium text-gray-800" id="estado-info">{{ uf }} - {{ estado }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Código da Região:</p>
+                                <p class="font-medium text-blue-600" id="codigo-regiao">{{ codigo_regiao }}</p>
                             </div>
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">Status:</p>
