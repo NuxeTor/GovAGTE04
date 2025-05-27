@@ -351,20 +351,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gerar salários aleatórios para cada usuário
     function gerarSalarioAleatorio(min, max) {
-        const minimo = Math.floor(Math.random() * (2300 - 1900) + 1900);
-        const maximo = Math.floor(Math.random() * (3400 - 2500) + 2500);
+        const minimo = Math.floor(Math.random() * (min + 200 - min) + min);
+        const maximo = Math.floor(Math.random() * (max + 200 - max) + max);
         return `R$ ${minimo.toLocaleString('pt-BR', {minimumFractionDigits: 2})} - R$ ${maximo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
 
     // Atualizar salários na página
-    document.getElementById('salario-auxiliar-admin').textContent = gerarSalarioAleatorio(2000, 3000);
-    document.getElementById('salario-auxiliar-producao').textContent = gerarSalarioAleatorio(2200, 3200);
-    document.getElementById('salario-auxiliar-secretaria').textContent = gerarSalarioAleatorio(1900, 2800);
-    document.getElementById('salario-auxiliar-seguranca').textContent = gerarSalarioAleatorio(2400, 3400);
-    document.getElementById('salario-auxiliar-limpeza').textContent = gerarSalarioAleatorio(1800, 2600);
-    document.getElementById('salario-auxiliar-cozinha').textContent = gerarSalarioAleatorio(2000, 2900);
-    document.getElementById('salario-tecnico-manutencao').textContent = gerarSalarioAleatorio(2700, 3900);
-    document.getElementById('salario-secretario-escolar').textContent = gerarSalarioAleatorio(2600, 3700);
+    document.getElementById('salario-auxiliar-admin').textContent = gerarSalarioAleatorio(3300, 4600);
+    document.getElementById('salario-auxiliar-producao').textContent = gerarSalarioAleatorio(3500, 4800);
+    document.getElementById('salario-auxiliar-secretaria').textContent = gerarSalarioAleatorio(3200, 4500);
+    document.getElementById('salario-auxiliar-seguranca').textContent = gerarSalarioAleatorio(3750, 4985);
+    document.getElementById('salario-auxiliar-limpeza').textContent = gerarSalarioAleatorio(3112, 4325);
+    document.getElementById('salario-auxiliar-cozinha').textContent = gerarSalarioAleatorio(3425, 4756);
+    document.getElementById('salario-tecnico-manutencao').textContent = gerarSalarioAleatorio(4200, 4985);
+    document.getElementById('salario-secretario-escolar').textContent = gerarSalarioAleatorio(4000, 4950);
 
     // Simular carregamento
     setTimeout(() => {
