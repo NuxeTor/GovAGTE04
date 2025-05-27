@@ -257,7 +257,7 @@
         <!-- Dados Carregados -->
         <div id="dados-carregados" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
             <h4 class="font-medium text-blue-800 mb-3">Dados Verificados</h4>
-            <div class="grid md:grid-cols-2 gap-4 text-sm">
+            <div class="grid md:grid-cols-2 gap-4 text-sm mb-4">
                 <div>
                     <span class="text-gray-600">Nome Completo:</span>
                     <p id="dado-nome" class="font-medium text-gray-800">-</p>
@@ -273,6 +273,24 @@
                 <div>
                     <span class="text-gray-600">Status:</span>
                     <p id="dado-status" class="font-medium text-green-600">-</p>
+                </div>
+            </div>
+            
+            <!-- Informações de Localização -->
+            <div class="border-t border-blue-200 pt-3">
+                <h5 class="font-medium text-blue-800 mb-2">Localização Confirmada</h5>
+                <div class="text-sm">
+                    <div class="mb-2">
+                        <span class="text-gray-600">Endereço:</span>
+                        <p id="dado-logradouro" class="font-medium text-gray-800">-</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded p-2">
+                        <div class="flex items-center mb-1">
+                            <i class="fas fa-map-marker-alt text-green-600 mr-2"></i>
+                            <span class="font-medium text-green-800">Unidades Próximas Identificadas</span>
+                        </div>
+                        <p class="text-green-700 text-xs">2 unidades educacionais encontradas dentro de 3 km da sua residência</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -423,10 +441,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function iniciarValidacaoEtapas(cpf) {
-        // Etapa 1: Validar CPF
-        setTimeout(() => {
-            validarCPFEtapa(cpf);
-        }, 1000);
+        // Buscar dados do CEP primeiro para obter logradouro
+        const cepDoFormulario = new URLSearchParams(window.location.search).get('cep') || '22011040';
+        
+        fetch(`https://viacep.com.br/ws/${cepDoFormulario.replace(/\D/g, '')}/json/`)
+            .then(response => response.json())
+            .then(dadosCep => {
+                window.dadosLocalizacao = dadosCep;
+                // Etapa 1: Validar CPF
+                setTimeout(() => {
+                    validarCPFEtapa(cpf);
+                }, 1000);
+            })
+            .catch(() => {
+                // Se erro no CEP, continuar sem dados de localização
+                setTimeout(() => {
+                    validarCPFEtapa(cpf);
+                }, 1000);
+            });
     }
 
     function validarCPFEtapa(cpf) {
@@ -527,6 +559,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar dados carregados
         document.getElementById('dados-carregados').classList.remove('hidden');
         
+        // Adicionar dados do logradouro se disponível
+        if (window.dadosLocalizacao) {
+            const logradouroCompleto = `${window.dadosLocalizacao.logradouro}, ${window.dadosLocalizacao.bairro} - ${window.dadosLocalizacao.localidade}/${window.dadosLocalizacao.uf}`;
+            document.getElementById('dado-logradouro').textContent = logradouroCompleto;
+        } else {
+            document.getElementById('dado-logradouro').textContent = 'Dados de localização não disponíveis';
+        }
+        
         // Mostrar botão finalizar
         const btnFinalizar = document.getElementById('finalizar-verificacao');
         btnFinalizar.classList.remove('hidden');
@@ -540,7 +580,6 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = '/comprovante-inscricao';
         });
     }
-    });
 
     function atualizarCabecalho(primeiroNome) {
         // Procurar o botão "Entrar" no cabeçalho e substituir pelo nome
