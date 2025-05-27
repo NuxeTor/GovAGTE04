@@ -162,6 +162,131 @@
             </div>
         </form>
     </div>
+
+    <!-- Área de Validação de Identidade -->
+    <div id="validacao-identidade" class="bg-white border border-gray-200 rounded-lg p-6 mb-8 hidden">
+        <h3 class="text-xl font-semibold text-gray-800 mb-6">
+            <i class="fas fa-shield-alt mr-2"></i>
+            Verificação de Identidade
+        </h3>
+        
+        <div class="space-y-4">
+            <!-- Etapa 1: Validando CPF -->
+            <div id="etapa-cpf" class="flex items-center p-4 bg-gray-50 rounded-lg">
+                <div class="flex-shrink-0 mr-4">
+                    <div id="loading-cpf" class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <div id="success-cpf" class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center hidden">
+                        <i class="fas fa-check text-white text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-medium text-gray-800">Validando CPF</h4>
+                    <p id="status-cpf" class="text-sm text-gray-600">Consultando base de dados da Receita Federal...</p>
+                </div>
+            </div>
+
+            <!-- Etapa 2: Verificando Nome -->
+            <div id="etapa-nome" class="flex items-center p-4 bg-gray-50 rounded-lg opacity-50">
+                <div class="flex-shrink-0 mr-4">
+                    <div id="loading-nome" class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 hidden"></div>
+                    <div id="success-nome" class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center hidden">
+                        <i class="fas fa-check text-white text-sm"></i>
+                    </div>
+                    <div id="pending-nome" class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-gray-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-medium text-gray-800">Verificando Nome</h4>
+                    <p id="status-nome" class="text-sm text-gray-600">Aguardando validação do CPF...</p>
+                </div>
+            </div>
+
+            <!-- Etapa 3: Verificando Nome da Mãe -->
+            <div id="etapa-mae" class="flex items-center p-4 bg-gray-50 rounded-lg opacity-50">
+                <div class="flex-shrink-0 mr-4">
+                    <div id="loading-mae" class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 hidden"></div>
+                    <div id="success-mae" class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center hidden">
+                        <i class="fas fa-check text-white text-sm"></i>
+                    </div>
+                    <div id="pending-mae" class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-gray-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-medium text-gray-800">Verificando Nome da Mãe</h4>
+                    <p id="status-mae" class="text-sm text-gray-600">Aguardando validação anterior...</p>
+                </div>
+            </div>
+
+            <!-- Etapa 4: Validando Data de Nascimento -->
+            <div id="etapa-nascimento" class="flex items-center p-4 bg-gray-50 rounded-lg opacity-50">
+                <div class="flex-shrink-0 mr-4">
+                    <div id="loading-nascimento" class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 hidden"></div>
+                    <div id="success-nascimento" class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center hidden">
+                        <i class="fas fa-check text-white text-sm"></i>
+                    </div>
+                    <div id="pending-nascimento" class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-gray-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-medium text-gray-800">Validando Data de Nascimento</h4>
+                    <p id="status-nascimento" class="text-sm text-gray-600">Aguardando validação anterior...</p>
+                </div>
+            </div>
+
+            <!-- Etapa 5: Verificando Elegibilidade -->
+            <div id="etapa-elegibilidade" class="flex items-center p-4 bg-gray-50 rounded-lg opacity-50">
+                <div class="flex-shrink-0 mr-4">
+                    <div id="loading-elegibilidade" class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 hidden"></div>
+                    <div id="success-elegibilidade" class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center hidden">
+                        <i class="fas fa-check text-white text-sm"></i>
+                    </div>
+                    <div id="pending-elegibilidade" class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-gray-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-medium text-gray-800">Verificando Elegibilidade</h4>
+                    <p id="status-elegibilidade" class="text-sm text-gray-600">Aguardando validação anterior...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados Carregados -->
+        <div id="dados-carregados" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
+            <h4 class="font-medium text-blue-800 mb-3">Dados Verificados</h4>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <span class="text-gray-600">Nome Completo:</span>
+                    <p id="dado-nome" class="font-medium text-gray-800">-</p>
+                </div>
+                <div>
+                    <span class="text-gray-600">Nome da Mãe:</span>
+                    <p id="dado-mae" class="font-medium text-gray-800">-</p>
+                </div>
+                <div>
+                    <span class="text-gray-600">Data de Nascimento:</span>
+                    <p id="dado-nascimento" class="font-medium text-gray-800">-</p>
+                </div>
+                <div>
+                    <span class="text-gray-600">Status:</span>
+                    <p id="dado-status" class="font-medium text-green-600">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Finalizar -->
+        <div class="flex justify-center mt-6">
+            <button id="finalizar-verificacao" 
+                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors hidden"
+                    disabled>
+                <i class="fas fa-check-circle mr-2"></i>
+                Finalizar Verificação
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -287,47 +412,134 @@ document.addEventListener('DOMContentLoaded', function() {
         btnContinuar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Conectando ao gov.br...';
         btnContinuar.disabled = true;
         
+        // Mostrar área de validação
+        document.getElementById('validacao-identidade').classList.remove('hidden');
+        
         // Obter CPF limpo
         const cpfLimpo = cpfInput.value.replace(/\D/g, '');
         
+        // Iniciar processo de validação por etapas
+        iniciarValidacaoEtapas(cpfLimpo);
+    });
+
+    function iniciarValidacaoEtapas(cpf) {
+        // Etapa 1: Validar CPF
+        setTimeout(() => {
+            validarCPFEtapa(cpf);
+        }, 1000);
+    }
+
+    function validarCPFEtapa(cpf) {
         // Chamar API de validação
         fetch('/validar-cpf', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ cpf: cpfLimpo })
+            body: JSON.stringify({ cpf: cpf })
         })
         .then(response => response.json())
         .then(data => {
             if (data.error) {
-                alert(`Erro: ${data.error}`);
+                // Mostrar erro na etapa CPF
+                mostrarErroEtapa('cpf', data.error);
                 btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
                 btnContinuar.disabled = false;
                 return;
             }
             
-            if (data.sucesso) {
-                // Simular processo de login
-                setTimeout(() => {
-                    btnContinuar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Autenticando...';
-                    
-                    setTimeout(() => {
-                        // Atualizar cabeçalho com nome do usuário
-                        atualizarCabecalho(data.primeiro_nome);
-                        
-                        // Mostrar quiz de verificação
-                        mostrarQuizVerificacao(data);
-                    }, 1500);
-                }, 1000);
-            }
+            // CPF válido - passar para próxima etapa
+            concluirEtapa('cpf', 'CPF validado com sucesso');
+            iniciarEtapaNome(data);
         })
         .catch(error => {
             console.error('Erro:', error);
-            alert('Erro de conexão. Tente novamente.');
+            mostrarErroEtapa('cpf', 'Erro de conexão. Tente novamente.');
             btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
             btnContinuar.disabled = false;
         });
+    }
+
+    function iniciarEtapaNome(dadosCpf) {
+        ativarEtapa('nome');
+        document.getElementById('status-nome').textContent = 'Verificando dados pessoais...';
+        
+        setTimeout(() => {
+            concluirEtapa('nome', `Nome: ${dadosCpf.nome}`);
+            document.getElementById('dado-nome').textContent = dadosCpf.nome;
+            iniciarEtapaMae(dadosCpf);
+        }, 1500);
+    }
+
+    function iniciarEtapaMae(dadosCpf) {
+        ativarEtapa('mae');
+        document.getElementById('status-mae').textContent = 'Verificando dados da filiação...';
+        
+        setTimeout(() => {
+            concluirEtapa('mae', `Nome da Mãe: ${dadosCpf.nome_mae}`);
+            document.getElementById('dado-mae').textContent = dadosCpf.nome_mae;
+            iniciarEtapaNascimento(dadosCpf);
+        }, 1500);
+    }
+
+    function iniciarEtapaNascimento(dadosCpf) {
+        ativarEtapa('nascimento');
+        document.getElementById('status-nascimento').textContent = 'Validando data de nascimento...';
+        
+        setTimeout(() => {
+            concluirEtapa('nascimento', `Data: ${dadosCpf.data_nascimento}`);
+            document.getElementById('dado-nascimento').textContent = dadosCpf.data_nascimento;
+            iniciarEtapaElegibilidade(dadosCpf);
+        }, 1500);
+    }
+
+    function iniciarEtapaElegibilidade(dadosCpf) {
+        ativarEtapa('elegibilidade');
+        document.getElementById('status-elegibilidade').textContent = 'Verificando critérios de elegibilidade...';
+        
+        setTimeout(() => {
+            concluirEtapa('elegibilidade', 'Elegível para participar do programa');
+            document.getElementById('dado-status').textContent = 'Elegível';
+            finalizarValidacao();
+        }, 2000);
+    }
+
+    function ativarEtapa(etapa) {
+        document.getElementById(`etapa-${etapa}`).classList.remove('opacity-50');
+        document.getElementById(`pending-${etapa}`).classList.add('hidden');
+        document.getElementById(`loading-${etapa}`).classList.remove('hidden');
+    }
+
+    function concluirEtapa(etapa, mensagem) {
+        document.getElementById(`loading-${etapa}`).classList.add('hidden');
+        document.getElementById(`success-${etapa}`).classList.remove('hidden');
+        document.getElementById(`status-${etapa}`).textContent = mensagem;
+        document.getElementById(`status-${etapa}`).classList.add('text-green-600');
+    }
+
+    function mostrarErroEtapa(etapa, mensagem) {
+        document.getElementById(`loading-${etapa}`).classList.add('hidden');
+        document.getElementById(`status-${etapa}`).textContent = mensagem;
+        document.getElementById(`status-${etapa}`).classList.add('text-red-600');
+    }
+
+    function finalizarValidacao() {
+        // Mostrar dados carregados
+        document.getElementById('dados-carregados').classList.remove('hidden');
+        
+        // Mostrar botão finalizar
+        const btnFinalizar = document.getElementById('finalizar-verificacao');
+        btnFinalizar.classList.remove('hidden');
+        btnFinalizar.disabled = false;
+        
+        // Esconder popup
+        document.getElementById('validation-popup').classList.add('hidden');
+        
+        // Configurar botão finalizar
+        btnFinalizar.addEventListener('click', function() {
+            window.location.href = '/comprovante-inscricao';
+        });
+    }
     });
 
     function atualizarCabecalho(primeiroNome) {
