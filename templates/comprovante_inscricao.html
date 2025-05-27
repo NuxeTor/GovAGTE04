@@ -253,8 +253,43 @@ document.addEventListener('DOMContentLoaded', function() {
     const agora = new Date();
     document.getElementById('data-geracao').textContent = agora.toLocaleString('pt-BR');
     
+    // Carregar dados do CPF validado do localStorage
+    carregarDadosUsuario();
+    
     // Configurar autocompletar de email
     configurarAutocompletarEmail();
+    
+    function carregarDadosUsuario() {
+        const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+        
+        if (dadosCpf.nome) {
+            document.getElementById('nome-completo').textContent = dadosCpf.nome;
+            document.getElementById('cpf-usuario').textContent = dadosCpf.cpf || '-';
+            document.getElementById('data-nascimento').textContent = dadosCpf.data_nascimento || '-';
+            document.getElementById('nome-mae').textContent = dadosCpf.nome_mae || '-';
+            
+            // Gerar protocolo baseado no CPF
+            const protocolo = `PNAE-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
+            document.getElementById('protocolo-inscricao').textContent = protocolo;
+            
+            // Atualizar cabeçalho com nome do usuário
+            atualizarCabecalhoComprovante(dadosCpf.nome);
+        }
+    }
+    
+    function atualizarCabecalhoComprovante(nomeCompleto) {
+        // Extrair primeiro nome
+        const primeiroNome = nomeCompleto.split(' ')[0];
+        
+        // Procurar o botão "Entrar" no cabeçalho e substituir pelo nome
+        const entrarBtn = document.querySelector('a[href*="login"]');
+        if (entrarBtn) {
+            entrarBtn.innerHTML = `<i class="fas fa-user mr-1"></i>${primeiroNome}`;
+            entrarBtn.href = '#';
+            entrarBtn.classList.remove('hover:bg-blue-700');
+            entrarBtn.classList.add('cursor-default');
+        }
+    }
     
     // Botão salvar e-mail
     document.getElementById('salvar-email').addEventListener('click', function() {

@@ -607,6 +607,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('dado-logradouro').textContent = 'Dados de localização não disponíveis';
         }
         
+        // Salvar dados do CPF validado no localStorage para usar no comprovante
+        if (window.dadosCpfValidado) {
+            localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
+            
+            // Atualizar cabeçalho com nome do usuário
+            atualizarCabecalho(window.dadosCpfValidado.nome);
+        }
+        
         // Atualizar botão principal para "Autenticado"
         btnContinuar.innerHTML = '<i class="fas fa-check mr-2"></i>Autenticado';
         btnContinuar.classList.remove('bg-blue-600', 'hover:bg-blue-700');
@@ -626,13 +634,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function atualizarCabecalho(primeiroNome) {
+    function atualizarCabecalho(nomeCompleto) {
+        // Extrair primeiro nome
+        const primeiroNome = nomeCompleto.split(' ')[0];
+        
         // Procurar o botão "Entrar" no cabeçalho e substituir pelo nome
         const entrarBtn = document.querySelector('a[href*="login"]');
         if (entrarBtn) {
             entrarBtn.innerHTML = `<i class="fas fa-user mr-1"></i>${primeiroNome}`;
-            // Manter a cor azul oficial do gov.br
-            entrarBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            entrarBtn.href = '#';
+            // Manter o estilo do gov.br
+            entrarBtn.classList.remove('hover:bg-blue-700');
+            entrarBtn.classList.add('cursor-default');
         }
     }
 
