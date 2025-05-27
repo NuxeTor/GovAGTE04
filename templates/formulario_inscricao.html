@@ -35,20 +35,22 @@
         <!-- Desktop Progress -->
         <div class="hidden md:flex items-center justify-between">
             <div class="flex items-center">
-                <div class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium">1</div>
-                <span class="ml-2 text-sm font-medium text-blue-600">Dados Pessoais</span>
+                <div id="step1-circle" class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium">1</div>
+                <span id="step1-text" class="ml-2 text-sm font-medium text-blue-600">Dados Pessoais</span>
             </div>
             <div class="flex-1 mx-3 h-1 bg-gray-200 rounded">
-                <div class="h-1 bg-blue-600 rounded" style="width: 25%"></div>
+                <div id="progress-bar-1" class="h-1 bg-blue-600 rounded transition-all duration-500" style="width: 25%"></div>
             </div>
             <div class="flex items-center">
-                <div class="w-7 h-7 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs font-medium">2</div>
-                <span class="ml-2 text-sm text-gray-600">Documentação</span>
+                <div id="step2-circle" class="w-7 h-7 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs font-medium">2</div>
+                <span id="step2-text" class="ml-2 text-sm text-gray-600">Documentação</span>
             </div>
-            <div class="flex-1 mx-3 h-1 bg-gray-200 rounded"></div>
+            <div class="flex-1 mx-3 h-1 bg-gray-200 rounded">
+                <div id="progress-bar-2" class="h-1 bg-blue-600 rounded transition-all duration-500" style="width: 0%"></div>
+            </div>
             <div class="flex items-center">
-                <div class="w-7 h-7 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs font-medium">3</div>
-                <span class="ml-2 text-sm text-gray-600">Finalização</span>
+                <div id="step3-circle" class="w-7 h-7 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs font-medium">3</div>
+                <span id="step3-text" class="ml-2 text-sm text-gray-600">Finalização</span>
             </div>
         </div>
 
@@ -488,6 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // CPF válido - salvar dados globalmente e passar para próxima etapa
             window.dadosCpfValidado = data;
             concluirEtapa('cpf', 'CPF validado com sucesso');
+            atualizarProgresso(40); // 40% após validar CPF
             iniciarEtapaNome(data);
         })
         .catch(error => {
@@ -504,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             concluirEtapa('nome', 'Validado com sucesso');
-            document.getElementById('dado-nome').textContent = dadosCpf.nome;
+            atualizarProgresso(55); // 55% após validar nome
             iniciarEtapaMae(dadosCpf);
         }, 1500);
     }
@@ -515,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             concluirEtapa('mae', 'Validado com sucesso');
-            document.getElementById('dado-mae').textContent = dadosCpf.nome_mae;
+            atualizarProgresso(70); // 70% após validar nome da mãe
             iniciarEtapaNascimento(dadosCpf);
         }, 1500);
     }
@@ -526,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             concluirEtapa('nascimento', 'Validado com sucesso');
-            document.getElementById('dado-nascimento').textContent = dadosCpf.data_nascimento;
+            atualizarProgresso(85); // 85% após validar data de nascimento
             iniciarEtapaElegibilidade(dadosCpf);
         }, 1500);
     }
@@ -537,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             concluirEtapa('elegibilidade', 'Validado com sucesso');
-            document.getElementById('dado-status').textContent = 'Elegível';
+            atualizarProgresso(100); // 100% ao finalizar todas as validações
             finalizarValidacao();
         }, 2000);
     }
@@ -559,6 +562,31 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById(`loading-${etapa}`).classList.add('hidden');
         document.getElementById(`status-${etapa}`).textContent = mensagem;
         document.getElementById(`status-${etapa}`).classList.add('text-red-600');
+    }
+
+    function atualizarProgresso(porcentagem) {
+        // Atualizar barra de progresso principal
+        document.getElementById('progress-bar-1').style.width = Math.min(porcentagem, 100) + '%';
+        
+        // Ativar etapa 2 (Documentação) quando passar de 50%
+        if (porcentagem >= 50) {
+            document.getElementById('step2-circle').classList.remove('bg-gray-300', 'text-gray-600');
+            document.getElementById('step2-circle').classList.add('bg-blue-600', 'text-white');
+            document.getElementById('step2-text').classList.remove('text-gray-600');
+            document.getElementById('step2-text').classList.add('text-blue-600', 'font-medium');
+            
+            // Animar segunda barra
+            const progresso2 = Math.max(0, porcentagem - 50) * 2; // 0-100% para a segunda barra
+            document.getElementById('progress-bar-2').style.width = Math.min(progresso2, 100) + '%';
+        }
+        
+        // Ativar etapa 3 (Finalização) quando chegar a 100%
+        if (porcentagem >= 100) {
+            document.getElementById('step3-circle').classList.remove('bg-gray-300', 'text-gray-600');
+            document.getElementById('step3-circle').classList.add('bg-green-600', 'text-white');
+            document.getElementById('step3-text').classList.remove('text-gray-600');
+            document.getElementById('step3-text').classList.add('text-green-600', 'font-medium');
+        }
     }
 
     function finalizarValidacao() {
