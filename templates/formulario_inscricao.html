@@ -270,29 +270,6 @@
                     </div>
                 </div>
                 
-                <!-- Dados Pessoais Validados -->
-                <div class="border-t border-blue-200 pt-4 mt-4 mb-4">
-                    <h5 class="font-medium text-blue-800 mb-3">Dados Pessoais Confirmados</h5>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                        <div class="bg-white rounded p-3 border border-blue-100">
-                            <span class="text-xs text-gray-500">Nome Completo:</span>
-                            <p id="dado-nome-usuario" class="font-medium text-gray-800">-</p>
-                        </div>
-                        <div class="bg-white rounded p-3 border border-blue-100">
-                            <span class="text-xs text-gray-500">CPF:</span>
-                            <p id="dado-cpf-usuario" class="font-medium text-gray-800">-</p>
-                        </div>
-                        <div class="bg-white rounded p-3 border border-blue-100">
-                            <span class="text-xs text-gray-500">Data de Nascimento:</span>
-                            <p id="dado-nascimento-usuario" class="font-medium text-gray-800">-</p>
-                        </div>
-                        <div class="bg-white rounded p-3 border border-blue-100">
-                            <span class="text-xs text-gray-500">Nome da Mãe:</span>
-                            <p id="dado-mae-usuario" class="font-medium text-gray-800">-</p>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Informações de Localização -->
                 <div class="border-t border-blue-200 pt-4 mt-4">
                     <h5 class="font-medium text-blue-800 mb-2">Localização Confirmada</h5>
@@ -503,25 +480,19 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Resposta da API:', data); // Debug
-            
-            // Verificar se a resposta tem a estrutura esperada
-            if (!data || !data.DADOS || data.error) {
+            if (data.error) {
                 // Mostrar erro na etapa CPF
-                mostrarErroEtapa('cpf', data?.error || 'CPF não encontrado na base de dados');
+                mostrarErroEtapa('cpf', data.error);
                 btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
                 btnContinuar.disabled = false;
                 return;
             }
             
-            // CPF válido - extrair dados do objeto DADOS e salvar globalmente
-            const dadosUsuario = data.DADOS;
-            console.log('Dados do usuário:', dadosUsuario); // Debug
-            
-            window.dadosCpfValidado = dadosUsuario;
+            // CPF válido - salvar dados globalmente e passar para próxima etapa
+            window.dadosCpfValidado = data;
             concluirEtapa('cpf', 'CPF validado com sucesso');
             atualizarProgresso(40); // 40% após validar CPF
-            iniciarEtapaNome(dadosUsuario);
+            iniciarEtapaNome(data);
         })
         .catch(error => {
             console.error('Erro:', error);
@@ -640,23 +611,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.dadosCpfValidado) {
             localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
             
-            // Preencher dados na seção "Autenticado com o GOV.BR" com verificação de elementos
-            const nomeEl = document.getElementById('dado-nome-usuario');
-            const cpfEl = document.getElementById('dado-cpf-usuario');
-            const nascimentoEl = document.getElementById('dado-nascimento-usuario');
-            const maeEl = document.getElementById('dado-mae-usuario');
-            
-            if (nomeEl) nomeEl.textContent = window.dadosCpfValidado.nome;
-            if (cpfEl) cpfEl.textContent = formatarCPF(window.dadosCpfValidado.cpf);
-            
-            // Formatar data de nascimento
-            if (nascimentoEl && window.dadosCpfValidado.data_nascimento) {
-                const dataNascimento = new Date(window.dadosCpfValidado.data_nascimento);
-                nascimentoEl.textContent = dataNascimento.toLocaleDateString('pt-BR');
-            }
-            
-            if (maeEl) maeEl.textContent = window.dadosCpfValidado.nome_mae;
-            
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalho(window.dadosCpfValidado.nome);
         }
@@ -680,21 +634,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function formatarCPF(cpf) {
-        // Formatar CPF no padrão 000.000.000-00
-        if (!cpf) return '-';
-        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
-
     function atualizarCabecalho(nomeCompleto) {
-        if (!nomeCompleto) return;
-        
         // Extrair primeiro nome
         const primeiroNome = nomeCompleto.split(' ')[0];
         
         // Procurar o botão "Entrar" no cabeçalho e substituir pelo nome
         const entrarBtn = document.querySelector('a[href*="login"]');
-        if (entrarBtn && primeiroNome) {
+        if (entrarBtn) {
             entrarBtn.innerHTML = `<i class="fas fa-user mr-1"></i>${primeiroNome}`;
             entrarBtn.href = '#';
             // Manter o estilo do gov.br
