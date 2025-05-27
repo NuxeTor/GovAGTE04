@@ -3,6 +3,21 @@
 {% block title %}{{ page_title or "Formulário de Inscrição - Mais Agentes da Educação - gov.br" }}{% endblock %}
 
 {% block content %}
+<!-- Popup de Validação -->
+<div id="validation-popup" class="fixed top-4 right-4 z-50 hidden">
+    <div class="bg-white border-2 border-gray-800 rounded-lg shadow-lg p-4 min-w-64">
+        <div class="flex items-center">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-800 mr-3"></div>
+            <div>
+                <p class="text-sm font-medium text-gray-800" id="validation-message">Validando dados...</p>
+                <p class="text-xs text-gray-600" id="validation-details">Aguarde um momento</p>
+            </div>
+        </div>
+        <div class="mt-2 bg-gray-200 rounded-full h-1">
+            <div class="bg-gray-800 h-1 rounded-full transition-all duration-500" id="validation-progress" style="width: 0%"></div>
+        </div>
+    </div>
+</div>
 <div class="px-4 py-4">
     <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Formulário de Inscrição - Mais Agentes da Educação</h1>
     
@@ -177,6 +192,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         e.target.value = value;
+        
+        // Mostrar popup de validação quando CPF estiver completo
+        if (value.replace(/\D/g, '').length === 11) {
+            mostrarValidacao('Validando CPF...', 'Consultando base de dados da Receita Federal');
+        }
         
         // Validar CPF
         validarCPF(value);
