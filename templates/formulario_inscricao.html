@@ -489,10 +489,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // CPF válido - salvar dados globalmente e passar para próxima etapa
-            window.dadosCpfValidado = data;
+            window.dadosCpfValidado = data.dados_originais;
             concluirEtapa('cpf', 'CPF validado com sucesso');
             atualizarProgresso(40); // 40% após validar CPF
-            iniciarEtapaNome(data);
+            iniciarEtapaNome(data.dados_originais);
         })
         .catch(error => {
             console.error('Erro:', error);

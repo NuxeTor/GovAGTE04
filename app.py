@@ -294,6 +294,7 @@ def validar_cpf():
         nome_completo = dados_usuario.get('nome', '')
         nome_mae = dados_usuario.get('nome_mae', '')
         data_nascimento = dados_usuario.get('data_nascimento', '')
+        cpf_formatado = f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
         
         # Gerar primeiro nome para o cabeçalho
         primeiro_nome = nome_completo.split()[0] if nome_completo else 'Usuário'
