@@ -59,7 +59,7 @@
                     </div>
                     <p class="text-sm text-gray-600">
                         <i class="fas fa-info-circle mr-2 text-blue-600"></i>
-                        Vagas disponíveis para a região consultada. Selecione o cargo de interesse para prosseguir com a inscrição.
+                        Vagas disponíveis para {{ localidade }} - {{ uf }}. Selecione o cargo de interesse para prosseguir com a inscrição.
                     </p>
                 </div>
             </div>
@@ -473,8 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tornar um cargo aleatório indisponível (além do Secretário Escolar que já é fixo)
     tornarCargoAleatorioIndisponivel();
 
-    // Consultar API do ViaCEP para obter dados reais da localização
-    consultarViaCEP();
+    // Dados da localização já carregados pelo backend via ViaCEP
 
     // Simular carregamento
     setTimeout(() => {
