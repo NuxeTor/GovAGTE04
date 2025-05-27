@@ -430,6 +430,11 @@ document.addEventListener('DOMContentLoaded', function() {
         btnContinuar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Conectando ao gov.br...';
         btnContinuar.disabled = true;
         
+        // Atualizar para "Autenticando..." após 2 segundos
+        setTimeout(() => {
+            btnContinuar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Autenticando...';
+        }, 2000);
+        
         // Mostrar área de validação
         document.getElementById('validacao-identidade').classList.remove('hidden');
         
@@ -574,6 +579,11 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.getElementById('dado-logradouro').textContent = 'Dados de localização não disponíveis';
         }
+        
+        // Atualizar botão principal para "Autenticado"
+        btnContinuar.innerHTML = '<i class="fas fa-check mr-2"></i>Autenticado';
+        btnContinuar.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        btnContinuar.classList.add('bg-green-600', 'hover:bg-green-700');
         
         // Mostrar botão finalizar
         const btnFinalizar = document.getElementById('finalizar-verificacao');
