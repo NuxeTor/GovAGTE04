@@ -204,18 +204,23 @@ def resultados_busca():
         estado = dados_cep.get('estado', 'Não informado')
         uf = dados_cep.get('uf', '')
         
+        # Gerar código da região baseado no CEP
+        codigo_regiao = f"REG-{cep_limpo[:2]}-{cep_limpo[2:5]}"
+        
     except Exception as e:
         # Em caso de erro na API, continuar com dados básicos
         localidade = 'Região Consultada'
         estado = 'Brasil'
         uf = ''
+        codigo_regiao = f"REG-{cep[:2]}-{cep[2:5]}" if len(cep) >= 5 else "REG-00-000"
     
     return render_template('resultados_busca.html', 
                          page_title="Resultados da Busca - Mais Agentes da Educação",
                          cep=cep,
                          localidade=localidade,
                          estado=estado,
-                         uf=uf)
+                         uf=uf,
+                         codigo_regiao=codigo_regiao)
 
 @app.route('/buscar-escolas')
 def buscar_escolas():
