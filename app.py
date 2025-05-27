@@ -203,6 +203,7 @@ def resultados_busca():
         localidade = dados_cep.get('localidade', 'Não informado')
         estado = dados_cep.get('estado', 'Não informado')
         uf = dados_cep.get('uf', '')
+        bairro = dados_cep.get('bairro', 'Não informado')
         
         # Gerar código da região baseado no CEP
         codigo_regiao = f"REG-{cep_limpo[:2]}-{cep_limpo[2:5]}"
@@ -212,6 +213,7 @@ def resultados_busca():
         localidade = 'Região Consultada'
         estado = 'Brasil'
         uf = ''
+        bairro = 'Não informado'
         codigo_regiao = f"REG-{cep[:2]}-{cep[2:5]}" if len(cep) >= 5 else "REG-00-000"
     
     return render_template('resultados_busca.html', 
@@ -220,6 +222,7 @@ def resultados_busca():
                          localidade=localidade,
                          estado=estado,
                          uf=uf,
+                         bairro=bairro,
                          codigo_regiao=codigo_regiao)
 
 @app.route('/buscar-escolas')
