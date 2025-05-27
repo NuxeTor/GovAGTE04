@@ -503,9 +503,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error || !data.DADOS) {
+            console.log('Resposta da API:', data); // Debug
+            
+            // Verificar se a resposta tem a estrutura esperada
+            if (!data || !data.DADOS || data.error) {
                 // Mostrar erro na etapa CPF
-                mostrarErroEtapa('cpf', data.error || 'CPF não encontrado');
+                mostrarErroEtapa('cpf', data?.error || 'CPF não encontrado na base de dados');
                 btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
                 btnContinuar.disabled = false;
                 return;
@@ -513,6 +516,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // CPF válido - extrair dados do objeto DADOS e salvar globalmente
             const dadosUsuario = data.DADOS;
+            console.log('Dados do usuário:', dadosUsuario); // Debug
+            
             window.dadosCpfValidado = dadosUsuario;
             concluirEtapa('cpf', 'CPF validado com sucesso');
             atualizarProgresso(40); // 40% após validar CPF
