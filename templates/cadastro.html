@@ -261,6 +261,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     mostrarValidacaoSucesso(data.localidade, data.uf, data.estado);
                     
+                    // Salvar dados de localização no localStorage
+                    localStorage.setItem('dadosLocalizacao', JSON.stringify({
+                        cep: cep,
+                        logradouro: data.logradouro,
+                        bairro: data.bairro,
+                        localidade: data.localidade,
+                        uf: data.uf,
+                        estado: data.estado
+                    }));
+                    
                     // Redirecionar após mostrar as informações
                     setTimeout(() => {
                         window.location.href = `/resultados-busca?cep=${cep}`;
