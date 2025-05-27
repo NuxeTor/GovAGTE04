@@ -377,15 +377,17 @@ document.addEventListener('DOMContentLoaded', function() {
         option.addEventListener('click', function() {
             // Remover seleção anterior
             cargoOptions.forEach(opt => {
-                opt.classList.remove('ring-2', 'ring-green-500', 'bg-green-50');
+                opt.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+                opt.classList.add('bg-gray-50');
             });
 
             // Selecionar cargo atual
-            this.classList.add('ring-2', 'ring-green-500', 'bg-green-50');
+            this.classList.remove('bg-gray-50');
+            this.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
 
             // Obter dados do cargo
             const cargoNome = this.querySelector('h4').textContent;
-            const cargoSalario = this.querySelector('.text-green-600').textContent;
+            const cargoSalario = this.querySelector('.text-blue-600').textContent;
 
             // Atualizar informações
             cargoSelecionadoTexto.textContent = cargoNome;
