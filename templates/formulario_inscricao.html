@@ -666,6 +666,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Esconder popup
         document.getElementById('validation-popup').classList.add('hidden');
         
+        // Rolagem automática para a seção autenticada após carregar dados
+        setTimeout(() => {
+            const dadosCarregados = document.getElementById('dados-carregados');
+            if (dadosCarregados) {
+                dadosCarregados.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }
+        }, 800);
+        
         // Configurar botão finalizar
         btnFinalizar.addEventListener('click', function() {
             window.location.href = '/comprovante-inscricao';
