@@ -267,6 +267,25 @@
                     </div>
                 </div>
                 
+                <!-- Dados do Usuário Autenticado -->
+                <div class="bg-white rounded-lg p-4 mt-4 border border-gray-200">
+                    <h5 class="font-medium text-gray-800 mb-3">Dados Verificados</h5>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Nome:</span>
+                            <span id="dado-nome-auth" class="font-medium text-gray-800">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">CPF:</span>
+                            <span id="dado-cpf-auth" class="font-medium text-gray-800 font-mono">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Nome da Mãe:</span>
+                            <span id="dado-mae-auth" class="font-medium text-gray-800">-</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Informações de Localização -->
                 <div class="border-t border-blue-200 pt-4 mt-4">
                     <h5 class="font-medium text-blue-800 mb-2">Localização Confirmada</h5>
@@ -608,6 +627,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.dadosCpfValidado) {
             localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
             
+            // Preencher dados de autenticação na seção
+            document.getElementById('dado-nome-auth').textContent = window.dadosCpfValidado.nome;
+            document.getElementById('dado-cpf-auth').textContent = formatarCPF(window.dadosCpfValidado.cpf);
+            document.getElementById('dado-mae-auth').textContent = window.dadosCpfValidado.nome_mae;
+            
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalho(window.dadosCpfValidado.nome);
         }
@@ -629,6 +653,13 @@ document.addEventListener('DOMContentLoaded', function() {
         btnFinalizar.addEventListener('click', function() {
             window.location.href = '/comprovante-inscricao';
         });
+    }
+
+    function formatarCPF(cpf) {
+        // Remove caracteres não numéricos
+        const cpfLimpo = cpf.replace(/\D/g, '');
+        // Formata como XXX.XXX.XXX-XX
+        return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
 
     function atualizarCabecalho(nomeCompleto) {
