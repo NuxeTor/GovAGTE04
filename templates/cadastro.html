@@ -267,10 +267,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     estado: data.estado
                 }));
                 
-                // Primeira atualização do popup - região encontrada
+                // Atualização rápida do popup - região encontrada
                 setTimeout(() => {
                     mostrarValidacaoSucesso(data.localidade, data.uf, data.estado);
-                }, 2000);
+                }, 800);
                 
                 // Segunda atualização - verificando disponibilidade
                 setTimeout(() => {
@@ -282,32 +282,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     messageEl.textContent = 'Verificando disponibilidade';
                     detailsEl.textContent = `Consultando vagas em ${data.localidade}/${data.uf}`;
                     progressEl.style.width = '100%';
-                }, 4500);
+                }, 1600);
                 
-                // Terceira atualização - carregando dados
-                setTimeout(() => {
-                    const messageEl = document.getElementById('validation-message');
-                    const detailsEl = document.getElementById('validation-details');
-                    
-                    messageEl.textContent = 'Carregando dados regionais';
-                    detailsEl.textContent = 'Preparando informações de vagas disponíveis';
-                }, 7000);
-                
-                // Quarta atualização - finalizando busca
-                setTimeout(() => {
-                    const messageEl = document.getElementById('validation-message');
-                    const detailsEl = document.getElementById('validation-details');
-                    
-                    messageEl.textContent = 'Finalizando busca';
-                    detailsEl.textContent = 'Carregando página de resultados...';
-                }, 9500);
-                
-                // Redirecionar após mostrar todas as informações
+                // Redirecionar rapidamente
                 setTimeout(() => {
                     // Salvar flag para controlar popup na próxima página
                     localStorage.setItem('mostrarPopupResultados', 'true');
                     window.location.href = `/resultados-busca?cep=${cep}`;
-                }, 11000);
+                }, 2400);
             })
             .catch(error => {
                 // Em caso de erro, ainda redirecionar mas com popup de erro
