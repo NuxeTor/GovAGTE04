@@ -145,30 +145,7 @@
         </div>
     </div>
 
-    <!-- Informativo sobre Validação -->
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-        <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-            <i class="fas fa-info-circle mr-2"></i>
-            Informações sobre Validação da Carteira Digital
-        </h3>
-        <div class="text-blue-700 mb-4">
-            <div class="flex items-start">
-                <input type="checkbox" id="ciente-validacao" class="mt-1 mr-3 h-4 w-4 text-blue-600 border-blue-300 rounded">
-                <label for="ciente-validacao" class="text-sm cursor-pointer">
-                    <p class="mb-2">
-                        Estou ciente de que para concluir a inscrição, é necessário que eu valide minha carteira digital de trabalho 
-                        para que o INEP possa registrar minha requisição de cargo de forma online, seguindo todas as normas legais.
-                    </p>
-                    <ul class="text-sm space-y-1 ml-4 list-disc">
-                        <li>Validação obrigatória para finalizar o processo</li>
-                        <li>Processo 100% digital e seguro</li>
-                        <li>Conformidade com regulamentações do Ministério do Trabalho</li>
-                        <li>Integração direta com sistemas do INEP</li>
-                    </ul>
-                </label>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Envio do Comprovante por Email -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
@@ -442,9 +419,20 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Inserir após a seção de email
-        const emailSection = document.querySelector('.bg-blue-50');
-        emailSection.parentNode.insertBefore(termosSection, emailSection.nextSibling);
+        // Inserir após a seção de email (buscar especificamente pela seção de email)
+        const emailSection = document.querySelector('.bg-blue-50:has(#email-comprovante)') || 
+                             document.querySelector('[id*="email"]').closest('.bg-blue-50') ||
+                             document.getElementById('email-comprovante').closest('.bg-blue-50');
+        
+        if (emailSection) {
+            emailSection.parentNode.insertBefore(termosSection, emailSection.nextSibling);
+        } else {
+            // Fallback: inserir no final da página antes das informações importantes
+            const infoSection = document.querySelector('.bg-blue-50:last-of-type');
+            if (infoSection) {
+                infoSection.parentNode.insertBefore(termosSection, infoSection);
+            }
+        }
         
         // Rolagem automática para os termos
         setTimeout(() => {
