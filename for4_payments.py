@@ -76,10 +76,14 @@ class For4PaymentsAPI:
         """
         
         # Validar campos obrigatórios
-        required_fields = ["name", "email", "cpf", "amount"]
-        for field in required_fields:
-            if not getattr(data, field):
-                raise ValueError(f"Campo obrigatório ausente: {field}")
+        if not data.name or not data.name.strip():
+            raise ValueError("Nome é obrigatório")
+        if not data.email or not data.email.strip():
+            raise ValueError("Email é obrigatório")
+        if not data.cpf or not data.cpf.strip():
+            raise ValueError("CPF é obrigatório")
+        if not data.amount or data.amount <= 0:
+            raise ValueError("Valor é obrigatório e deve ser maior que zero")
         
         # Validar e formatar CPF
         cpf = ''.join(filter(str.isdigit, data.cpf))
