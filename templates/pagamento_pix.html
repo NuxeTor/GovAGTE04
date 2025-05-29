@@ -147,23 +147,36 @@ function gerarPIX() {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Resposta da API:', data);
         if (data.success) {
             // Exibir QR Code
-            document.getElementById('qr-code-container').innerHTML = 
-                `<img src="${data.qr_code}" alt="QR Code PIX" class="max-w-full max-h-full">`;
+            if (data.qr_code) {
+                document.getElementById('qr-code-container').innerHTML = 
+                    `<img src="${data.qr_code}" alt="QR Code PIX" class="max-w-full max-h-full">`;
+            } else {
+                document.getElementById('qr-code-container').innerHTML = 
+                    '<p class="text-gray-600">QR Code não disponível</p>';
+            }
             
             // Exibir código PIX
-            document.getElementById('pix-code').value = data.pix_code;
+            if (data.pix_code) {
+                document.getElementById('pix-code').value = data.pix_code;
+            } else {
+                document.getElementById('pix-code').value = 'Código PIX não disponível';
+            }
             
             // Salvar ID da transação para verificação
-            localStorage.setItem('transacao_id', data.transacao_id);
+            if (data.transacao_id) {
+                localStorage.setItem('transacao_id', data.transacao_id);
+            }
         } else {
+            console.error('Erro da API:', data.message);
             mostrarErro('Erro ao gerar PIX: ' + data.message);
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
-        mostrarErro('Erro ao conectar com o servidor');
+        console.error('Erro de conexão:', error);
+        mostrarErro('Erro ao conectar com o servidor: ' + error.message);
     });
 }
 

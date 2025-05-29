@@ -16,126 +16,8 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-# FOR4 PAYMENTS Integration
-class For4PaymentsAPI:
-    def __init__(self, secret_key: str):
-        self.API_URL = "https://app.for4payments.com.br/api/v1"
-        self.secret_key = secret_key
-        
-    def _get_headers(self):
-        return {
-            "Authorization": self.secret_key,
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        }
-    
-    def create_pix_payment(self, name, email, cpf, amount, description="Taxa de Inscrição - Mais Agentes da Educação"):
-        # Validar dados obrigatórios
-        if not name or not email or not cpf:
-            raise ValueError("Nome, email e CPF são obrigatórios")
-        
-        # Validar email
-        if "@" not in email or "." not in email.split("@")[-1]:
-            raise ValueError("Email inválido")
-        
-        # Validar e formatar CPF
-        cpf_clean = ''.join(filter(str.isdigit, cpf))
-        if len(cpf_clean) != 11:
-            raise ValueError("CPF inválido - deve conter 11 dígitos")
-        
-        # Converter valor para centavos
-        amount_cents = int(amount * 100)
-        
-        payment_data = {
-            "name": name,
-            "email": email,
-            "cpf": cpf_clean,
-            "phone": "11999999999",
-            "paymentMethod": "PIX",
-            "amount": amount_cents,
-            "traceable": True,
-            "items": [
-                {
-                    "title": description,
-                    "quantity": 1,
-                    "unitPrice": amount_cents,
-                    "tangible": False
-                }
-            ],
-            "cep": "77828-558",
-            "street": "Rua Exemplo",
-            "number": "123",
-            "complement": "",
-            "district": "Centro",
-            "city": "São Paulo",
-            "state": "SP",
-            "externalId": f"inscricao-{int(datetime.now().timestamp())}",
-        }
-        
-        response = requests.post(
-            f"{self.API_URL}/transaction.purchase",
-            json=payment_data,
-            headers=self._get_headers(),
-            timeout=30
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"Erro na API: {response.status_code} - {response.text}")
-        
-        data = response.json()
-        
-        # Extrair dados do PIX
-        pix_code = (
-            data.get("pix", {}).get("code") or
-            data.get("pixData", {}).get("copyPaste") or
-            data.get("pixCode") or
-            data.get("copy_paste")
-        )
-        
-        pix_qr_code = (
-            data.get("pix", {}).get("qrCode") or
-            data.get("pix", {}).get("base64Image") or
-            data.get("qrCode", {}).get("imageUrl") or
-            data.get("pixQrCode")
-        )
-        
-        payment_id = (
-            data.get("id") or
-            data.get("transactionId") or
-            data.get("_id")
-        )
-        
-        return {
-            "id": payment_id,
-            "pix_code": pix_code,
-            "pix_qr_code": pix_qr_code,
-            "status": data.get("status", "pending")
-        }
-    
-    def check_payment_status(self, payment_id):
-        response = requests.get(
-            f"{self.API_URL}/transaction.getPayment?id={payment_id}",
-            headers=self._get_headers(),
-            timeout=30
-        )
-        
-        if response.status_code != 200:
-            return {"status": "pending"}
-        
-        data = response.json()
-        status = data.get("status", "pending").lower()
-        
-        # Mapear status
-        status_mapping = {
-            "approved": "completed",
-            "completed": "completed", 
-            "paid": "completed",
-            "pending": "pending",
-            "processing": "pending"
-        }
-        
-        return {"status": status_mapping.get(status, "pending")}
+# Importar a classe da API FOR4 PAYMENTS
+from for4_payments import For4PaymentsAPI, PaymentRequestData
 
 # Create the Flask app
 app = Flask(__name__)
@@ -538,6 +420,7 @@ def gerar_pix():
         nome = dados.get('nome_pagador', '').strip()
         email = dados.get('email_pagador', '').strip()
         cpf = dados.get('cpf_pagador', '').strip()
+        valor = dados.get('valor', 87.40)
         
         if not nome or not email or not cpf:
             return jsonify({
@@ -548,23 +431,31 @@ def gerar_pix():
         # Log dos dados recebidos para debug
         app.logger.info(f"Gerando PIX para: {nome}, {email}, CPF: {cpf[:3]}***")
         
-        # Criar pagamento PIX
-        payment = api.create_pix_payment(
+        # Criar objeto PaymentRequestData
+        payment_data = PaymentRequestData(
             name=nome,
             email=email,
             cpf=cpf,
-            amount=dados.get('valor', 87.40),
+            phone=dados.get('telefone'),
+            amount=int(valor * 100),  # Converter para centavos
             description=dados.get('descricao', 'Taxa de Inscrição - Mais Agentes da Educação')
         )
         
+        # Criar pagamento PIX usando a classe correta
+        payment = api.create_pix_payment(payment_data)
+        
         return jsonify({
             'success': True,
-            'transacao_id': payment['id'],
-            'pix_code': payment['pix_code'],
-            'qr_code': payment['pix_qr_code'],
-            'status': payment['status']
+            'transacao_id': payment.id,
+            'pix_code': payment.pix_code,
+            'qr_code': payment.pix_qr_code,
+            'status': payment.status,
+            'expires_at': payment.expires_at
         })
         
+    except ValueError as e:
+        app.logger.error(f"Erro de validação: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 400
     except Exception as e:
         app.logger.error(f"Erro ao gerar PIX: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
@@ -582,7 +473,9 @@ def verificar_pagamento(transacao_id):
         
         return jsonify({
             'pago': status_data['status'] == 'completed',
-            'status': status_data['status']
+            'status': status_data['status'],
+            'pix_code': status_data.get('pixCode'),
+            'qr_code': status_data.get('pixQrCode')
         })
         
     except Exception as e:
