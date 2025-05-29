@@ -571,19 +571,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     }
     
-    // Função para formatar CPF
-    function formatarCPF(cpf) {
-        if (!cpf) return '';
-        const numerosCPF = cpf.replace(/\D/g, '');
-        return numerosCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
-    
-    // Função para formatar data
-    function formatarData(data) {
-        if (!data) return '';
-        const date = new Date(data);
-        return date.toLocaleDateString('pt-BR');
-    }
+
+
 });
 </script>
 
