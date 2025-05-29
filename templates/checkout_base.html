@@ -52,25 +52,63 @@
 <body class="bg-gray-50">
     <!-- Header específico do checkout -->
     {% block header %}
-    <header class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-4">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
-                         alt="Gov.br" class="h-8 mr-4">
-                    <div>
-                        <h1 class="text-lg font-semibold text-gray-800">Pagamento Seguro</h1>
-                        <p class="text-sm text-gray-600">Programa Nacional de Agentes da Educação</p>
+                         alt="Gov.br" class="h-10 mr-3">
+                    <div class="border-l border-gray-300 pl-3">
+                        <h1 class="text-xl font-semibold text-gray-900">Mais Agentes da Educação</h1>
+                        <p class="text-sm text-gray-600">Finalizar Inscrição</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center text-green-600">
-                        <i class="fas fa-shield-alt mr-2"></i>
-                        <span class="text-sm font-medium hidden md:inline">Ambiente Seguro</span>
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center text-green-700">
+                        <i class="fas fa-shield-check mr-2 text-lg"></i>
+                        <div class="hidden md:block">
+                            <p class="text-sm font-semibold">Ambiente Seguro</p>
+                            <p class="text-xs text-gray-500">Certificado SSL</p>
+                        </div>
                     </div>
-                    <div class="flex items-center text-blue-600">
-                        <i class="fas fa-lock mr-2"></i>
-                        <span class="text-sm font-medium hidden md:inline">SSL</span>
+                    <div class="flex items-center text-blue-700">
+                        <i class="fas fa-user-check mr-2 text-lg"></i>
+                        <div class="hidden md:block">
+                            <p class="text-sm font-semibold">Dados Verificados</p>
+                            <p class="text-xs text-gray-500">CPF Validado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barra de progresso -->
+        <div class="bg-blue-600">
+            <div class="max-w-7xl mx-auto px-4 py-3">
+                <div class="flex items-center justify-between text-white text-sm">
+                    <div class="flex items-center space-x-8">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center mr-2">
+                                <i class="fas fa-check text-blue-600 text-xs"></i>
+                            </div>
+                            <span class="font-medium">Dados Pessoais</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center mr-2">
+                                <i class="fas fa-check text-blue-600 text-xs"></i>
+                            </div>
+                            <span class="font-medium">Documentação</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center mr-2">
+                                <span class="text-blue-900 text-xs font-bold">3</span>
+                            </div>
+                            <span class="font-bold">Pagamento</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold">Etapa 3 de 3</p>
+                        <p class="text-xs opacity-90">Finalizando inscrição</p>
                     </div>
                 </div>
             </div>
