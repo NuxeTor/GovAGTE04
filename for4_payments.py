@@ -16,8 +16,8 @@ class PaymentRequestData:
     name: str
     email: str
     cpf: str
-    phone: Optional[str] = None
     amount: int  # Valor em centavos
+    phone: Optional[str] = None
     description: Optional[str] = None
 
 @dataclass
