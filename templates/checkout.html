@@ -1,29 +1,9 @@
-{% extends "base.html" %}
+{% extends "checkout_base.html" %}
 
 {% block title %}{{ page_title or "Checkout - Pagamento da Inscrição - Mais Agentes da Educação - gov.br" }}{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50">
-    <!-- Header de Pagamento Seguro -->
-    <div class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="max-w-4xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
-                         alt="Gov.br" class="h-8 mr-4">
-                    <div>
-                        <h1 class="text-lg font-semibold text-gray-800">Pagamento Seguro</h1>
-                        <p class="text-sm text-gray-600">Programa Nacional de Agentes da Educação</p>
-                    </div>
-                </div>
-                <div class="flex items-center text-green-600">
-                    <i class="fas fa-shield-alt mr-2"></i>
-                    <span class="text-sm font-medium">Ambiente Seguro</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="max-w-4xl mx-auto px-4 py-8">
         <div class="grid md:grid-cols-3 gap-8">
             <!-- Resumo do Pedido -->
@@ -231,7 +211,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Carregar dados do usuário

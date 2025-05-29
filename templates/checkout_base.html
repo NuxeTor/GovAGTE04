@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Checkout - Pagamento da Inscrição - gov.br{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMTM1MUI0Ii8+CjxwYXRoIGQ9Ik04IDEySDI0VjIwSDhWMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+    
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "n8s4r8mqne");
+    </script>
+    
+    <style>
+        /* Custom styles for checkout */
+        .payment-method.selected {
+            border-color: #2563eb !important;
+            background-color: #eff6ff !important;
+        }
+        
+        .payment-method:hover {
+            border-color: #60a5fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Loading animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header específico do checkout -->
+    {% block header %}
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                         alt="Gov.br" class="h-8 mr-4">
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-800">Pagamento Seguro</h1>
+                        <p class="text-sm text-gray-600">Programa Nacional de Agentes da Educação</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center text-green-600">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        <span class="text-sm font-medium hidden md:inline">Ambiente Seguro</span>
+                    </div>
+                    <div class="flex items-center text-blue-600">
+                        <i class="fas fa-lock mr-2"></i>
+                        <span class="text-sm font-medium hidden md:inline">SSL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% endblock %}
+    
+    <!-- Conteúdo principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer específico do checkout -->
+    {% block footer %}
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-4">Segurança</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt text-green-600 mr-2"></i>
+                            <span>Certificado SSL</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-lock text-green-600 mr-2"></i>
+                            <span>Dados criptografados</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            <span>Conforme LGPD</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-4">Formas de Pagamento</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-credit-card text-blue-600 mr-2"></i>
+                            <span>Cartão de Crédito/Débito</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-qrcode text-blue-600 mr-2"></i>
+                            <span>PIX</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-barcode text-blue-600 mr-2"></i>
+                            <span>Boleto Bancário</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-4">Suporte</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p>Dúvidas sobre o pagamento?</p>
+                        <p class="font-medium text-blue-600">suporte@pnae.gov.br</p>
+                        <p class="font-medium text-blue-600">0800 123 4567</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-6 text-center text-sm text-gray-500">
+                <p>&copy; 2025 Governo Federal - Programa Nacional de Agentes da Educação</p>
+                <p class="mt-1">Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+    
+    <!-- Scripts específicos do checkout -->
+    <script>
+        // Funções globais para checkout
+        console.log('Checkout system initialized');
+        
+        // Prevenção de fraude básica
+        document.addEventListener('contextmenu', function(e) {
+            // Permitir menu de contexto (não bloquear)
+        });
+        
+        // Detectar tentativas de F12
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                console.log('DevTools access detected - this is normal for debugging');
+            }
+        });
+        
+        // Global error handler específico para checkout
+        window.addEventListener('error', function(e) {
+            console.log('Checkout error:', e.error);
+        });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
