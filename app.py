@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
+from for4_payments import For4PaymentsAPI, PaymentRequestData, create_payment_api
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
