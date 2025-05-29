@@ -224,7 +224,7 @@
             <button id="salvar-email" 
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
                 <i class="fas fa-save mr-2"></i>
-                Salvar E-mail
+                Salvar E-mail e Telefone
             </button>
             
             <div id="status-email" class="hidden text-center p-3 rounded-md">
@@ -278,6 +278,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Configurar autocompletar de email
     configurarAutocompletarEmail();
+    
+    // Configurar formatação automática do telefone
+    configurarFormatacaoTelefone();
     
     function carregarDadosUsuario() {
         const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
@@ -434,6 +437,38 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mostrar termos após salvar dados
             mostrarTermosFinais(email);
         }, 1500);
+    }
+    
+    function configurarFormatacaoTelefone() {
+        const telefoneInput = document.getElementById('telefone-comprovante');
+        
+        telefoneInput.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            // Limita a 11 dígitos
+            if (valor.length > 11) {
+                valor = valor.substring(0, 11);
+            }
+            
+            // Aplica a formatação
+            if (valor.length <= 2) {
+                valor = valor.replace(/(\d{1,2})/, '($1');
+            } else if (valor.length <= 7) {
+                valor = valor.replace(/(\d{2})(\d{1,5})/, '($1) $2');
+            } else {
+                valor = valor.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3');
+            }
+            
+            e.target.value = valor;
+        });
+        
+        // Permitir apenas números e alguns caracteres especiais
+        telefoneInput.addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            if (!/[\d\(\)\-\s]/.test(char) && e.which !== 8) {
+                e.preventDefault();
+            }
+        });
     }
     
     function mostrarTermosFinais(email) {
