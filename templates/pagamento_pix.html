@@ -428,24 +428,24 @@ function mostrarErro(mensagem) {
     </main>
 
     <!-- Footer -->
-    <footer class="footer-govbr bg-gray-800 text-white">
-        <div class="container mx-auto px-4 py-8">
-            <!-- Logo e Informações Principais -->
-            <div class="text-center mb-6">
+    <footer class="bg-[#0a1f44] text-white">
+        <div class="container mx-auto px-6 py-4">
+            <!-- Logo -->
+            <div class="py-6">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
-                     alt="gov.br" 
-                     class="h-8 mx-auto mb-4 filter brightness-0 invert">
-                <p class="text-sm text-gray-300">
-                    Portal oficial do Governo Federal do Brasil
-                </p>
+                     alt="Government of Brazil logo showing gov.br in white text" 
+                     class="w-40">
             </div>
 
-            <!-- Menu Principal do Footer -->
-            <nav class="footer-nav" aria-label="Menu principal do rodapé">
-                <ul class="space-y-2">
+            <!-- Divider -->
+            <div class="border-t border-gray-600"></div>
+
+            <!-- Navigation Menu -->
+            <nav aria-label="Menu principal do rodapé">
+                <ul>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
-                        <a href="{{ url_for('index') }}" class="text-sm hover:text-gray-300">PÁGINA INICIAL</a>
-                        <button class="footer-expand-btn" aria-label="Expandir seção Página Inicial">
+                        <a href="#" class="text-sm hover:text-gray-300">MEC</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção MEC">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                     </li>
