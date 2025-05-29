@@ -682,12 +682,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function formatarCPF(cpf) {
-        // Remove caracteres não numéricos
-        const cpfLimpo = cpf.replace(/\D/g, '');
-        // Formata como XXX.XXX.XXX-XX
-        return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
+
 
     function atualizarCabecalho(nomeCompleto) {
         // Extrair primeiro nome
