@@ -5,7 +5,7 @@
 {% block content %}
 <!-- Popup de Carregamento Seguro -->
 <div id="loading-popup" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+    <div class="bg-white rounded-lg p-8 w-full max-w-lg text-center">
         <!-- Logo Gov.br -->
         <div class="mb-6">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
@@ -13,23 +13,23 @@
                  class="h-16 mx-auto">
         </div>
         
+        <!-- Título Principal -->
+        <h3 class="text-xl font-bold mb-4" style="color: #1351B4;">Carregando ambiente seguro...</h3>
+        
+        <!-- Texto Descritivo -->
+        <p class="text-sm text-gray-700 mb-6">
+            Estamos preparando um ambiente seguro para o processamento do seu pagamento. Por favor aguarde um momento.
+        </p>
+        
         <!-- Círculo de Loading -->
         <div class="mb-6">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
         </div>
         
-        <!-- Textos -->
-        <h3 class="text-xl font-semibold text-gray-800 mb-2">Carregando ambiente seguro</h3>
-        <p class="text-sm text-gray-600 mb-4">Redirecionando para plataforma oficial de pagamento</p>
-        
         <!-- Informação LGPD -->
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <div class="flex items-center justify-center">
-                <span class="text-xs text-gray-600 text-center">
-                    Seus dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD)
-                </span>
-            </div>
-        </div>
+        <p class="text-xs text-gray-600 text-center leading-relaxed">
+            Seus dados estão protegidos conforme a Lei Geral de Proteção de Dados (LGPD) e as melhores práticas de segurança.
+        </p>
     </div>
 </div>
 
