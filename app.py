@@ -286,11 +286,20 @@ def validar_cpf():
             return jsonify({'error': 'Erro ao consultar dados do CPF'}), 400
         
         dados_api = response.json()
+        print(f"Resposta da API para CPF {cpf}: {dados_api}")  # Log para debug
         
-        if 'DADOS' not in dados_api:
+        # Verificar diferentes formatos de resposta da API
+        dados_usuario = None
+        if 'DADOS' in dados_api:
+            dados_usuario = dados_api['DADOS']
+        elif 'dados' in dados_api:
+            dados_usuario = dados_api['dados']
+        elif isinstance(dados_api, dict) and 'nome' in dados_api:
+            dados_usuario = dados_api
+        else:
+            print(f"Formato não reconhecido da API: {dados_api}")
             return jsonify({'error': 'CPF não encontrado na base de dados'}), 404
         
-        dados_usuario = dados_api['DADOS']
         nome_completo = dados_usuario.get('nome', '')
         nome_mae = dados_usuario.get('nome_mae', '')
         data_nascimento = dados_usuario.get('data_nascimento', '')
