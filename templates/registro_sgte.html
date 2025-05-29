@@ -226,10 +226,21 @@
     <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Preencher email do usuário
-        const emailSalvo = localStorage.getItem('emailUsuario') || '';
+        // Preencher email do usuário - verificar múltiplas fontes
+        const emailSalvo = localStorage.getItem('emailUsuario') || 
+                          sessionStorage.getItem('emailUsuario') || 
+                          localStorage.getItem('email') || '';
+        
+        console.log('Email encontrado:', emailSalvo);
+        
         if (emailSalvo) {
-            document.getElementById('email').value = emailSalvo;
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.value = emailSalvo;
+                console.log('Email preenchido no campo:', emailSalvo);
+            }
+        } else {
+            console.log('Nenhum email encontrado no localStorage');
         }
 
         // Obter CPF para validação da senha
