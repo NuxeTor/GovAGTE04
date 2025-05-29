@@ -392,6 +392,55 @@ def comprovante_inscricao():
     """Proof of registration page"""
     return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - Mais Agentes da Educação")
 
+@app.route('/pagamento-pix')
+def pagamento_pix():
+    """PIX payment page"""
+    return render_template('pagamento_pix.html', page_title="Pagamento PIX - Mais Agentes da Educação")
+
+@app.route('/api/gerar-pix', methods=['POST'])
+def gerar_pix():
+    """Generate PIX payment using FOR4 PAYMENTS API"""
+    try:
+        dados = request.get_json()
+        
+        # Validar dados obrigatórios
+        if not dados or not dados.get('valor'):
+            return jsonify({'success': False, 'message': 'Dados inválidos'}), 400
+        
+        # TODO: Implementar integração com FOR4 PAYMENTS
+        # Aguardando credenciais da API para implementar corretamente
+        
+        # Por enquanto, retornar estrutura básica
+        return jsonify({
+            'success': False,
+            'message': 'Credenciais da FOR4 PAYMENTS necessárias para implementação'
+        }), 500
+        
+    except Exception as e:
+        app.logger.error(f"Erro ao gerar PIX: {e}")
+        return jsonify({'success': False, 'message': 'Erro interno do servidor'}), 500
+
+@app.route('/api/verificar-pagamento/<string:transacao_id>')
+def verificar_pagamento(transacao_id):
+    """Verify PIX payment status using FOR4 PAYMENTS API"""
+    try:
+        # TODO: Implementar verificação com FOR4 PAYMENTS
+        # Aguardando credenciais da API para implementar corretamente
+        
+        return jsonify({
+            'pago': False,
+            'message': 'Credenciais da FOR4 PAYMENTS necessárias para implementação'
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Erro ao verificar pagamento: {e}")
+        return jsonify({'pago': False, 'message': 'Erro interno do servidor'}), 500
+
+@app.route('/pagamento-confirmado')
+def pagamento_confirmado():
+    """Payment confirmation page"""
+    return render_template('pagamento_confirmado.html', page_title="Pagamento Confirmado - Mais Agentes da Educação")
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""

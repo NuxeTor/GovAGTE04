@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title or "Pagamento PIX - Mais Agentes da Educação - gov.br" }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Pagamento da Taxa de Inscrição</h1>
+    
+    <div class="border-t border-b border-gray-300 py-3 mb-6">
+        <div class="text-gray-700 text-sm">
+            <p>Gerado em <span id="data-geracao"></span></p>
+            <p>Valor: <strong>R$ 87,40</strong></p>
+        </div>
+    </div>
+
+    <!-- Informações do Pagamento -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">
+            <i class="fas fa-qrcode mr-2" style="color: #1351B4;"></i>
+            Pagamento via PIX
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- QR Code -->
+            <div class="text-center">
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                    <div id="qr-code-container" class="flex items-center justify-center h-64">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <span class="ml-2 text-gray-600">Gerando QR Code...</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">Escaneie o código com o app do seu banco</p>
+            </div>
+
+            <!-- Código PIX -->
+            <div>
+                <h3 class="font-semibold text-gray-800 mb-3">Código PIX Copia e Cola</h3>
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                    <textarea id="pix-code" readonly 
+                              class="w-full h-32 text-xs font-mono bg-transparent border-none resize-none focus:outline-none"
+                              placeholder="Gerando código PIX..."></textarea>
+                </div>
+                <button id="copy-pix-btn" 
+                        class="w-full bg-blue-600 text-white py-2 px-4 rounded font-medium hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-copy mr-2"></i>
+                    Copiar Código PIX
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status do Pagamento -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h3 class="font-semibold text-gray-800 mb-4">Status do Pagamento</h3>
+        
+        <div id="payment-status" class="flex items-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600 mr-3"></div>
+            <span class="text-yellow-800">Aguardando pagamento...</span>
+        </div>
+        
+        <button id="verify-payment-btn" 
+                class="mt-4 bg-green-600 text-white py-2 px-6 rounded font-medium hover:bg-green-700 transition-colors">
+            <i class="fas fa-check-circle mr-2"></i>
+            Verificar Pagamento
+        </button>
+    </div>
+
+    <!-- Informações Importantes -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 class="font-semibold text-blue-800 mb-3">
+            <i class="fas fa-info-circle mr-2"></i>
+            Informações Importantes
+        </h3>
+        <ul class="text-sm text-blue-700 space-y-2">
+            <li>• O pagamento via PIX é processado instantaneamente</li>
+            <li>• Após a confirmação, você receberá o comprovante por email</li>
+            <li>• O código PIX tem validade de 2 horas</li>
+            <li>• Em caso de problemas, entre em contato pelo suporte</li>
+            <li>• Taxa de inscrição: R$ 87,40</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gerar data atual
+    const agora = new Date();
+    document.getElementById('data-geracao').textContent = agora.toLocaleString('pt-BR');
+    
+    // Copiar código PIX
+    document.getElementById('copy-pix-btn').addEventListener('click', function() {
+        const pixCode = document.getElementById('pix-code');
+        pixCode.select();
+        document.execCommand('copy');
+        
+        // Feedback visual
+        this.innerHTML = '<i class="fas fa-check mr-2"></i>Copiado!';
+        this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        this.classList.add('bg-green-600');
+        
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-copy mr-2"></i>Copiar Código PIX';
+            this.classList.remove('bg-green-600');
+            this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+        }, 2000);
+    });
+    
+    // Verificar pagamento
+    document.getElementById('verify-payment-btn').addEventListener('click', function() {
+        verificarPagamento();
+    });
+    
+    // Gerar PIX automaticamente ao carregar a página
+    gerarPIX();
+    
+    // Verificar pagamento automaticamente a cada 10 segundos
+    setInterval(verificarPagamento, 10000);
+});
+
+function gerarPIX() {
+    // Obter dados do usuário
+    const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+    const emailSalvo = localStorage.getItem('emailUsuario') || '';
+    
+    // Dados para a API
+    const dadosPagamento = {
+        valor: 87.40,
+        descricao: 'Taxa de Inscrição - Mais Agentes da Educação',
+        nome_pagador: dadosCpf.nome || 'Nome não informado',
+        cpf_pagador: dadosCpf.cpf || '',
+        email_pagador: emailSalvo
+    };
+    
+    fetch('/api/gerar-pix', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dadosPagamento)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Exibir QR Code
+            document.getElementById('qr-code-container').innerHTML = 
+                `<img src="${data.qr_code}" alt="QR Code PIX" class="max-w-full max-h-full">`;
+            
+            // Exibir código PIX
+            document.getElementById('pix-code').value = data.pix_code;
+            
+            // Salvar ID da transação para verificação
+            localStorage.setItem('transacao_id', data.transacao_id);
+        } else {
+            mostrarErro('Erro ao gerar PIX: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        mostrarErro('Erro ao conectar com o servidor');
+    });
+}
+
+function verificarPagamento() {
+    const transacaoId = localStorage.getItem('transacao_id');
+    
+    if (!transacaoId) {
+        return;
+    }
+    
+    fetch(`/api/verificar-pagamento/${transacaoId}`)
+    .then(response => response.json())
+    .then(data => {
+        const statusDiv = document.getElementById('payment-status');
+        
+        if (data.pago) {
+            statusDiv.innerHTML = `
+                <div class="flex items-center p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                    <span class="text-green-800">Pagamento confirmado!</span>
+                </div>
+            `;
+            
+            // Redirecionar para página de sucesso
+            setTimeout(() => {
+                window.location.href = '/pagamento-confirmado';
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Erro na verificação:', error);
+    });
+}
+
+function mostrarErro(mensagem) {
+    const container = document.getElementById('qr-code-container');
+    container.innerHTML = `
+        <div class="text-center text-red-600">
+            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+            <p>${mensagem}</p>
+        </div>
+    `;
+}
+</script>
+{% endblock %}
