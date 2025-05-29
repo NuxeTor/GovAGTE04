@@ -1,6 +1,8 @@
 import os
 import logging
-from datetime import datetime
+import requests
+import json
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -13,6 +15,119 @@ class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
+
+# FOR4 PAYMENTS Integration
+class For4PaymentsAPI:
+    def __init__(self, secret_key: str):
+        self.API_URL = "https://app.for4payments.com.br/api/v1"
+        self.secret_key = secret_key
+        
+    def _get_headers(self):
+        return {
+            "Authorization": self.secret_key,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        }
+    
+    def create_pix_payment(self, name, email, cpf, amount, description="Taxa de Inscrição - Mais Agentes da Educação"):
+        # Validar e formatar CPF
+        cpf_clean = ''.join(filter(str.isdigit, cpf))
+        if len(cpf_clean) != 11:
+            raise ValueError("CPF inválido")
+        
+        # Converter valor para centavos
+        amount_cents = int(amount * 100)
+        
+        payment_data = {
+            "name": name,
+            "email": email,
+            "cpf": cpf_clean,
+            "phone": "11999999999",
+            "paymentMethod": "PIX",
+            "amount": amount_cents,
+            "traceable": True,
+            "items": [
+                {
+                    "title": description,
+                    "quantity": 1,
+                    "unitPrice": amount_cents,
+                    "tangible": False
+                }
+            ],
+            "cep": "77828-558",
+            "street": "Rua Exemplo",
+            "number": "123",
+            "complement": "",
+            "district": "Centro",
+            "city": "São Paulo",
+            "state": "SP",
+            "externalId": f"inscricao-{int(datetime.now().timestamp())}",
+        }
+        
+        response = requests.post(
+            f"{self.API_URL}/transaction.purchase",
+            json=payment_data,
+            headers=self._get_headers(),
+            timeout=30
+        )
+        
+        if response.status_code != 200:
+            raise Exception(f"Erro na API: {response.status_code} - {response.text}")
+        
+        data = response.json()
+        
+        # Extrair dados do PIX
+        pix_code = (
+            data.get("pix", {}).get("code") or
+            data.get("pixData", {}).get("copyPaste") or
+            data.get("pixCode") or
+            data.get("copy_paste")
+        )
+        
+        pix_qr_code = (
+            data.get("pix", {}).get("qrCode") or
+            data.get("pix", {}).get("base64Image") or
+            data.get("qrCode", {}).get("imageUrl") or
+            data.get("pixQrCode")
+        )
+        
+        payment_id = (
+            data.get("id") or
+            data.get("transactionId") or
+            data.get("_id")
+        )
+        
+        return {
+            "id": payment_id,
+            "pix_code": pix_code,
+            "pix_qr_code": pix_qr_code,
+            "status": data.get("status", "pending")
+        }
+    
+    def check_payment_status(self, payment_id):
+        response = requests.get(
+            f"{self.API_URL}/transaction.getPayment?id={payment_id}",
+            headers=self._get_headers(),
+            timeout=30
+        )
+        
+        if response.status_code != 200:
+            return {"status": "pending"}
+        
+        data = response.json()
+        status = data.get("status", "pending").lower()
+        
+        # Mapear status
+        status_mapping = {
+            "approved": "completed",
+            "completed": "completed", 
+            "paid": "completed",
+            "pending": "pending",
+            "processing": "pending"
+        }
+        
+        return {"status": status_mapping.get(status, "pending")}
 
 # Create the Flask app
 app = Flask(__name__)
@@ -407,34 +522,50 @@ def gerar_pix():
         if not dados or not dados.get('valor'):
             return jsonify({'success': False, 'message': 'Dados inválidos'}), 400
         
-        # TODO: Implementar integração com FOR4 PAYMENTS
-        # Aguardando credenciais da API para implementar corretamente
+        # Obter chave da API
+        secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
+        api = For4PaymentsAPI(secret_key)
         
-        # Por enquanto, retornar estrutura básica
+        # Criar pagamento PIX
+        payment = api.create_pix_payment(
+            name=dados.get('nome_pagador', 'Nome não informado'),
+            email=dados.get('email_pagador', 'email@exemplo.com'),
+            cpf=dados.get('cpf_pagador', ''),
+            amount=dados.get('valor', 87.40),
+            description=dados.get('descricao', 'Taxa de Inscrição - Mais Agentes da Educação')
+        )
+        
         return jsonify({
-            'success': False,
-            'message': 'Credenciais da FOR4 PAYMENTS necessárias para implementação'
-        }), 500
+            'success': True,
+            'transacao_id': payment['id'],
+            'pix_code': payment['pix_code'],
+            'qr_code': payment['pix_qr_code'],
+            'status': payment['status']
+        })
         
     except Exception as e:
         app.logger.error(f"Erro ao gerar PIX: {e}")
-        return jsonify({'success': False, 'message': 'Erro interno do servidor'}), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/verificar-pagamento/<string:transacao_id>')
 def verificar_pagamento(transacao_id):
     """Verify PIX payment status using FOR4 PAYMENTS API"""
     try:
-        # TODO: Implementar verificação com FOR4 PAYMENTS
-        # Aguardando credenciais da API para implementar corretamente
+        # Obter chave da API
+        secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
+        api = For4PaymentsAPI(secret_key)
+        
+        # Verificar status do pagamento
+        status_data = api.check_payment_status(transacao_id)
         
         return jsonify({
-            'pago': False,
-            'message': 'Credenciais da FOR4 PAYMENTS necessárias para implementação'
+            'pago': status_data['status'] == 'completed',
+            'status': status_data['status']
         })
         
     except Exception as e:
         app.logger.error(f"Erro ao verificar pagamento: {e}")
-        return jsonify({'pago': False, 'message': 'Erro interno do servidor'}), 500
+        return jsonify({'pago': False, 'message': str(e)}), 500
 
 @app.route('/pagamento-confirmado')
 def pagamento_confirmado():

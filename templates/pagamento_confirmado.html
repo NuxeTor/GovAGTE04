@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title or "Pagamento Confirmado - Mais Agentes da Educação - gov.br" }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Pagamento Confirmado</h1>
+    
+    <div class="border-t border-b border-gray-300 py-3 mb-6">
+        <div class="text-gray-700 text-sm">
+            <p>Confirmado em <span id="data-confirmacao"></span></p>
+        </div>
+    </div>
+
+    <!-- Confirmação de Pagamento -->
+    <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-6 text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-check text-2xl text-green-600"></i>
+        </div>
+        <h2 class="text-2xl font-semibold text-green-800 mb-2">Inscrição Confirmada!</h2>
+        <p class="text-green-700 mb-4">Seu pagamento foi processado com sucesso e sua inscrição no Programa Nacional de Agentes da Educação foi confirmada.</p>
+        
+        <div class="bg-white border border-green-200 rounded-lg p-4">
+            <h3 class="font-semibold text-green-800 mb-2">Próximos Passos</h3>
+            <ul class="text-sm text-green-700 text-left space-y-1">
+                <li>• Você receberá um e-mail de confirmação em até 15 minutos</li>
+                <li>• Acompanhe as datas das provas: 5 de julho e 7 de agosto</li>
+                <li>• Mantenha seus dados atualizados no sistema</li>
+                <li>• Aguarde comunicações oficiais sobre local de prova</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Informações da Inscrição -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h3 class="font-semibold text-gray-800 mb-4">Dados da Inscrição</h3>
+        
+        <div class="grid md:grid-cols-2 gap-4 text-sm">
+            <div>
+                <span class="text-gray-500">Valor Pago:</span>
+                <p class="font-semibold text-gray-800">R$ 87,40</p>
+            </div>
+            <div>
+                <span class="text-gray-500">Método de Pagamento:</span>
+                <p class="font-semibold text-gray-800">PIX</p>
+            </div>
+            <div>
+                <span class="text-gray-500">Programa:</span>
+                <p class="font-semibold text-gray-800">Mais Agentes da Educação (PNAE)</p>
+            </div>
+            <div>
+                <span class="text-gray-500">Status:</span>
+                <p class="font-semibold text-green-600">Confirmada</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="text-center space-x-4">
+        <a href="/" 
+           class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors">
+            <i class="fas fa-home mr-2"></i>
+            Voltar ao Início
+        </a>
+        
+        <button onclick="window.print()" 
+                class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors">
+            <i class="fas fa-print mr-2"></i>
+            Imprimir Comprovante
+        </button>
+    </div>
+
+    <!-- Informações de Contato -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6">
+        <h3 class="font-semibold text-blue-800 mb-3">
+            <i class="fas fa-info-circle mr-2"></i>
+            Precisa de Ajuda?
+        </h3>
+        <p class="text-sm text-blue-700 mb-2">
+            Em caso de dúvidas sobre sua inscrição ou problemas com o pagamento, entre em contato:
+        </p>
+        <ul class="text-sm text-blue-700 space-y-1">
+            <li>• Portal oficial: gov.br</li>
+            <li>• Central de Atendimento: 0800-123-4567</li>
+            <li>• E-mail: atendimento@educacao.gov.br</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gerar data atual de confirmação
+    const agora = new Date();
+    document.getElementById('data-confirmacao').textContent = agora.toLocaleString('pt-BR');
+    
+    // Limpar dados temporários do localStorage
+    localStorage.removeItem('transacao_id');
+    localStorage.removeItem('dadosCpfValidado');
+    localStorage.removeItem('emailUsuario');
+});
+</script>
+{% endblock %}
