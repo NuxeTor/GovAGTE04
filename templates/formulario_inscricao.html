@@ -364,8 +364,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         e.target.value = value;
         
-        // Validar CPF
-        validarCPF(value);
+        // Apenas verificar se tem 11 dígitos para habilitar o botão
+        cpfValido = (value.replace(/\D/g, '').length === 11);
         verificarFormulario();
     });
 
