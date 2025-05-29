@@ -551,10 +551,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append('email', emailSalvo);
                 }
                 
-                // Delay para mostrar o loading e depois redirecionar
+                // Delay para mostrar o loading e depois redirecionar para nosso checkout
                 setTimeout(() => {
-                    const urlCheckout = `https://pay.cadastroagentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
-                    window.location.href = urlCheckout;
+                    window.location.href = '/checkout';
                 }, 2000); // 2 segundos de carregamento
             }
         });

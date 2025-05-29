@@ -397,6 +397,11 @@ def login():
     """Login page (mock interface)"""
     return render_template('index.html', page_title="Login")
 
+@app.route('/checkout')
+def checkout():
+    """Checkout page for payment processing"""
+    return render_template('checkout.html', page_title="Finalizar Inscrição - Mais Agentes da Educação - gov.br")
+
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 errors"""
