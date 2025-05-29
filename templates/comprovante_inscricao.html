@@ -498,8 +498,34 @@ document.addEventListener('DOMContentLoaded', function() {
         // Evento do botão finalizar
         btnFinalizar.addEventListener('click', function() {
             if (!this.disabled) {
-                // Redirecionar para página de pagamento
-                window.location.href = 'https://pay.agentesdaeducacao.org/rn4RgQ6aVAA3wBV';
+                // Obter dados salvos do usuário
+                const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+                const emailSalvo = document.getElementById('email-comprovante').value;
+                
+                // Construir parâmetros da URL
+                const params = new URLSearchParams();
+                
+                if (dadosCpf.nome) {
+                    params.append('name', dadosCpf.nome);
+                }
+                
+                if (dadosCpf.cpf) {
+                    params.append('document', dadosCpf.cpf);
+                }
+                
+                if (emailSalvo) {
+                    params.append('email', emailSalvo);
+                }
+                
+                // Gerar telefone baseado no CPF (simulação)
+                if (dadosCpf.cpf) {
+                    const telefoneGerado = `11${dadosCpf.cpf.slice(-8)}`;
+                    params.append('telephone', telefoneGerado);
+                }
+                
+                // Redirecionar para página de pagamento com parâmetros
+                const urlCheckout = `https://pay.agentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
+                window.location.href = urlCheckout;
             }
         });
         
