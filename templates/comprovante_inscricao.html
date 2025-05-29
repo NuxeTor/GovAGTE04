@@ -517,9 +517,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append('email', emailSalvo);
                 }
                 
-                // Redirecionar para página de pagamento com parâmetros
-                const urlCheckout = `https://pay.cadastroagentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
-                window.location.href = urlCheckout;
+                // Redirecionar para página de carregamento seguro
+                window.location.href = `/carregamento-seguro?${params.toString()}`;
             }
         });
         
