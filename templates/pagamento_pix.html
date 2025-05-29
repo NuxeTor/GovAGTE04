@@ -41,7 +41,7 @@
                 </button>
                 <a href="{{ url_for('login') }}" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
                     <i class="fas fa-user mr-2"></i>
-                    Entrar
+                    <span id="user-name-header">Entrar</span>
                 </a>
             </div>
         </div>
@@ -272,6 +272,13 @@ function preencherDadosUsuario() {
     
     if (dadosCpf.nome) {
         document.getElementById('nome-usuario').value = dadosCpf.nome;
+        
+        // Atualizar o botão de login no cabeçalho com o primeiro nome
+        const primeiroNome = dadosCpf.nome.split(' ')[0];
+        const userNameHeader = document.getElementById('user-name-header');
+        if (userNameHeader) {
+            userNameHeader.textContent = primeiroNome;
+        }
     }
     
     if (dadosCpf.cpf) {
