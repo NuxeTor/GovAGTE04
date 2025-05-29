@@ -13,6 +13,27 @@
         </div>
     </div>
 
+    <!-- Dados do Usuário -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Confirme seus dados</h2>
+        
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                <input type="text" id="nome-usuario" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+                <input type="text" id="cpf-usuario" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <input type="email" id="email-usuario" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com">
+        </div>
+    </div>
+
     <!-- Informações do Pagamento -->
     <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">
@@ -87,6 +108,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const agora = new Date();
     document.getElementById('data-geracao').textContent = agora.toLocaleString('pt-BR');
     
+    // Preencher dados do usuário
+    preencherDadosUsuario();
+    
     // Copiar código PIX
     document.getElementById('copy-pix-btn').addEventListener('click', function() {
         const pixCode = document.getElementById('pix-code');
@@ -110,18 +134,46 @@ document.addEventListener('DOMContentLoaded', function() {
         verificarPagamento();
     });
     
-    // Gerar PIX automaticamente ao carregar a página
-    gerarPIX();
+    // Gerar PIX quando o email for preenchido
+    document.getElementById('email-usuario').addEventListener('blur', function() {
+        if (this.value && this.value.includes('@')) {
+            gerarPIX();
+        }
+    });
     
     // Verificar pagamento automaticamente a cada 10 segundos
     setInterval(verificarPagamento, 10000);
 });
 
+function preencherDadosUsuario() {
+    const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+    
+    if (dadosCpf.nome) {
+        document.getElementById('nome-usuario').value = dadosCpf.nome;
+    }
+    
+    if (dadosCpf.cpf) {
+        // Formatar CPF
+        const cpfFormatado = dadosCpf.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        document.getElementById('cpf-usuario').value = cpfFormatado;
+    }
+    
+    // Tentar buscar email salvo
+    const emailSalvo = localStorage.getItem('emailUsuario') || sessionStorage.getItem('emailUsuario') || '';
+    if (emailSalvo) {
+        document.getElementById('email-usuario').value = emailSalvo;
+        // Gerar PIX automaticamente se tiver todos os dados
+        setTimeout(() => gerarPIX(), 1000);
+    }
+}
+
 function gerarPIX() {
     // Obter dados do usuário do localStorage
     const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
-    const emailInput = document.getElementById('email-comprovante');
-    const emailSalvo = emailInput ? emailInput.value : localStorage.getItem('emailUsuario') || '';
+    
+    // Buscar email do campo de input
+    const emailInput = document.getElementById('email-usuario');
+    const emailSalvo = emailInput ? emailInput.value : '';
     
     // Validar se temos os dados necessários
     console.log('Dados do localStorage:', {
