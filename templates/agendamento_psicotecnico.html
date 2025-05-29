@@ -347,8 +347,8 @@
             }
         }
 
-        // Function to confirm data and redirect
-        function confirmarDados() {
+        // Make function available globally
+        window.confirmarDados = function() {
             // Show loading popup
             const loadingHTML = `
                 <div id="loading-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -401,7 +401,7 @@
             setTimeout(function() {
                 window.location.href = '/confirmacao-agendamento';
             }, 3000);
-        }
+        };
     });
     </script>
     
