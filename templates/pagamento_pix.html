@@ -124,7 +124,17 @@ function gerarPIX() {
     const emailSalvo = emailInput ? emailInput.value : localStorage.getItem('emailUsuario') || '';
     
     // Validar se temos os dados necessários
+    console.log('Dados do localStorage:', {
+        dadosCpf: dadosCpf,
+        email: emailSalvo
+    });
+    
     if (!dadosCpf.nome || !dadosCpf.cpf || !emailSalvo) {
+        console.error('Dados faltando:', {
+            nome: dadosCpf.nome,
+            cpf: dadosCpf.cpf,
+            email: emailSalvo
+        });
         mostrarErro('Dados do usuário não encontrados. Refaça o processo de inscrição.');
         return;
     }
