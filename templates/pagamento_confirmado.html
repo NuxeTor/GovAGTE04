@@ -121,7 +121,7 @@
 </div>
 
 <!-- Modal de Aviso Importante -->
-<div id="avisoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+<div id="avisoModal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50" style="backdrop-filter: blur(5px);">
     <div class="bg-white rounded-lg p-8 w-full max-w-md mx-0 sm:mx-4">
         <div class="text-center mb-6">
             <div class="flex items-center justify-center mb-4">
@@ -168,7 +168,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar modal após 3 segundos
     setTimeout(function() {
         document.getElementById('avisoModal').classList.remove('hidden');
+        // Desabilitar scroll da página de fundo
+        document.body.style.overflow = 'hidden';
+        // Prevenir fechamento com ESC
+        document.addEventListener('keydown', preventEscape);
     }, 3000);
+    
+    // Função para prevenir fechamento do modal
+    function preventEscape(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+        }
+    }
     
     // Gerenciar checkbox e botão
     const checkbox = document.getElementById('concordoTermos');
