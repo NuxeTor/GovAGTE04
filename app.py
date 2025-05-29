@@ -397,11 +397,6 @@ def login():
     """Login page (mock interface)"""
     return render_template('index.html', page_title="Login")
 
-@app.route('/checkout')
-def checkout():
-    """Checkout page"""
-    return render_template('checkout.html')
-
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 errors"""
