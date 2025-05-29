@@ -534,6 +534,11 @@ def teste_pix():
             'teste': True
         }), 500
 
+@app.route('/registro-sgte')
+def registro_sgte():
+    """SGTE Registration page"""
+    return render_template('registro_sgte.html', page_title="SGTE - Sistema de Gestão do Trabalho e da Educação")
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
