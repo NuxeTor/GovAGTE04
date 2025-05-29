@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento para Avaliação Psicotécnica - gov.br</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <!-- Top bar with security indicators -->
+        <div class="bg-green-600 text-white text-xs py-1">
+            <div class="container mx-auto px-6 flex justify-between items-center">
+                <span class="flex items-center">
+                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Site seguro • Certificado SSL válido
+                </span>
+                <span>Ministério da Educação - Governo Federal</span>
+            </div>
+        </div>
+
+        <!-- Main header -->
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-4">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                         alt="Government of Brazil logo showing gov.br in blue text" 
+                         class="w-24">
+                    <div class="border-l border-gray-300 pl-4">
+                        <h1 class="text-lg font-semibold text-gray-800">Ministério da Educação</h1>
+                        <p class="text-sm text-gray-600">Governo Federal</p>
+                    </div>
+                </div>
+
+                <!-- Login button -->
+                <div class="flex items-center space-x-4">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span id="user-greeting">Entrar com gov.br</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="px-4 py-4">
+        <div class="bg-white border border-gray-200 rounded-lg mx-2 my-2 p-6">
+            <!-- Title Section -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-blue-600 mb-2">
+                    Agendamento para Avaliação Psicotécnica
+                </h1>
+                <p class="text-lg text-gray-700">
+                    Programa Mais Agentes da Educação
+                </p>
+            </div>
+
+            <!-- Success Message -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+                <div class="flex items-center mb-3">
+                    <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <h2 class="text-lg font-semibold text-green-800">Dados Confirmados com Sucesso!</h2>
+                </div>
+                <p class="text-green-700">
+                    Seus dados foram confirmados e enviados para processamento. Você receberá as instruções para o agendamento da avaliação psicotécnica em breve.
+                </p>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-blue-600 mb-4">Próximos Passos:</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-4 mt-1">
+                            1
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Aguarde o Contato</h4>
+                            <p class="text-gray-700">Em até 2 dias úteis, você receberá um e-mail com as instruções detalhadas para o agendamento da avaliação psicotécnica.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-4 mt-1">
+                            2
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Agende na UBS</h4>
+                            <p class="text-gray-700">Entre em contato com a UBS (Unidade Básica de Saúde) mais próxima do seu endereço para agendar a avaliação psicotécnica.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-4 mt-1">
+                            3
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Realize o Exame</h4>
+                            <p class="text-gray-700">Compareça na data agendada para realizar a avaliação psicotécnica e obter o laudo necessário.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-4 mt-1">
+                            4
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Apresente na Prova</h4>
+                            <p class="text-gray-700"><strong>Apresente o laudo no dia da prova, sob pena de desclassificação.</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <h3 class="text-lg font-bold text-orange-600 mb-3">
+                    IMPORTANTE
+                </h3>
+                <ul class="text-gray-700 space-y-2">
+                    <li class="flex items-start">
+                        <span class="text-orange-600 mr-2">•</span>
+                        Mantenha seus dados de contato atualizados para receber as comunicações.
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-orange-600 mr-2">•</span>
+                        O agendamento da avaliação psicotécnica é de sua responsabilidade.
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-orange-600 mr-2">•</span>
+                        O laudo psicotécnico é documento obrigatório para participar da prova.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center space-y-4">
+                <button onclick="window.print()" 
+                        class="bg-green-600 text-white px-8 py-3 rounded-md font-medium hover:bg-green-700 transition-colors mr-4">
+                    Imprimir Comprovante
+                </button>
+                <br>
+                <a href="/" 
+                   class="bg-blue-600 text-white px-8 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors inline-block">
+                    Voltar ao Início
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0a1f44] text-white">
+        <div class="container mx-auto px-6 py-4">
+            <!-- Logo -->
+            <div class="py-6">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                     alt="Government of Brazil logo showing gov.br in white text" 
+                     class="w-40">
+            </div>
+
+            <!-- Footer Links -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 py-8 border-t border-blue-900">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Acesso à Informação</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Institucional</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Ações e Programas</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Participação Social</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Auditorias</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Serviços</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Consulta de Documentos</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Bolsas e Auxílios</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Sistema SGTE</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Atendimento</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Canais</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Ouvidoria</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Fale Conosco</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Transparência</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Dados Abertos</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <span class="sr-only">Facebook</span>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <span class="sr-only">Twitter</span>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-blue-900 pt-8 pb-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-300 text-sm">
+                        © 2025 Ministério da Educação. Governo Federal do Brasil.
+                    </p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-300 hover:text-white text-sm transition-colors">Política de Privacidade</a>
+                        <a href="#" class="text-gray-300 hover:text-white text-sm transition-colors">Termos de Uso</a>
+                        <a href="#" class="text-gray-300 hover:text-white text-sm transition-colors">Acessibilidade</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Load user data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get user name from localStorage
+            const userName = localStorage.getItem('user_name');
+            if (userName) {
+                const userGreeting = document.getElementById('user-greeting');
+                if (userGreeting) {
+                    const firstName = userName.split(' ')[0];
+                    userGreeting.textContent = `Olá, ${firstName}`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

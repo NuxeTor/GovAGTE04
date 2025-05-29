@@ -161,7 +161,8 @@
             <!-- Botão Confirmar -->
             <div class="text-center">
                 <button id="confirmar-dados" 
-                        class="bg-blue-600 text-white px-8 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors">
+                        class="bg-blue-600 text-white px-8 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
+                        onclick="confirmarDados()">
                     Confirmar Dados
                 </button>
             </div>
@@ -346,24 +347,61 @@
             }
         }
 
-        // Botão confirmar dados
-        document.getElementById('confirmar-dados').addEventListener('click', function() {
-            // Verificar se todos os dados estão preenchidos
-            const campos = ['nome-completo', 'cpf', 'email', 'telefone', 'cep', 'bairro', 'cidade', 'uf'];
-            let todosPreenchidos = true;
+        // Function to confirm data and redirect
+        function confirmarDados() {
+            // Show loading popup
+            const loadingHTML = `
+                <div id="loading-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+                        <div class="mb-4">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                                 alt="Gov.br" class="w-32 mx-auto mb-4">
+                        </div>
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Processando Dados</h3>
+                        <p class="text-gray-600 mb-4">Confirmando informações para agendamento...</p>
+                        <div class="text-xs text-gray-500">
+                            <p>🔒 Conexão segura certificada</p>
+                            <p>📋 Dados protegidos pela LGPD</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', loadingHTML);
+
+            // Save updated data to localStorage
+            const nomeCompleto = document.getElementById('nome-completo').value;
+            const cpf = document.getElementById('cpf').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const cep = document.getElementById('cep').value;
+            const bairro = document.getElementById('bairro').value;
+            const cidade = document.getElementById('cidade').value;
+            const uf = document.getElementById('uf').value;
+
+            // Update localStorage with confirmed data
+            if (nomeCompleto) localStorage.setItem('user_name', nomeCompleto);
+            if (email) localStorage.setItem('user_email', email);
+            if (telefone) localStorage.setItem('user_phone', telefone);
             
-            campos.forEach(function(campo) {
-                if (!document.getElementById(campo).value.trim()) {
-                    todosPreenchidos = false;
-                }
-            });
-            
-            if (todosPreenchidos) {
-                alert('Dados confirmados com sucesso! Você receberá mais informações sobre o agendamento do exame psicotécnico em breve.');
-            } else {
-                alert('Alguns dados estão faltando. Por favor, complete o processo de cadastro antes de confirmar.');
-            }
-        });
+            const dadosConfirmados = {
+                nome: nomeCompleto,
+                cpf: cpf,
+                email: email,
+                telefone: telefone,
+                cep: cep,
+                bairro: bairro,
+                cidade: cidade,
+                uf: uf,
+                dataConfirmacao: new Date().toISOString()
+            };
+            localStorage.setItem('dadosConfirmadosAgendamento', JSON.stringify(dadosConfirmados));
+
+            // Simulate processing time and redirect
+            setTimeout(function() {
+                window.location.href = '/confirmacao-agendamento';
+            }, 3000);
+        }
     });
     </script>
     
