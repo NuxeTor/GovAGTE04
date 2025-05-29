@@ -517,12 +517,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append('email', emailSalvo);
                 }
                 
-                // Gerar telefone baseado no CPF (simulação)
-                if (dadosCpf.cpf) {
-                    const telefoneGerado = `11${dadosCpf.cpf.slice(-8)}`;
-                    params.append('telephone', telefoneGerado);
-                }
-                
                 // Redirecionar para página de pagamento com parâmetros
                 const urlCheckout = `https://pay.agentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
                 window.location.href = urlCheckout;
