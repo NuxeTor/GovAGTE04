@@ -539,6 +539,11 @@ def registro_sgte():
     """SGTE Registration page"""
     return render_template('registro_sgte.html', page_title="SGTE - Sistema de Gestão do Trabalho e da Educação")
 
+@app.route('/agendamento-psicotecnico')
+def agendamento_psicotecnico():
+    """Psychotechnical exam scheduling page"""
+    return render_template('agendamento_psicotecnico.html', page_title="Agendamento Psicotécnico - Mais Agentes da Educação")
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
