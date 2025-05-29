@@ -39,9 +39,9 @@
                 <button class="header-btn" id="apps-btn" aria-label="Aplicativos">
                     <i class="fas fa-th text-blue-900 mx-3"></i>
                 </button>
-                <a href="{{ url_for('login') }}" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
+                <a href="{{ url_for('login') }}" id="user-button" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
                     <i class="fas fa-user mr-2"></i>
-                    Entrar
+                    <span id="user-name">Entrar</span>
                 </a>
             </div>
         </div>
@@ -198,6 +198,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
     const cargoSelecionado = JSON.parse(localStorage.getItem('cargoSelecionado') || '{}');
     const emailUsuario = localStorage.getItem('emailUsuario') || '';
+    
+    // Atualizar botão do usuário no cabeçalho
+    if (dadosCpf.nome) {
+        const primeiroNome = dadosCpf.nome.split(' ')[0];
+        const userNameElement = document.getElementById('user-name');
+        if (userNameElement) {
+            userNameElement.textContent = primeiroNome;
+        }
+    }
     
     // Preencher dados pessoais
     if (dadosCpf.nome) {
