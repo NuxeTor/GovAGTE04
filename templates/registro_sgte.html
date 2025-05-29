@@ -226,12 +226,26 @@
     <!-- JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Preencher email do usuário - verificar múltiplas fontes
-        const emailSalvo = localStorage.getItem('emailUsuario') || 
-                          sessionStorage.getItem('emailUsuario') || 
-                          localStorage.getItem('email') || '';
+        // Preencher email do usuário - verificar múltiplas fontes e dados completos
+        let emailSalvo = localStorage.getItem('emailUsuario') || 
+                        sessionStorage.getItem('emailUsuario') || 
+                        localStorage.getItem('email') || '';
+        
+        // Se não encontrou email diretamente, verificar nos dados completos
+        if (!emailSalvo) {
+            const dadosCompletos = localStorage.getItem('dadosInscricao');
+            if (dadosCompletos) {
+                try {
+                    const dados = JSON.parse(dadosCompletos);
+                    emailSalvo = dados.email || '';
+                } catch(e) {
+                    console.log('Erro ao ler dados de inscrição:', e);
+                }
+            }
+        }
         
         console.log('Email encontrado:', emailSalvo);
+        console.log('Todos os dados no localStorage:', Object.keys(localStorage));
         
         if (emailSalvo) {
             const emailInput = document.getElementById('email');
