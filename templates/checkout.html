@@ -3,6 +3,15 @@
 {% block title %}Checkout - Mais Agentes da Educação - gov.br{% endblock %}
 
 {% block content %}
+<script>
+// Alterar o texto do cabeçalho apenas nesta página
+document.addEventListener('DOMContentLoaded', function() {
+    const headerText = document.querySelector('.text-gray-800.text-sm.font-medium');
+    if (headerText && headerText.textContent.includes('Fundo Nacional de Desenvolvimento da Educação')) {
+        headerText.textContent = 'Ministério da Educação';
+    }
+});
+</script>
 <div class="px-4 py-4">
     <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Finalização da Inscrição</h1>
     
