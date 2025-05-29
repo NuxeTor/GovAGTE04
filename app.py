@@ -397,11 +397,6 @@ def login():
     """Login page (mock interface)"""
     return render_template('index.html', page_title="Login")
 
-@app.route('/carregamento-seguro')
-def carregamento_seguro():
-    """Secure loading page"""
-    return render_template('carregamento_seguro.html')
-
 @app.route('/checkout')
 def checkout():
     """Checkout page"""
