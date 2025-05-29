@@ -16,8 +16,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-# Importar a classe da API FOR4 PAYMENTS
-from for4_payments import For4PaymentsAPI, PaymentRequestData
+# FOR4 PAYMENTS API está implementada abaixo
 
 # Create the Flask app
 app = Flask(__name__)
