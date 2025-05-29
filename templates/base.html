@@ -57,7 +57,7 @@
                 <button class="header-btn" id="apps-btn" aria-label="Aplicativos">
                     <i class="fas fa-th text-blue-900 mx-3"></i>
                 </button>
-                <a href="{{ url_for('login') }}" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
+                <a href="{{ url_for('login') }}" id="login-btn" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
                     <i class="fas fa-user mr-2"></i>
                     Entrar
                 </a>
@@ -255,5 +255,27 @@
 
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+    // Função para atualizar o botão de login com o nome do usuário
+    function atualizarBotaoLogin() {
+        const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+        const loginBtn = document.getElementById('login-btn');
+        
+        if (dadosCpf.nome && loginBtn) {
+            const primeiroNome = dadosCpf.nome.split(' ')[0];
+            loginBtn.innerHTML = `<i class="fas fa-user mr-2"></i>${primeiroNome}`;
+            loginBtn.href = '#';
+            loginBtn.classList.remove('hover:bg-blue-800');
+            loginBtn.classList.add('cursor-default');
+        }
+    }
+    
+    // Executar quando a página carregar
+    document.addEventListener('DOMContentLoaded', atualizarBotaoLogin);
+    
+    // Também executar quando localStorage for alterado (para outras abas)
+    window.addEventListener('storage', atualizarBotaoLogin);
+    </script>
 </body>
 </html>
