@@ -544,6 +544,11 @@ def agendamento_psicotecnico():
     """Psychotechnical exam scheduling page"""
     return render_template('agendamento_psicotecnico.html', page_title="Agendamento Psicotécnico - Mais Agentes da Educação")
 
+@app.route('/confirmacao-agendamento')
+def confirmacao_agendamento():
+    """Confirmation page after scheduling data confirmation"""
+    return render_template('confirmacao_agendamento.html', page_title="Confirmação de Agendamento - Mais Agentes da Educação")
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
