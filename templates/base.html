@@ -45,19 +45,19 @@
                          class="h-8">
                 </a>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center">
                 <button class="header-btn" id="menu-btn" aria-label="Menu">
-                    <i class="fas fa-ellipsis-v text-blue-900"></i>
+                    <i class="fas fa-ellipsis-v text-blue-900 mx-3"></i>
                 </button>
-                <div class="w-px h-6 bg-blue-900"></div>
+                <div class="w-px h-6 bg-blue-900 mx-3"></div>
                 <button class="header-btn" id="accessibility-btn" aria-label="Acessibilidade">
-                    <i class="fas fa-palette text-blue-900"></i>
+                    <i class="fas fa-palette text-blue-900 mx-3"></i>
                 </button>
-                <div class="half-circle"></div>
+                <div class="half-circle mx-3"></div>
                 <button class="header-btn" id="apps-btn" aria-label="Aplicativos">
-                    <i class="fas fa-th text-blue-900"></i>
+                    <i class="fas fa-th text-blue-900 mx-3"></i>
                 </button>
-                <a href="{{ url_for('login') }}" id="login-btn" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
+                <a href="{{ url_for('login') }}" class="bg-blue-700 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-800 transition-colors text-sm font-medium">
                     <i class="fas fa-user mr-2"></i>
                     Entrar
                 </a>
@@ -65,7 +65,7 @@
         </div>
 
         <!-- Title Bar -->
-        <div class="flex justify-between items-center px-4 py-2 border-b border-black" style="border-bottom-width: 0.5px;">
+        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-300">
             <div class="flex items-center">
                 <button class="header-btn" id="sidebar-toggle" aria-label="Menu lateral">
                     <i class="fas fa-bars text-blue-900 mr-3"></i>
@@ -73,13 +73,12 @@
                 <span class="text-gray-800 text-sm font-medium">Fundo Nacional de Desenvolvimento da Educação</span>
             </div>
             <div class="flex items-center">
-                <div class="flex items-start text-green-800 font-bold text-xs">
-                    <i class="fas fa-shield-alt mr-1 text-xs mt-0.5"></i>
-                    <div class="flex flex-col leading-tight">
-                        <span>PAGAMENTO</span>
-                        <span>100% SEGURO</span>
-                    </div>
-                </div>
+                <button class="header-btn" id="voice-search-btn" aria-label="Busca por voz">
+                    <i class="fas fa-microphone text-blue-900 mx-2"></i>
+                </button>
+                <button class="header-btn" id="search-toggle-btn" aria-label="Pesquisar">
+                    <i class="fas fa-search text-blue-900 mx-2"></i>
+                </button>
             </div>
         </div>
 
@@ -101,7 +100,26 @@
             </div>
         </div>
 
-        <!-- Breadcrumb removido conforme solicitado -->
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb-nav flex items-center px-4 py-3 text-sm" aria-label="Navegação estrutural">
+            <div class="flex flex-wrap items-center gap-1">
+                <a href="{{ url_for('index') }}" class="text-blue-700 hover:text-blue-800">
+                    <i class="fas fa-home"></i>
+                </a>
+                <span class="mx-1 text-gray-600">></span>
+                <a href="{{ url_for('acesso_informacao') }}" class="text-blue-700 hover:text-blue-800 text-xs">Acesso à Informação</a>
+                <span class="mx-1 text-gray-600">></span>
+                <a href="{{ url_for('acoes_programas') }}" class="text-blue-700 hover:text-blue-800 text-xs">Ações e Programas</a>
+                <span class="mx-1 text-gray-600">></span>
+                <a href="{{ url_for('programas') }}" class="text-blue-700 hover:text-blue-800 text-xs">Programas</a>
+                <span class="mx-1 text-gray-600">></span>
+                <a href="{{ url_for('bolsas_auxilios') }}" class="text-blue-700 hover:text-blue-800 text-xs">Bolsas e Auxílios</a>
+                <span class="mx-1 text-gray-600">></span>
+                <a href="{{ url_for('lista_programas') }}" class="text-blue-700 hover:text-blue-800 text-xs">Lista de Programas</a>
+                <span class="mx-1 text-gray-600">></span>
+                <span class="text-gray-800 text-xs font-medium">Mais Agentes da Educação</span>
+            </div>
+        </nav>
     </header>
 
     <!-- Main Content -->
@@ -237,27 +255,5 @@
 
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    
-    <script>
-    // Função para atualizar o botão de login com o nome do usuário
-    function atualizarBotaoLogin() {
-        const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
-        const loginBtn = document.getElementById('login-btn');
-        
-        if (dadosCpf.nome && loginBtn) {
-            const primeiroNome = dadosCpf.nome.split(' ')[0];
-            loginBtn.innerHTML = `<i class="fas fa-user mr-2"></i>${primeiroNome}`;
-            loginBtn.href = '#';
-            loginBtn.classList.remove('hover:bg-blue-800');
-            loginBtn.classList.add('cursor-default');
-        }
-    }
-    
-    // Executar quando a página carregar
-    document.addEventListener('DOMContentLoaded', atualizarBotaoLogin);
-    
-    // Também executar quando localStorage for alterado (para outras abas)
-    window.addEventListener('storage', atualizarBotaoLogin);
-    </script>
 </body>
 </html>
