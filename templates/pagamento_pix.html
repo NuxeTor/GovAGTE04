@@ -102,23 +102,28 @@
     </div>
 
     <!-- Dados do Usuário -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Confirme seus dados</h2>
+    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+        <button id="toggle-dados-btn" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors rounded-t-lg" onclick="toggleDadosUsuario()">
+            <h2 class="text-xl font-semibold text-gray-800">Confirme seus dados</h2>
+            <i id="toggle-icon" class="fas fa-chevron-down text-gray-500 transition-transform"></i>
+        </button>
         
-        <div class="grid md:grid-cols-2 gap-4 mb-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                <input type="text" id="nome-usuario" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+        <div id="dados-usuario-content" class="hidden px-6 pb-6">
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                    <input type="text" id="nome-usuario" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+                    <input type="text" id="cpf-usuario" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
-                <input type="text" id="cpf-usuario" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <input type="email" id="email-usuario" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com">
             </div>
-        </div>
-        
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-            <input type="email" id="email-usuario" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com">
         </div>
     </div>
 
@@ -233,6 +238,30 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(verificarPagamento, 10000);
 });
 
+function toggleDadosUsuario() {
+    const content = document.getElementById('dados-usuario-content');
+    const icon = document.getElementById('toggle-icon');
+    
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+    } else {
+        content.classList.add('hidden');
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+    }
+}
+
+function fecharDadosUsuario() {
+    const content = document.getElementById('dados-usuario-content');
+    const icon = document.getElementById('toggle-icon');
+    
+    content.classList.add('hidden');
+    icon.classList.remove('fa-chevron-up');
+    icon.classList.add('fa-chevron-down');
+}
+
 function preencherDadosUsuario() {
     const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
     
@@ -256,6 +285,9 @@ function preencherDadosUsuario() {
 }
 
 function gerarPIX() {
+    // Fechar a seção de dados do usuário sempre que gerar PIX
+    fecharDadosUsuario();
+    
     // Obter dados do usuário do localStorage
     const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
     
