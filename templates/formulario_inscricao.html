@@ -345,17 +345,30 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let cpfValido = false;
 
-    // Aplicar máscara para CPF
-    aplicarMascaraCPF(cpfInput);
-    
-    // Verificar CPF ao digitar
+    // Máscara para CPF
     cpfInput.addEventListener('input', function(e) {
-        const value = e.target.value.replace(/\D/g, '');
-        cpfValido = (value.length === 11 && validarCPF(value));
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length > 11) {
+            value = value.substring(0, 11);
+        }
+        
+        if (value.length > 9) {
+            value = value.substring(0, 3) + '.' + value.substring(3, 6) + '.' + value.substring(6, 9) + '-' + value.substring(9);
+        } else if (value.length > 6) {
+            value = value.substring(0, 3) + '.' + value.substring(3, 6) + '.' + value.substring(6);
+        } else if (value.length > 3) {
+            value = value.substring(0, 3) + '.' + value.substring(3);
+        }
+        
+        e.target.value = value;
+        
+        // Apenas verificar se tem 11 dígitos para habilitar o botão
+        cpfValido = (value.replace(/\D/g, '').length === 11);
         verificarFormulario();
     });
 
-    function validarCPFFormulario(cpf) {
+    function validarCPF(cpf) {
         cpf = cpf.replace(/\D/g, '');
         
         if (cpf.length !== 11) {
