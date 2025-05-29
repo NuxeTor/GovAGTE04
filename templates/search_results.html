@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <div class="flex items-center mb-4">
+        <i class="fas fa-search text-blue-800 mr-2"></i>
+        <h1 class="text-2xl text-blue-800 font-medium">Resultados da Busca</h1>
+    </div>
+    
+    <!-- Search box -->
+    <div class="mb-6">
+        <div class="relative">
+            <input type="text" 
+                   id="search-input" 
+                   placeholder="Digite sua busca..." 
+                   value="{{ query }}"
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200">
+            <button id="search-btn" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800">
+                <i class="fas fa-search text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Search results -->
+    <div id="search-results">
+        {% if query %}
+            <div class="mb-4">
+                <p class="text-gray-600">
+                    <span id="results-count">{{ total_results }}</span> resultado(s) encontrado(s) para "<strong>{{ query }}</strong>"
+                </p>
+            </div>
+            
+            {% if results %}
+                <div class="space-y-4">
+                    {% for result in results %}
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        {% if result.type == 'program' %}
+                                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-2">
+                                                Programa
+                                            </span>
+                                        {% elif result.type == 'position' %}
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-2">
+                                                Vaga
+                                            </span>
+                                        {% endif %}
+                                        
+                                        {% if result.date %}
+                                            <span class="text-gray-500 text-xs">{{ result.date }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <h3 class="text-lg font-semibold text-blue-800 mb-2">
+                                        <a href="{{ result.url }}" class="hover:underline">{{ result.title }}</a>
+                                    </h3>
+                                    
+                                    <p class="text-gray-700 mb-2">{{ result.description }}</p>
+                                    
+                                    <div class="flex flex-wrap gap-2 text-sm text-gray-600">
+                                        {% if result.ministry %}
+                                            <span class="bg-gray-100 px-2 py-1 rounded">{{ result.ministry }}</span>
+                                        {% endif %}
+                                        {% if result.salary %}
+                                            <span class="bg-gray-100 px-2 py-1 rounded">{{ result.salary }}</span>
+                                        {% endif %}
+                                        {% if result.work_type %}
+                                            <span class="bg-gray-100 px-2 py-1 rounded">{{ result.work_type }}</span>
+                                        {% endif %}
+                                        {% if result.workload %}
+                                            <span class="bg-gray-100 px-2 py-1 rounded">{{ result.workload }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <a href="{{ result.url }}" class="ml-4 text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-600 mb-2">Nenhum resultado encontrado</h3>
+                    <p class="text-gray-500">Tente usar palavras-chave diferentes ou mais genéricas.</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-8">
+                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-medium text-gray-600 mb-2">Digite algo para buscar</h3>
+                <p class="text-gray-500">Busque por programas, vagas, tipos de trabalho ou ministérios.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Loading indicator -->
+    <div id="loading-indicator" class="hidden text-center py-8">
+        <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-2"></i>
+        <p class="text-gray-600">Buscando...</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const searchResults = document.getElementById('search-results');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    function performSearch() {
+        const query = searchInput.value.trim();
+        
+        if (query.length === 0) {
+            window.location.href = '/busca';
+            return;
+        }
+        
+        // Show loading
+        searchResults.classList.add('hidden');
+        loadingIndicator.classList.remove('hidden');
+        
+        // Perform AJAX search
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading
+                loadingIndicator.classList.add('hidden');
+                searchResults.classList.remove('hidden');
+                
+                // Update URL without refresh
+                const newUrl = `/busca?q=${encodeURIComponent(query)}`;
+                window.history.pushState({query: query}, '', newUrl);
+                
+                // Update results
+                updateSearchResults(data);
+            })
+            .catch(error => {
+                console.error('Erro na busca:', error);
+                loadingIndicator.classList.add('hidden');
+                searchResults.classList.remove('hidden');
+            });
+    }
+    
+    function updateSearchResults(data) {
+        const resultsCountElement = document.getElementById('results-count');
+        if (resultsCountElement) {
+            resultsCountElement.textContent = data.total_results;
+        }
+        
+        // You would update the results here in a real implementation
+        // For now, we'll reload the page with the new query
+        window.location.href = `/busca?q=${encodeURIComponent(data.query)}`;
+    }
+    
+    // Event listeners
+    searchBtn.addEventListener('click', performSearch);
+    
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    // Auto-search with debounce
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            if (searchInput.value.trim().length >= 3) {
+                performSearch();
+            }
+        }, 500);
+    });
+});
+</script>
+{% endblock %}

