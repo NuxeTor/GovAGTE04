@@ -427,6 +427,119 @@ function mostrarErro(mensagem) {
 
     </main>
 
+    <!-- Footer -->
+    <footer class="footer-govbr bg-gray-800 text-white">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Logo e Informações Principais -->
+            <div class="text-center mb-6">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                     alt="gov.br" 
+                     class="h-8 mx-auto mb-4 filter brightness-0 invert">
+                <p class="text-sm text-gray-300">
+                    Portal oficial do Governo Federal do Brasil
+                </p>
+            </div>
+
+            <!-- Menu Principal do Footer -->
+            <nav class="footer-nav" aria-label="Menu principal do rodapé">
+                <ul class="space-y-2">
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="{{ url_for('index') }}" class="text-sm hover:text-gray-300">PÁGINA INICIAL</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Página Inicial">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="{{ url_for('acoes_programas') }}" class="text-sm hover:text-gray-300">AÇÕES E PROGRAMAS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Ações e Programas">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">EDUCAÇÃO BÁSICA</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Educação Básica">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">ENSINO SUPERIOR</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Ensino Superior">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">PROGRAMAS EDUCACIONAIS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Programas Educacionais">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="{{ url_for('acesso_informacao') }}" class="text-sm hover:text-gray-300">ACESSO À INFORMAÇÃO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Acesso à Informação">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">PORTAL DO PROFESSOR</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Portal do Professor">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">CANAIS DE ATENDIMENTO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Canais de Atendimento">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600 py-3 flex justify-between items-center">
+                        <a href="#" class="text-sm hover:text-gray-300">POLÍTICAS EDUCACIONAIS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Políticas Educacionais">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </li>
+                    <li class="border-t border-gray-600"></li>
+                </ul>
+            </nav>
+
+            <!-- Cookie Settings -->
+            <div class="mt-6 flex items-center">
+                <button id="cookie-settings" class="flex items-center hover:text-gray-300" aria-label="Redefinir configurações de cookies">
+                    <i class="fas fa-cookie-bite text-lg mr-2"></i>
+                    <span class="text-sm">Redefinir Cookies</span>
+                </button>
+            </div>
+
+            <!-- Social Networks -->
+            <div class="redes-e-logos mt-8">
+                <div class="redes-sociais">
+                    <div class="titulo text-sm font-bold mb-4">Redes sociais</div>
+                    <ul class="portal-redes">
+                        <li class="portalredes-youtube portalredes-item">
+                            <a href="#" aria-label="YouTube" class="social-link">
+                                <i class="fab fa-youtube social-icon"></i>
+                            </a>
+                        </li>
+                        <li class="portalredes-facebook portalredes-item">
+                            <a href="#" aria-label="Facebook" class="social-link">
+                                <i class="fab fa-facebook-f social-icon"></i>
+                            </a>
+                        </li>
+                        <li class="portalredes-twitter portalredes-item">
+                            <a href="#" aria-label="Twitter" class="social-link">
+                                <i class="fab fa-twitter social-icon"></i>
+                            </a>
+                        </li>
+                        <li class="portalredes-instagram portalredes-item">
+                            <a href="#" aria-label="Instagram" class="social-link">
+                                <i class="fab fa-instagram social-icon"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- JavaScript do gov.br -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
