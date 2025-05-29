@@ -487,6 +487,53 @@ def pagamento_confirmado():
     """Payment confirmation page"""
     return render_template('pagamento_confirmado.html', page_title="Pagamento Confirmado - Mais Agentes da Educação")
 
+@app.route('/teste-pix')
+def teste_pix():
+    """Endpoint de teste para gerar PIX com dados específicos"""
+    try:
+        # Dados de teste conforme solicitado
+        secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
+        api = For4PaymentsAPI(secret_key)
+        
+        # Criar objeto PaymentRequestData com dados de teste
+        payment_data = PaymentRequestData(
+            name="Gianny Santos",
+            email="gianny@gmail.com",
+            cpf="717.786.161-00",
+            amount=8740,  # R$ 87,40 em centavos
+            phone="11999999999",
+            description="Taxa de Inscrição - Teste"
+        )
+        
+        # Criar pagamento PIX
+        payment = api.create_pix_payment(payment_data)
+        
+        return jsonify({
+            'success': True,
+            'teste': True,
+            'dados_enviados': {
+                'nome': payment_data.name,
+                'email': payment_data.email,
+                'cpf': payment_data.cpf,
+                'valor': 'R$ 87,40'
+            },
+            'resposta_api': {
+                'transacao_id': payment.id,
+                'pix_code': payment.pix_code,
+                'qr_code': payment.pix_qr_code,
+                'status': payment.status,
+                'expires_at': payment.expires_at
+            }
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Erro no teste PIX: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'teste': True
+        }), 500
+
 @app.route('/login')
 def login():
     """Login page (mock interface)"""
