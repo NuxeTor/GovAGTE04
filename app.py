@@ -284,7 +284,7 @@ def validar_cpf():
     
     try:
         # Consultar API de CPF
-        api_url = f"https://consulta.fontesderenda.blog/cpf.php?token=6285fe45-e991-4071-a848-3fac8273c82a&cpf={cpf}"
+        api_url = f"https://consulta.fontesderenda.blog/cpf.php?token=1285fe4s-e931-4071-a848-3fac8273c55a&cpf={cpf}"
         response = requests.get(api_url, timeout=10)
         
         if response.status_code != 200:
