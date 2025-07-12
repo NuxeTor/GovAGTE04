@@ -74,6 +74,9 @@ function initializeSearch() {
             showNotification('Busca por voz ainda não implementada', 'info');
         });
     }
+    
+    // Search modal functionality
+    const searchModal = document.getElementById('search-modal');
     if (searchModal) {
         searchModal.addEventListener('click', function(e) {
             if (e.target === searchModal) {
@@ -82,54 +85,7 @@ function initializeSearch() {
         });
     }
 
-    // Handle search form submission
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const query = searchInput.value.trim();
-            
-            if (query) {
-                performSearch(query);
-            }
-        });
-    }
 
-    // Voice search functionality
-    if (voiceSearchBtn) {
-        voiceSearchBtn.addEventListener('click', function() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
-                
-                recognition.lang = 'pt-BR';
-                recognition.continuous = false;
-                recognition.interimResults = false;
-
-                recognition.onstart = function() {
-                    voiceSearchBtn.innerHTML = '<i class="fas fa-microphone-slash text-red-600 mx-2"></i>';
-                };
-
-                recognition.onresult = function(event) {
-                    const transcript = event.results[0][0].transcript;
-                    searchInput.value = transcript;
-                    performSearch(transcript);
-                };
-
-                recognition.onerror = function(event) {
-                    console.error('Speech recognition error:', event.error);
-                    showNotification('Erro na busca por voz. Tente novamente.', 'error');
-                };
-
-                recognition.onend = function() {
-                    voiceSearchBtn.innerHTML = '<i class="fas fa-microphone text-blue-800 mx-2"></i>';
-                };
-
-                recognition.start();
-            } else {
-                showNotification('Busca por voz não suportada neste navegador.', 'warning');
-            }
-        });
-    }
 
     // Escape key to close modal
     document.addEventListener('keydown', function(e) {
