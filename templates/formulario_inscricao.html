@@ -520,10 +520,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validarCPFEtapa(cpf) {
-        // Chamar API de validação CPF
-        consultarCPF(cpf)
+        // Chamar nossa API interna de validação CPF
+        fetch('/validar-cpf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cpf: cpf })
+        })
+        .then(response => response.json())
         .then(data => {
-            if (data.error || !data.nome) {
+            if (data.error || !data.sucesso) {
                 // Mostrar erro na etapa CPF
                 mostrarErroEtapa('cpf', data.error || 'CPF não encontrado');
                 btnContinuar.innerHTML = 'Continuar <i class="fas fa-arrow-right ml-2"></i>';
@@ -655,12 +662,12 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('dadosCpfValidado', JSON.stringify(window.dadosCpfValidado));
             
             // Preencher dados de autenticação na seção com os dados da API
-            document.getElementById('dado-nome-auth').textContent = window.dadosCpfValidado.nome || 'Nome não informado';
-            document.getElementById('dado-cpf-auth').textContent = formatarCPF(window.dadosCpfValidado.cpf);
-            document.getElementById('dado-mae-auth').textContent = window.dadosCpfValidado.nome_mae || 'Nome da mãe não informado';
+            document.getElementById('dado-nome-auth').textContent = window.dadosCpfValidado.dados_originais?.nome || 'Nome não informado';
+            document.getElementById('dado-cpf-auth').textContent = formatarCPF(window.dadosCpfValidado.dados_originais?.cpf || '');
+            document.getElementById('dado-mae-auth').textContent = window.dadosCpfValidado.dados_originais?.nome_mae || 'Nome da mãe não informado';
             
             // Atualizar cabeçalho com nome do usuário
-            atualizarCabecalho(window.dadosCpfValidado.nome);
+            atualizarCabecalho(window.dadosCpfValidado.dados_originais?.nome || '');
         }
         
         // Atualizar botão principal para "Autenticado"
