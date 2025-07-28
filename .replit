@@ -41,3 +41,6 @@ args = "python app.py"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[agent]
+integrations = ["python_openai==1.0.0", "python_sendgrid==1.0.0"]
