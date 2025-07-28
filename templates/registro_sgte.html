@@ -104,7 +104,7 @@
                            maxlength="4"
                            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                            placeholder="Digite os 4 primeiros dígitos do seu CPF">
-                    <p class="text-xs text-gray-500 mt-1">sua senha padrão são os 4 primeiros dígitos do seu CPF</p>
+                    <p class="text-xs text-gray-500 mt-1" id="senhaHelp">sua senha padrão são os 4 primeiros dígitos do seu CPF</p>
                 </div>
 
                 <button type="submit" 
@@ -257,10 +257,55 @@
             console.log('Nenhum email encontrado no localStorage');
         }
 
-        // Obter CPF para validação da senha
-        const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
-        const cpfCompleto = dadosCpf.cpf || '';
+        // Obter CPF para validação da senha - verificar múltiplas fontes
+        let dadosCpf = {};
+        let cpfCompleto = '';
+        
+        // Tentar diferentes fontes de dados do CPF
+        try {
+            // Primeiro, tentar dadosCpf (usado no formulário principal)
+            const dadosCpfStr = localStorage.getItem('dadosCpf');
+            if (dadosCpfStr) {
+                const dados = JSON.parse(dadosCpfStr);
+                if (dados.dados_originais && dados.dados_originais.cpf) {
+                    cpfCompleto = dados.dados_originais.cpf;
+                }
+            }
+            
+            // Se não encontrou, tentar dadosCpfValidado
+            if (!cpfCompleto) {
+                const dadosCpfValidadoStr = localStorage.getItem('dadosCpfValidado');
+                if (dadosCpfValidadoStr) {
+                    const dados = JSON.parse(dadosCpfValidadoStr);
+                    cpfCompleto = dados.cpf || '';
+                }
+            }
+            
+            // Se ainda não encontrou, tentar dados de inscrição
+            if (!cpfCompleto) {
+                const dadosInscricaoStr = localStorage.getItem('dadosInscricao');
+                if (dadosInscricaoStr) {
+                    const dados = JSON.parse(dadosInscricaoStr);
+                    cpfCompleto = dados.cpf || '';
+                }
+            }
+        } catch(e) {
+            console.log('Erro ao ler dados do CPF:', e);
+        }
+        
         const senhaCorreta = cpfCompleto.substring(0, 4);
+        
+        console.log('CPF encontrado:', cpfCompleto);
+        console.log('4 primeiros dígitos:', senhaCorreta);
+        
+        // Atualizar a dica de senha se encontrou o CPF
+        if (senhaCorreta && senhaCorreta.length === 4) {
+            const senhaHelp = document.getElementById('senhaHelp');
+            if (senhaHelp) {
+                senhaHelp.innerHTML = `sua senha padrão são os 4 primeiros dígitos do seu CPF: <strong>${senhaCorreta}</strong>`;
+                senhaHelp.className = 'text-xs text-blue-600 mt-1 font-medium';
+            }
+        }
 
         // Formulário de login
         document.getElementById('sgteLoginForm').addEventListener('submit', function(e) {
