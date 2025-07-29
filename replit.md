@@ -1,7 +1,7 @@
-# Mais Agentes da Educação - Portal Gov.br
+# Correios Contrata - Portal Gov.br
 
 ## Visão Geral
-Portal governamental brasileiro para o programa "Mais Agentes da Educação" (PNAE), implementando um sistema completo de inscrição e seleção pública para agentes educacionais.
+Portal governamental brasileiro para o programa "Correios Contrata", implementando um sistema completo de inscrição e seleção pública para funcionários dos Correios.
 
 ## Stack Tecnológico
 - **Backend**: Flask (Python)
@@ -17,10 +17,17 @@ Portal governamental brasileiro para o programa "Mais Agentes da Educação" (PN
 - Validação de CPF via API externa
 - Pagamento via PIX
 - Agendamento de exames psicotécnicos
-- Autenticação gov.br simulada
+- Sistema direcionado aos Correios
 - Interface responsiva
 
 ## Alterações Recentes
+**29/07/2025 - Transformação para Tema Correios**
+- Alterado foco do projeto de "Agentes da Educação" para "Correios Contrata"
+- Atualizados títulos, textos e terminologias em todas as páginas
+- Modificados cargos disponíveis para funções dos Correios
+- Alteradas referências institucionais para ECT (Empresa Brasileira de Correios e Telégrafos)
+- Mantida estrutura técnica e funcionalidades do sistema
+
 **12/07/2025 - Integração API de CPF**
 - Implementada integração com API externa para validação de CPF
 - Rota `/validar-cpf` configurada no backend

