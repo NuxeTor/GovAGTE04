@@ -74,9 +74,9 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    """Main page showing the Mais Agentes da Educação program"""
+    """Main page showing the Correios Contrata program"""
     # Get program data from database
-    program = Program.query.filter_by(title='Mais Agentes da Educação').first()
+    program = Program.query.filter_by(title='Correios Contrata').first()
     positions = Position.query.filter_by(program_id=1).all() if program else []
     
     return render_template('index.html', program=program, positions=positions)

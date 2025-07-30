@@ -10,130 +10,130 @@ def populate_database():
         Position.query.delete()
         Program.query.delete()
         
-        # Create PNAE program
-        pnae_program = Program(
-            title='Mais Agentes da Educação',
-            description='Em cumprimento à agenda estratégica de valorização da educação pública e fortalecimento da gestão escolar nos municípios, o Governo Federal, em articulação com as Prefeituras Municipais, institui o Programa Nacional de Agentes da Educação (PNAE). A iniciativa visa preencher, em caráter oficial e regulamentado, vagas para funções de apoio técnico-operacional nas unidades escolares municipais.',
-            ministry='Ministério da Educação',
-            program_type='Educação Básica',
+        # Create Correios Contrata program
+        correios_program = Program(
+            title='Correios Contrata',
+            description='Em cumprimento à modernização dos serviços postais e fortalecimento da infraestrutura logística nacional, a Empresa Brasileira de Correios e Telégrafos (ECT), em articulação com o Governo Federal, institui o Programa Correios Contrata. A iniciativa visa preencher, em caráter oficial e regulamentado, vagas para funções operacionais e administrativas nas unidades dos Correios em todo o território nacional.',
+            ministry='Empresa Brasileira de Correios e Telégrafos - ECT',
+            program_type='Serviços Postais',
             status='active',
             published_date=datetime(2025, 5, 24, 17, 37),
             updated_date=datetime(2025, 5, 24, 18, 29)
         )
         
-        db.session.add(pnae_program)
+        db.session.add(correios_program)
         db.session.flush()  # Get the ID
         
-        # Create positions for PNAE
+        # Create positions for Correios Contrata
         positions = [
             Position(
+                name='Carteiro',
+                description='Responsável pela entrega de correspondências e encomendas, seguindo rotas pré-estabelecidas e mantendo contato direto com clientes.',
+                requirements='Ensino Médio completo; CNH categoria A ou B; Idade mínima de 18 anos; Capacidade física para longas caminhadas.',
+                salary_min=2429.26,
+                salary_max=3230.88,
+                workload_hours=44,
+                work_type='Presencial',
+                program_id=correios_program.id
+            ),
+            Position(
+                name='Atendente Comercial',
+                description='Atendimento ao público nas agências dos Correios, realizando vendas de produtos e serviços postais.',
+                requirements='Ensino Médio completo; Experiência em atendimento ao público; Conhecimentos básicos de informática.',
+                salary_min=2429.26,
+                salary_max=3230.88,
+                workload_hours=44,
+                work_type='Presencial',
+                program_id=correios_program.id
+            ),
+            Position(
+                name='Auxiliar de Triagem e Transbordo',
+                description='Organização e distribuição de correspondências e encomendas nos centros de distribuição dos Correios.',
+                requirements='Ensino Médio completo; Capacidade física para levantamento de peso; Idade mínima de 18 anos.',
+                salary_min=2429.26,
+                salary_max=3230.88,
+                workload_hours=44,
+                work_type='Presencial',
+                program_id=correios_program.id
+            ),
+            Position(
                 name='Auxiliar Administrativo',
-                description='Responsável pelo apoio às atividades administrativas da unidade escolar, incluindo organização de documentos, atendimento ao público e suporte à gestão.',
-                requirements='Ensino Médio completo; Idade mínima de 18 anos; Participação em curso técnico preparatório.',
-                salary_min=2149.35,
-                salary_max=2800.00,
-                workload_hours=40,
+                description='Apoio administrativo nas unidades dos Correios, incluindo controle de documentos e suporte operacional.',
+                requirements='Ensino Médio completo; Conhecimentos avançados de informática; Experiência administrativa.',
+                salary_min=2429.26,
+                salary_max=3230.88,
+                workload_hours=44,
                 work_type='Presencial',
-                program_id=pnae_program.id
+                program_id=correios_program.id
             ),
             Position(
-                name='Auxiliar de Produção Escolar',
-                description='Atua no preparo e distribuição da alimentação escolar, garantindo qualidade nutricional e segurança alimentar aos estudantes.',
-                requirements='Ensino Médio completo; Curso de manipulação de alimentos; Idade mínima de 18 anos.',
-                salary_min=2149.35,
-                salary_max=2600.00,
-                workload_hours=40,
+                name='Operador de Triagem',
+                description='Operação de equipamentos de triagem automatizada e organização de volumes nas unidades operacionais.',
+                requirements='Ensino Médio completo; Curso técnico em logística (desejável); Experiência com equipamentos automatizados.',
+                salary_min=2429.26,
+                salary_max=3230.88,
+                workload_hours=44,
                 work_type='Presencial',
-                program_id=pnae_program.id
+                program_id=correios_program.id
             ),
             Position(
-                name='Auxiliar de Secretaria',
-                description='Presta suporte às atividades da secretaria escolar, incluindo matrícula de alunos, organização de prontuários e atendimento aos responsáveis.',
-                requirements='Ensino Médio completo; Conhecimentos básicos de informática; Idade mínima de 18 anos.',
-                salary_min=2300.00,
-                salary_max=2900.00,
-                workload_hours=40,
+                name='Auxiliar de Serviços Postais',
+                description='Apoio geral nas atividades postais, incluindo embalagem, etiquetagem e controle de qualidade.',
+                requirements='Ensino Médio completo; Disponibilidade para trabalhar em turnos; Idade mínima de 18 anos.',
+                salary_min=2429.26,
+                salary_max=3230.88,
+                workload_hours=44,
                 work_type='Presencial',
-                program_id=pnae_program.id
+                program_id=correios_program.id
             ),
             Position(
-                name='Auxiliar de Segurança Escolar',
-                description='Responsável pela segurança do ambiente escolar, controle de acesso e proteção do patrimônio público.',
-                requirements='Ensino Médio completo; Curso de segurança patrimonial; Idade mínima de 21 anos.',
-                salary_min=2400.00,
-                salary_max=3100.00,
-                workload_hours=40,
-                work_type='Presencial',
-                program_id=pnae_program.id
-            ),
-            Position(
-                name='Auxiliar de Serviços de Limpeza',
-                description='Mantém a limpeza e organização dos espaços escolares, garantindo ambiente saudável e adequado para o aprendizado.',
-                requirements='Ensino Médio completo; Experiência em limpeza institucional; Idade mínima de 18 anos.',
-                salary_min=2149.35,
-                salary_max=2500.00,
-                workload_hours=40,
-                work_type='Presencial',
-                program_id=pnae_program.id
-            ),
-            Position(
-                name='Auxiliar de Cozinha Escolar',
-                description='Atua no preparo de refeições escolares, seguindo cardápios nutricionais e normas de higiene alimentar.',
-                requirements='Ensino Médio completo; Curso de manipulação de alimentos; Idade mínima de 18 anos.',
-                salary_min=2149.35,
-                salary_max=2600.00,
-                workload_hours=40,
-                work_type='Presencial',
-                program_id=pnae_program.id
-            ),
-            Position(
-                name='Técnico em Manutenção Predial',
-                description='Realiza manutenção preventiva e corretiva das instalações escolares, garantindo funcionamento adequado da infraestrutura.',
-                requirements='Ensino Médio completo; Curso técnico em edificações ou manutenção; Idade mínima de 18 anos.',
+                name='Motorista',
+                description='Condução de veículos para transporte de correspondências e encomendas entre agências e centros de distribuição.',
+                requirements='Ensino Médio completo; CNH categoria D; Experiência comprovada como motorista profissional.',
                 salary_min=2800.00,
-                salary_max=3412.32,
-                workload_hours=40,
+                salary_max=3750.00,
+                workload_hours=44,
                 work_type='Presencial',
-                program_id=pnae_program.id
+                program_id=correios_program.id
             ),
             Position(
-                name='Secretário Escolar',
-                description='Coordena as atividades da secretaria escolar, gerencia documentação oficial e presta suporte à gestão pedagógica.',
-                requirements='Ensino Médio completo; Experiência em secretaria escolar; Conhecimentos avançados de informática.',
-                salary_min=2600.00,
-                salary_max=3200.00,
-                workload_hours=30,
-                work_type='Home Office',
-                program_id=pnae_program.id
+                name='Supervisor de Agência',
+                description='Coordenação das atividades operacionais e comerciais das agências dos Correios, supervisionando equipes.',
+                requirements='Ensino Superior completo; Experiência em liderança; Conhecimentos em gestão e vendas.',
+                salary_min=3500.00,
+                salary_max=4800.00,
+                workload_hours=44,
+                work_type='Presencial',
+                program_id=correios_program.id
             )
         ]
         
         for position in positions:
             db.session.add(position)
         
-        # Add other education programs for search diversity
+        # Add other postal service programs for search diversity
         other_programs = [
             Program(
-                title='Programa Nacional do Livro Didático',
-                description='O PNLD tem por objetivo subsidiar o trabalho pedagógico dos professores por meio da distribuição de coleções de livros didáticos aos alunos da educação básica.',
-                ministry='Ministério da Educação',
-                program_type='Material Didático',
+                title='Programa de Modernização dos Correios',
+                description='Iniciativa de modernização da infraestrutura tecnológica e operacional dos Correios para melhor atendimento ao público.',
+                ministry='Empresa Brasileira de Correios e Telégrafos - ECT',
+                program_type='Modernização',
                 status='active',
                 published_date=datetime(2025, 1, 15)
             ),
             Program(
-                title='Programa Mais Alfabetização',
-                description='Programa de apoio à alfabetização, destinado a fortalecer e apoiar as unidades escolares no processo de alfabetização dos estudantes.',
-                ministry='Ministério da Educação',
-                program_type='Alfabetização',
+                title='Programa de Capacitação Profissional',
+                description='Programa de treinamento e capacitação continuada para funcionários dos Correios em novas tecnologias e processos.',
+                ministry='Empresa Brasileira de Correios e Telégrafos - ECT',
+                program_type='Capacitação',
                 status='active',
                 published_date=datetime(2025, 2, 10)
             ),
             Program(
-                title='Programa Nacional de Alimentação Escolar',
-                description='O PNAE garante, por meio da transferência de recursos financeiros, a alimentação escolar dos alunos de toda a educação básica.',
-                ministry='Ministério da Educação',
-                program_type='Alimentação Escolar',
+                title='Programa de Expansão da Rede Postal',
+                description='Expansão da rede de agências e pontos de atendimento dos Correios para melhor cobertura territorial.',
+                ministry='Empresa Brasileira de Correios e Telégrafos - ECT',
+                program_type='Expansão',
                 status='active',
                 published_date=datetime(2025, 3, 5)
             )
@@ -144,8 +144,8 @@ def populate_database():
         
         db.session.commit()
         print("✅ Banco de dados populado com sucesso!")
-        print(f"✅ {len(positions)} vagas criadas para o programa PNAE")
-        print(f"✅ {len(other_programs) + 1} programas educacionais adicionados")
+        print(f"✅ {len(positions)} vagas criadas para o programa Correios Contrata")
+        print(f"✅ {len(other_programs) + 1} programas dos Correios adicionados")
 
 if __name__ == '__main__':
     populate_database()

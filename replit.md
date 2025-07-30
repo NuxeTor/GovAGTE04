@@ -21,6 +21,16 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
+**30/07/2025 - Eliminação Completa de Referências Educacionais**
+- Substituída imagem principal pela nova imagem da agência dos Correios
+- Removidas TODAS referências a "agente da educação", "PNAE", "educação" e termos relacionados
+- Atualizados todos templates HTML com terminologia dos Correios
+- Modificados metadados, títulos e descrições para refletir tema dos Correios
+- Alterados cargos disponíveis: carteiro, atendente comercial, auxiliar de triagem, etc.
+- Atualizado banco de dados com posições específicas dos Correios
+- Corrigidas referências em app.py, populate_database.py e for4_payments.py
+- Alterado sistema SGTE para SGTC (Sistema de Gestão do Trabalho dos Correios)
+
 **29/07/2025 - Transformação para Tema Correios**
 - Alterado foco do projeto de "Agentes da Educação" para "Correios Contrata"
 - Atualizados títulos, textos e terminologias em todas as páginas

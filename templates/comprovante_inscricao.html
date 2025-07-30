@@ -88,11 +88,11 @@
                 <img src="/static/img/gov-logo.svg" alt="Gov.br" class="h-12 mr-4" onerror="this.style.display='none'">
                 <div>
                     <h2 class="text-xl font-bold text-gray-800">GOVERNO FEDERAL</h2>
-                    <p class="text-sm text-gray-600">Ministério da Educação</p>
+                    <p class="text-sm text-gray-600">Correios - ECT</p>
                 </div>
             </div>
             <h3 class="text-lg font-semibold text-green-700 mb-2">COMPROVANTE DE INSCRIÇÃO</h3>
-            <p class="text-sm text-gray-600">Programa Nacional de Agentes da Educação - PNAE</p>
+            <p class="text-sm text-gray-600">Programa Correios Contrata</p>
         </div>
 
         <div class="border-t border-b border-gray-200 py-4 mb-6">
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('nome-mae').textContent = dadosCpf.nome_mae || '-';
             
             // Gerar protocolo baseado no CPF
-            const protocolo = `PNAE-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
+            const protocolo = `CC-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
             document.getElementById('protocolo-inscricao').textContent = protocolo;
             document.getElementById('codigo-validacao').textContent = protocolo;
             

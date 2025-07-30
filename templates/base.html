@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mais Agentes da Educação - gov.br{% endblock %}</title>
+    <title>{% block title %}Correios Contrata - gov.br{% endblock %}</title>
     
     <!-- External CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,13 +14,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     
     <!-- SEO and Meta Tags -->
-    <meta name="description" content="{% block description %}Programa Nacional de Agentes da Educação - Governo Federal{% endblock %}">
-    <meta name="keywords" content="educação, governo federal, agentes educação, PNAE, vagas públicas">
+    <meta name="description" content="{% block description %}Programa Correios Contrata - Governo Federal{% endblock %}">
+    <meta name="keywords" content="correios, logística, carteiro, funcionários públicos, vagas públicas">
     <meta name="author" content="Governo Federal do Brasil">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="{% block og_title %}Mais Agentes da Educação - gov.br{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Programa Nacional de Agentes da Educação do Governo Federal{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Correios Contrata - gov.br{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Programa Correios Contrata do Governo Federal{% endblock %}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
     
@@ -70,7 +70,7 @@
                 <button class="header-btn" id="sidebar-toggle" aria-label="Menu lateral">
                     <i class="fas fa-bars text-blue-900 mr-3"></i>
                 </button>
-                <span class="text-gray-800 text-sm font-medium">Fundo Nacional de Desenvolvimento da Educação</span>
+                <span class="text-gray-800 text-sm font-medium">Empresa Brasileira de Correios e Telégrafos</span>
             </div>
             <div class="flex items-center">
                 <button class="header-btn" id="voice-search-btn" aria-label="Busca por voz">
@@ -117,7 +117,7 @@
                 <span class="mx-1 text-gray-600">></span>
                 <a href="{{ url_for('lista_programas') }}" class="text-blue-700 hover:text-blue-800 text-xs">Lista de Programas</a>
                 <span class="mx-1 text-gray-600">></span>
-                <span class="text-gray-800 text-xs font-medium">Mais Agentes da Educação</span>
+                <span class="text-gray-800 text-xs font-medium">Correios Contrata</span>
             </div>
         </nav>
     </header>
@@ -149,8 +149,8 @@
                         <a href="#" class="text-sm hover:text-gray-300">MEC</a>
                     </li>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
-                        <a href="#" class="text-sm hover:text-gray-300">EDUCAÇÃO BÁSICA</a>
-                        <button class="footer-expand-btn" aria-label="Expandir seção Educação Básica">
+                        <a href="#" class="text-sm hover:text-gray-300">SERVIÇOS POSTAIS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Serviços Postais">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                     </li>
@@ -173,8 +173,8 @@
                         </button>
                     </li>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
-                        <a href="#" class="text-sm hover:text-gray-300">PORTAL DO PROFESSOR</a>
-                        <button class="footer-expand-btn" aria-label="Expandir seção Portal do Professor">
+                        <a href="#" class="text-sm hover:text-gray-300">PORTAL DO FUNCIONÁRIO</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Portal do Funcionário">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                     </li>
