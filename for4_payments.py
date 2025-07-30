@@ -113,7 +113,7 @@ class For4PaymentsAPI:
             "traceable": True,
             "items": [
                 {
-                    "title": data.description or "Taxa de Inscrição - PNAE",
+                    "title": data.description or "Taxa de Inscrição - Correios Contrata",
                     "quantity": 1,
                     "unitPrice": amount,  # Valor em centavos
                     "tangible": False
@@ -129,7 +129,7 @@ class For4PaymentsAPI:
             "utmQuery": "",
             "checkoutUrl": "",
             "referrerUrl": "",
-            "externalId": f"pnae-{int(datetime.now().timestamp())}",
+            "externalId": f"correios-{int(datetime.now().timestamp())}",
             "postbackUrl": "",
             "fingerPrints": []
         }
