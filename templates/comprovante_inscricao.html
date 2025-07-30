@@ -327,14 +327,25 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Dados CPF do localStorage:', dadosCpf);
         console.log('Cargo selecionado do localStorage:', cargoSelecionado);
         
-        // Tentar carregar dados de diferentes fontes do localStorage
-        const dadosUsuario = dadosCpf.dados || dadosCpf;
+        // Acessar os dados reais da estrutura correta
+        let dadosUsuario = null;
+        
+        if (dadosCpf.dados_originais) {
+            // Estrutura nova com dados_originais
+            dadosUsuario = dadosCpf.dados_originais;
+        } else if (dadosCpf.dados) {
+            // Estrutura alternativa
+            dadosUsuario = dadosCpf.dados;
+        } else if (dadosCpf.nome || dadosCpf.cpf) {
+            // Dados diretos no objeto principal
+            dadosUsuario = dadosCpf;
+        }
         
         if (dadosUsuario && (dadosUsuario.nome || dadosUsuario.name)) {
-            const nome = dadosUsuario.nome || dadosUsuario.name || 'Nome não informado';
-            const cpf = dadosUsuario.cpf || 'CPF não informado';
-            const dataNasc = dadosUsuario.data_nascimento || dadosUsuario.dataNascimento || 'Data não informada';
-            const nomeMae = dadosUsuario.nome_mae || dadosUsuario.nomeMae || 'Nome da mãe não informado';
+            const nome = dadosUsuario.nome || dadosUsuario.name;
+            const cpf = dadosUsuario.cpf;
+            const dataNasc = dadosUsuario.data_nascimento || dadosUsuario.dataNascimento;
+            const nomeMae = dadosUsuario.nome_mae || dadosUsuario.nomeMae;
             
             document.getElementById('nome-completo').textContent = nome;
             document.getElementById('cpf-usuario').textContent = formatarCPF(cpf);
@@ -342,36 +353,25 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('nome-mae').textContent = nomeMae;
             
             // Gerar protocolo baseado no CPF
-            const cpfNumeros = cpf.replace(/\D/g, '');
+            const cpfNumeros = cpf ? cpf.replace(/\D/g, '') : '';
             const protocolo = `CC-${new Date().getFullYear()}-${cpfNumeros.slice(-6) || Math.random().toString().slice(-6)}`;
             document.getElementById('protocolo-inscricao').textContent = protocolo;
             document.getElementById('codigo-validacao').textContent = protocolo;
             
             // Atualizar cabeçalho com nome do usuário
             atualizarCabecalhoComprovante(nome);
-        } else {
-            // Se não há dados no localStorage, usar dados de exemplo para teste
-            document.getElementById('nome-completo').textContent = 'USUÁRIO DE TESTE';
-            document.getElementById('cpf-usuario').textContent = '000.000.000-00';
-            document.getElementById('data-nascimento').textContent = '01/01/1990';
-            document.getElementById('nome-mae').textContent = 'MÃE DE TESTE';
-            
-            const protocolo = `CC-${new Date().getFullYear()}-${Math.random().toString().slice(-6)}`;
-            document.getElementById('protocolo-inscricao').textContent = protocolo;
-            document.getElementById('codigo-validacao').textContent = protocolo;
         }
         
         // Carregar dados do cargo selecionado
         if (cargoSelecionado && (cargoSelecionado.nome || cargoSelecionado.cargo)) {
-            const cargo = cargoSelecionado.nome || cargoSelecionado.cargo || 'Cargo não selecionado';
-            const salario = cargoSelecionado.salarioMaximo || cargoSelecionado.salario || 'Salário não informado';
+            let cargo = cargoSelecionado.nome || cargoSelecionado.cargo;
+            // Remover o bullet point se existir
+            cargo = cargo.replace(/^•\s*/, '');
+            
+            const salario = cargoSelecionado.salarioMaximo || cargoSelecionado.salario;
             
             document.getElementById('cargo-pretendido').textContent = cargo;
             document.getElementById('remuneracao').textContent = salario;
-        } else {
-            // Dados de exemplo para teste
-            document.getElementById('cargo-pretendido').textContent = 'Carteiro';
-            document.getElementById('remuneracao').textContent = 'R$ 2.429,26 - R$ 3.230,88';
         }
     }
     
