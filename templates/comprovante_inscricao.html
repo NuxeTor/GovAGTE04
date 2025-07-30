@@ -282,30 +282,96 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar formatação automática do telefone
     configurarFormatacaoTelefone();
     
+    // Funções auxiliares de formatação
+    function formatarCPF(cpf) {
+        if (!cpf) return '-';
+        const cpfLimpo = cpf.replace(/\D/g, '');
+        if (cpfLimpo.length === 11) {
+            return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        }
+        return cpf;
+    }
+    
+    function formatarData(data) {
+        if (!data) return '-';
+        
+        // Se já está no formato brasileiro (dd/mm/yyyy), retornar como está
+        if (data.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+            return data;
+        }
+        
+        // Se está no formato ISO (yyyy-mm-dd), converter
+        if (data.match(/^\d{4}-\d{2}-\d{2}/)) {
+            const partes = data.split(/[-T\s]/)[0].split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+        
+        // Tentar converter outros formatos
+        try {
+            const dataObj = new Date(data);
+            if (!isNaN(dataObj.getTime())) {
+                return dataObj.toLocaleDateString('pt-BR');
+            }
+        } catch (e) {
+            console.error('Erro ao formatar data:', e);
+        }
+        
+        return data;
+    }
+    
     function carregarDadosUsuario() {
         const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
         const cargoSelecionado = JSON.parse(localStorage.getItem('cargoSelecionado') || '{}');
         
-        if (dadosCpf.nome) {
-            document.getElementById('nome-completo').textContent = dadosCpf.nome;
-            document.getElementById('cpf-usuario').textContent = dadosCpf.cpf || '-';
-            document.getElementById('data-nascimento').textContent = dadosCpf.data_nascimento || '-';
-            document.getElementById('nome-mae').textContent = dadosCpf.nome_mae || '-';
+        // Debug - verificar dados no localStorage
+        console.log('Dados CPF do localStorage:', dadosCpf);
+        console.log('Cargo selecionado do localStorage:', cargoSelecionado);
+        
+        // Tentar carregar dados de diferentes fontes do localStorage
+        const dadosUsuario = dadosCpf.dados || dadosCpf;
+        
+        if (dadosUsuario && (dadosUsuario.nome || dadosUsuario.name)) {
+            const nome = dadosUsuario.nome || dadosUsuario.name || 'Nome não informado';
+            const cpf = dadosUsuario.cpf || 'CPF não informado';
+            const dataNasc = dadosUsuario.data_nascimento || dadosUsuario.dataNascimento || 'Data não informada';
+            const nomeMae = dadosUsuario.nome_mae || dadosUsuario.nomeMae || 'Nome da mãe não informado';
+            
+            document.getElementById('nome-completo').textContent = nome;
+            document.getElementById('cpf-usuario').textContent = formatarCPF(cpf);
+            document.getElementById('data-nascimento').textContent = formatarData(dataNasc);
+            document.getElementById('nome-mae').textContent = nomeMae;
             
             // Gerar protocolo baseado no CPF
-            const protocolo = `CC-${new Date().getFullYear()}-${dadosCpf.cpf?.slice(-6) || Math.random().toString().slice(-6)}`;
+            const cpfNumeros = cpf.replace(/\D/g, '');
+            const protocolo = `CC-${new Date().getFullYear()}-${cpfNumeros.slice(-6) || Math.random().toString().slice(-6)}`;
             document.getElementById('protocolo-inscricao').textContent = protocolo;
             document.getElementById('codigo-validacao').textContent = protocolo;
             
             // Atualizar cabeçalho com nome do usuário
-            atualizarCabecalhoComprovante(dadosCpf.nome);
+            atualizarCabecalhoComprovante(nome);
+        } else {
+            // Se não há dados no localStorage, usar dados de exemplo para teste
+            document.getElementById('nome-completo').textContent = 'USUÁRIO DE TESTE';
+            document.getElementById('cpf-usuario').textContent = '000.000.000-00';
+            document.getElementById('data-nascimento').textContent = '01/01/1990';
+            document.getElementById('nome-mae').textContent = 'MÃE DE TESTE';
+            
+            const protocolo = `CC-${new Date().getFullYear()}-${Math.random().toString().slice(-6)}`;
+            document.getElementById('protocolo-inscricao').textContent = protocolo;
+            document.getElementById('codigo-validacao').textContent = protocolo;
         }
         
         // Carregar dados do cargo selecionado
-        if (cargoSelecionado.nome) {
-            document.getElementById('cargo-pretendido').textContent = cargoSelecionado.nome;
-            // Usar sempre o valor máximo da remuneração
-            document.getElementById('remuneracao').textContent = cargoSelecionado.salarioMaximo || cargoSelecionado.salario;
+        if (cargoSelecionado && (cargoSelecionado.nome || cargoSelecionado.cargo)) {
+            const cargo = cargoSelecionado.nome || cargoSelecionado.cargo || 'Cargo não selecionado';
+            const salario = cargoSelecionado.salarioMaximo || cargoSelecionado.salario || 'Salário não informado';
+            
+            document.getElementById('cargo-pretendido').textContent = cargo;
+            document.getElementById('remuneracao').textContent = salario;
+        } else {
+            // Dados de exemplo para teste
+            document.getElementById('cargo-pretendido').textContent = 'Carteiro';
+            document.getElementById('remuneracao').textContent = 'R$ 2.429,26 - R$ 3.230,88';
         }
     }
     
