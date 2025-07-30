@@ -405,15 +405,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function tornarCargoAleatorioIndisponivel() {
-        // Lista de cargos disponíveis (excluindo o Secretário Escolar que já é fixo)
+        // Lista de cargos disponíveis dos Correios
         const cargosDisponiveis = [
-            'auxiliar-admin',
-            'auxiliar-producao', 
-            'auxiliar-secretaria',
-            'auxiliar-seguranca',
-            'auxiliar-limpeza',
-            'auxiliar-cozinha',
-            'tecnico-manutencao'
+            'carteiro',
+            'atendente-comercial', 
+            'auxiliar-triagem',
+            'auxiliar-administrativo',
+            'operador-triagem',
+            'auxiliar-servicos-postais',
+            'motorista'
         ];
         
         // Selecionar um cargo aleatório
@@ -497,14 +497,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Atualizar salários na página
-    document.getElementById('salario-auxiliar-admin').textContent = gerarSalarioAleatorio(3300, 4600);
-    document.getElementById('salario-auxiliar-producao').textContent = gerarSalarioAleatorio(3500, 4800);
-    document.getElementById('salario-auxiliar-secretaria').textContent = gerarSalarioAleatorio(3200, 4500);
-    document.getElementById('salario-auxiliar-seguranca').textContent = gerarSalarioAleatorio(3750, 4985);
-    document.getElementById('salario-auxiliar-limpeza').textContent = gerarSalarioAleatorio(3112, 4325);
-    document.getElementById('salario-auxiliar-cozinha').textContent = gerarSalarioAleatorio(3425, 4756);
-    document.getElementById('salario-tecnico-manutencao').textContent = gerarSalarioAleatorio(4200, 4985);
-    document.getElementById('salario-secretario-escolar').textContent = gerarSalarioAleatorio(4000, 4950);
+    const salarioCarteiro = document.getElementById('salario-carteiro');
+    const salarioAtendente = document.getElementById('salario-atendente-comercial');
+    const salarioTriagem = document.getElementById('salario-auxiliar-triagem');
+    const salarioAdmin = document.getElementById('salario-auxiliar-administrativo');
+    const salarioOperador = document.getElementById('salario-operador-triagem');
+    const salarioServicos = document.getElementById('salario-auxiliar-servicos-postais');
+    const salarioMotorista = document.getElementById('salario-motorista');
+    const salarioSupervisor = document.getElementById('salario-supervisor-agencia');
+    
+    if (salarioCarteiro) salarioCarteiro.textContent = gerarSalarioAleatorio(2429, 3230);
+    if (salarioAtendente) salarioAtendente.textContent = gerarSalarioAleatorio(2429, 3230);
+    if (salarioTriagem) salarioTriagem.textContent = gerarSalarioAleatorio(2429, 3230);
+    if (salarioAdmin) salarioAdmin.textContent = gerarSalarioAleatorio(2429, 3230);
+    if (salarioOperador) salarioOperador.textContent = gerarSalarioAleatorio(2429, 3230);
+    if (salarioServicos) salarioServicos.textContent = gerarSalarioAleatorio(2429, 3230);
+    if (salarioMotorista) salarioMotorista.textContent = gerarSalarioAleatorio(2800, 3750);
+    if (salarioSupervisor) salarioSupervisor.textContent = gerarSalarioAleatorio(3500, 4800);
 
     // Tornar um cargo aleatório indisponível (além do Secretário Escolar que já é fixo)
     tornarCargoAleatorioIndisponivel();
