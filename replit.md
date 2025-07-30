@@ -21,6 +21,15 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
+**30/07/2025 - Atualização da Página de Resultados de Busca**
+- Corrigidos cargos da página /resultados-busca para refletir posições específicas dos Correios
+- Substituídos todos os cargos escolares antigos pelos 8 cargos dos Correios do banco de dados
+- Atualizados salários conforme valores reais: carteiro, atendente comercial (R$ 2.429,26 - R$ 3.230,88)
+- Motorista com faixa salarial diferenciada (R$ 2.800,00 - R$ 3.750,00)
+- Supervisor de Agência como cargo de destaque (R$ 3.500,00 - R$ 4.800,00)
+- Corrigida carga horária para 44h semanais conforme padrão dos Correios
+- Mantidas descrições técnicas precisas para cada função postal
+
 **30/07/2025 - Eliminação Completa de Referências Educacionais**
 - Substituída imagem principal pela nova imagem da agência dos Correios
 - Removidas TODAS referências a "agente da educação", "PNAE", "educação" e termos relacionados
