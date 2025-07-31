@@ -31,7 +31,20 @@
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
 </head>
 <body class="bg-white">
-    {% include 'base.html' %}
+    <!-- Header gov.br -->
+    <header class="bg-blue-900 text-white py-3">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
+                     alt="gov.br" 
+                     class="h-8 mr-4">
+                <h1 class="text-lg font-semibold">Correios Contrata</h1>
+            </div>
+            <div class="text-sm">
+                Portal Oficial do Governo Federal
+            </div>
+        </div>
+    </header>
     
     <main class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Support Header -->
@@ -142,5 +155,13 @@
             </ul>
         </div>
     </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">&copy; 2025 Governo Federal do Brasil - Todos os direitos reservados</p>
+            <p class="text-xs text-gray-400 mt-2">Portal oficial do programa Correios Contrata</p>
+        </div>
+    </footer>
 </body>
 </html>
