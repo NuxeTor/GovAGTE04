@@ -21,6 +21,16 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
+**31/07/2025 - Integração Completa da API Nova Era PIX**
+- Substituída API FOR4 PAYMENTS pela API Nova Era para pagamentos PIX
+- Implementada classe NovaEraAPI em nova_era_api.py com autenticação Basic Auth
+- Configuradas credenciais fornecidas: pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x e sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb
+- Atualizada página /pagamento-pix com geração de QR Code usando biblioteca QRCode.js
+- Implementada funcionalidade "copia e cola" para chave PIX
+- Testada criação de transações PIX - funcionando corretamente (ID: 499608)
+- Rotas /api/gerar-pix e /api/verificar-pagamento atualizadas para Nova Era API
+- Adicionado endpoint /teste-pix para validação da integração
+
 **30/07/2025 - Atualização da Página de Resultados de Busca**
 - Corrigidos cargos da página /resultados-busca para refletir posições específicas dos Correios
 - Substituídos todos os cargos escolares antigos pelos 8 cargos dos Correios do banco de dados

@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
     
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     
@@ -314,15 +317,31 @@ function gerarPIX() {
     
     // Buscar email do campo de input
     const emailInput = document.getElementById('email-usuario');
+    const telefoneInput = document.getElementById('telefone-usuario');
     const emailSalvo = emailInput ? emailInput.value : '';
+    const telefoneSalvo = telefoneInput ? telefoneInput.value : '';
+    
+    // Acessar dados reais da estrutura correta
+    let dadosUsuario = null;
+    if (dadosCpf.dados_originais) {
+        dadosUsuario = dadosCpf.dados_originais;
+    } else if (dadosCpf.dados) {
+        dadosUsuario = dadosCpf.dados;
+    } else {
+        dadosUsuario = dadosCpf;
+    }
     
     // Validar se temos os dados necessários
-    console.log('Dados do localStorage:', {
-        dadosCpf: dadosCpf,
-        email: emailSalvo
+    console.log('Dados para PIX:', {
+        dadosUsuario: dadosUsuario,
+        email: emailSalvo,
+        telefone: telefoneSalvo
     });
     
-    if (!dadosCpf.nome || !dadosCpf.cpf || !emailSalvo) {
+    const nome = dadosUsuario?.nome || dadosUsuario?.name;
+    const cpf = dadosUsuario?.cpf;
+    
+    if (!nome || !cpf || !emailSalvo) {
         console.error('Dados faltando:', {
             nome: dadosCpf.nome,
             cpf: dadosCpf.cpf,
@@ -332,13 +351,14 @@ function gerarPIX() {
         return;
     }
     
-    // Dados para a API
+    // Dados para a API Nova Era
     const dadosPagamento = {
         valor: 87.40,
-        descricao: 'Pack de Criativos Atuais',
-        nome_pagador: dadosCpf.nome,
-        cpf_pagador: dadosCpf.cpf,
-        email_pagador: emailSalvo
+        descricao: 'Taxa de Inscrição - Correios Contrata',
+        nome_pagador: nome,
+        cpf_pagador: cpf,
+        email_pagador: emailSalvo,
+        telefone: telefoneSalvo || '(11) 99999-9999'
     };
     
     fetch('/api/gerar-pix', {
@@ -352,13 +372,40 @@ function gerarPIX() {
     .then(data => {
         console.log('Resposta da API:', data);
         if (data.success) {
-            // Exibir QR Code
-            if (data.qr_code) {
-                document.getElementById('qr-code-container').innerHTML = 
-                    `<img src="${data.qr_code}" alt="QR Code PIX" class="max-w-full max-h-full">`;
-            } else {
-                document.getElementById('qr-code-container').innerHTML = 
-                    '<p class="text-gray-600">QR Code não disponível</p>';
+            // Gerar QR Code usando a biblioteca QRCode.js
+            if (data.pix_code) {
+                const qrContainer = document.getElementById('qr-code-container');
+                qrContainer.innerHTML = ''; // Limpar conteúdo anterior
+                
+                // Criar QR code usando a biblioteca QRCode.js
+                try {
+                    QRCode.toCanvas(qrContainer, data.pix_code, {
+                        width: 200,
+                        height: 200,
+                        colorDark: '#000000',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.M
+                    }, function(error) {
+                        if (error) {
+                            console.error('Erro ao gerar QR Code:', error);
+                            qrContainer.innerHTML = `
+                                <div class="bg-gray-100 p-4 rounded text-center">
+                                    <i class="fas fa-qrcode text-4xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600 text-sm">QR Code disponível no código PIX abaixo</p>
+                                </div>
+                            `;
+                        }
+                    });
+                } catch(e) {
+                    // Fallback se QRCode.js não estiver disponível
+                    qrContainer.innerHTML = `
+                        <div class="bg-blue-100 p-4 rounded text-center">
+                            <i class="fas fa-qrcode text-4xl text-blue-600 mb-2"></i>
+                            <p class="text-blue-800 text-sm font-medium">Use o código PIX abaixo</p>
+                            <p class="text-blue-600 text-xs">Copie e cole em seu app bancário</p>
+                        </div>
+                    `;
+                }
             }
             
             // Exibir código PIX
@@ -371,7 +418,15 @@ function gerarPIX() {
             // Salvar ID da transação para verificação
             if (data.transacao_id) {
                 localStorage.setItem('transacao_id', data.transacao_id);
+                console.log('Transação ID salvo:', data.transacao_id);
             }
+            
+            // Log da resposta para debug
+            console.log('PIX gerado com sucesso:', {
+                transacao_id: data.transacao_id,
+                api_provider: data.api_provider,
+                status: data.status
+            });
         } else {
             console.error('Erro da API:', data.message);
             mostrarErro('Erro ao gerar PIX: ' + data.message);
