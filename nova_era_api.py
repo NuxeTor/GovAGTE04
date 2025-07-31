@@ -6,8 +6,12 @@ from typing import Dict, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime
 
-# Configurar logging - Reduzir logs para melhorar performance
-logging.basicConfig(level=logging.WARNING)
+# Configurar logging para produção
+import os
+if os.environ.get('FLASK_ENV') == 'production':
+    logging.basicConfig(level=logging.ERROR)
+else:
+    logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 @dataclass

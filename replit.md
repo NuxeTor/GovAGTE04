@@ -21,6 +21,21 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
+**31/07/2025 - Otimização Completa para Deploy Heroku**
+- Configurado Procfile otimizado com 3 workers, timeout 120s e preload para melhor performance
+- Implementada configuração avançada do PostgreSQL com pool de conexões otimizado
+- Corrigida compatibilidade da URL do banco (postgres:// para postgresql://)
+- Adicionados arquivos heroku.yml e app.json para deploy automático
+- Cache HTTP implementado com diferentes TTLs: 30min página inicial, 5min para APIs
+- Sistema de fallback para falhas de banco de dados
+- Logs configurados por ambiente (ERROR em produção, WARNING em desenvolvimento)
+- Scripts analytics (Clarity/Facebook) carregam após page load para melhor performance
+- CSS e JavaScript carregam de forma assíncrona
+- Timeouts reduzidos para APIs externas (8s vs 10s anteriormente)
+- Headers de cache e compressão otimizados para CDN
+- Preconnect adicionado para domínios externos críticos
+- Runtime Python fixado em 3.11.10 para consistência
+
 **31/07/2025 - Implementação Completa do Microsoft Clarity e Facebook Pixel**
 - Integrado Microsoft Clarity (ID: snb84erm98) em TODO o projeto para rastreamento completo
 - Adicionado script Clarity no template base (base.html) para cobertura automática global
@@ -104,9 +119,23 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 6. Confirmação Final
 
 ## Configuração de Ambiente
-- DATABASE_URL: Conexão PostgreSQL
-- FOR4_PAYMENTS_SECRET_KEY: Chave API PIX
+### Desenvolvimento
+- DATABASE_URL: Conexão PostgreSQL local
+- FLASK_ENV: development
+
+### Produção (Heroku)
+- DATABASE_URL: PostgreSQL Heroku addon (auto-configurado)
+- FLASK_ENV: production
+- SESSION_SECRET: Chave secreta Flask (gerada automaticamente)
 - TOKEN_CPF_API: Token para validação de CPF
+- NOVA_ERA_SECRET_KEY: Chave secreta API Nova Era PIX
+- NOVA_ERA_PUBLIC_KEY: Chave pública API Nova Era PIX
+
+### Arquivos de Deploy
+- `Procfile`: Configuração Gunicorn otimizada para Heroku
+- `runtime.txt`: Python 3.11.10
+- `heroku.yml`: Build configuration avançada
+- `app.json`: Deploy button e configuração automática
 
 ## Estado Atual
 - Servidor Flask rodando na porta 5000
