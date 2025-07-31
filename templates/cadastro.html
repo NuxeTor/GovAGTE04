@@ -6,12 +6,15 @@
 <!-- CSS personalizado para destaque dos termos -->
 <style>
 .termos-destaque {
-    background-color: #fef2f2 !important;
+    background-color: #fee2e2 !important;
     color: #dc2626 !important;
-    padding: 8px !important;
-    border: 2px solid #dc2626 !important;
-    border-radius: 4px !important;
-    animation: pulse-red 2s infinite;
+    font-weight: bold !important;
+    padding: 12px !important;
+    border: 3px solid #dc2626 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.5) !important;
+    animation: pulse-red 1s infinite !important;
+    display: block !important;
 }
 
 @keyframes pulse-red {
@@ -216,7 +219,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (this.checked) {
             // Remover destaque vermelho se estiver ativo
-            labelTermos.classList.remove('termos-destaque');
+            labelTermos.style.backgroundColor = '';
+            labelTermos.style.color = '';
+            labelTermos.style.border = '';
+            labelTermos.style.padding = '';
+            labelTermos.style.borderRadius = '';
+            labelTermos.style.fontWeight = '';
             
             secaoCep.classList.remove('opacity-50', 'pointer-events-none');
             secaoCep.classList.add('opacity-100');
@@ -258,9 +266,15 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.target.blur();
             
-            // Destacar label em vermelho
+            // Destacar label em vermelho - TESTE DIRETO
             const labelTermos = document.getElementById('label-termos');
-            labelTermos.classList.add('termos-destaque');
+            console.log('FOCUS - Elemento encontrado:', labelTermos);
+            labelTermos.style.backgroundColor = '#fee2e2';
+            labelTermos.style.color = '#dc2626';
+            labelTermos.style.border = '3px solid #dc2626';
+            labelTermos.style.padding = '12px';
+            labelTermos.style.borderRadius = '8px';
+            labelTermos.style.fontWeight = 'bold';
             
             // Scroll para os termos
             document.getElementById('aceitar-termos').scrollIntoView({ 
@@ -273,7 +287,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Remover destaque após 10 segundos
             setTimeout(() => {
-                labelTermos.classList.remove('termos-destaque');
+                labelTermos.style.backgroundColor = '';
+                labelTermos.style.color = '';
+                labelTermos.style.border = '';
+                labelTermos.style.padding = '';
+                labelTermos.style.borderRadius = '';
+                labelTermos.style.fontWeight = '';
             }, 10000);
         }
     });
@@ -283,9 +302,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!aceitarTermos.checked) {
             e.target.value = '';
             
-            // Destacar label em vermelho
+            // Destacar label em vermelho - TESTE DIRETO
             const labelTermos = document.getElementById('label-termos');
-            labelTermos.classList.add('termos-destaque');
+            console.log('INPUT - Elemento encontrado:', labelTermos);
+            labelTermos.style.backgroundColor = '#fee2e2';
+            labelTermos.style.color = '#dc2626';
+            labelTermos.style.border = '3px solid #dc2626';
+            labelTermos.style.padding = '12px';
+            labelTermos.style.borderRadius = '8px';
+            labelTermos.style.fontWeight = 'bold';
             
             // Scroll para os termos
             document.getElementById('aceitar-termos').scrollIntoView({ 
@@ -308,9 +333,15 @@ document.addEventListener('DOMContentLoaded', function() {
     buscarBtn.addEventListener('click', function() {
         // Verificar se os termos foram aceitos
         if (!aceitarTermos.checked) {
-            // Destacar label em vermelho
+            // Destacar label em vermelho - TESTE DIRETO
             const labelTermos = document.getElementById('label-termos');
-            labelTermos.classList.add('termos-destaque');
+            console.log('BUTTON - Elemento encontrado:', labelTermos);
+            labelTermos.style.backgroundColor = '#fee2e2';
+            labelTermos.style.color = '#dc2626';
+            labelTermos.style.border = '3px solid #dc2626';
+            labelTermos.style.padding = '12px';
+            labelTermos.style.borderRadius = '8px';
+            labelTermos.style.fontWeight = 'bold';
             
             // Scroll para os termos
             document.getElementById('aceitar-termos').scrollIntoView({ 
@@ -323,7 +354,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Remover destaque após 10 segundos
             setTimeout(() => {
-                labelTermos.classList.remove('termos-destaque');
+                labelTermos.style.backgroundColor = '';
+                labelTermos.style.color = '';
+                labelTermos.style.border = '';
+                labelTermos.style.padding = '';
+                labelTermos.style.borderRadius = '';
+                labelTermos.style.fontWeight = '';
             }, 10000);
             
             return;
