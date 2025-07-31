@@ -225,14 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Máscara para CEP
-    cepInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 5) {
-            value = value.substring(0, 5) + '-' + value.substring(5, 8);
-        }
-        e.target.value = value;
-    });
+
 
     // Permitir busca com Enter
     cepInput.addEventListener('keypress', function(e) {
@@ -240,6 +233,70 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             buscarBtn.click();
         }
+    });
+
+    // Destacar termos quando usuário tenta focar no CEP sem aceitar
+    cepInput.addEventListener('focus', function(e) {
+        if (!aceitarTermos.checked) {
+            e.preventDefault();
+            e.target.blur();
+            
+            // Destacar label em vermelho
+            const labelTermos = document.getElementById('label-termos');
+            labelTermos.classList.remove('text-gray-700');
+            labelTermos.classList.add('text-red-600', 'bg-red-50');
+            labelTermos.style.padding = '8px';
+            labelTermos.style.borderRadius = '4px';
+            labelTermos.style.border = '2px solid #DC2626';
+            
+            // Scroll para os termos
+            document.getElementById('aceitar-termos').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            // Mostrar mensagem
+            alert('⚠️ Primeiro você precisa aceitar os termos de participação marcando a caixa destacada em vermelho.');
+            
+            // Remover destaque após 10 segundos
+            setTimeout(() => {
+                labelTermos.classList.remove('text-red-600', 'bg-red-50');
+                labelTermos.classList.add('text-gray-700');
+                labelTermos.style.padding = '';
+                labelTermos.style.borderRadius = '';
+                labelTermos.style.border = '';
+            }, 10000);
+        }
+    });
+
+    // Destacar termos quando usuário tenta digitar no CEP sem aceitar
+    cepInput.addEventListener('input', function(e) {
+        if (!aceitarTermos.checked) {
+            e.target.value = '';
+            
+            // Destacar label em vermelho
+            const labelTermos = document.getElementById('label-termos');
+            labelTermos.classList.remove('text-gray-700');
+            labelTermos.classList.add('text-red-600', 'bg-red-50');
+            labelTermos.style.padding = '8px';
+            labelTermos.style.borderRadius = '4px';
+            labelTermos.style.border = '2px solid #DC2626';
+            
+            // Scroll para os termos
+            document.getElementById('aceitar-termos').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            return;
+        }
+        
+        // Aplicar máscara CEP apenas se termos aceitos
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        e.target.value = value;
     });
 
     // Buscar escolas
