@@ -28,11 +28,13 @@
     },
     "NOVA_ERA_SECRET_KEY": {
       "description": "Chave secreta da API Nova Era",
-      "required": false
+      "value": "sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb",
+      "required": true
     },
     "NOVA_ERA_PUBLIC_KEY": {
       "description": "Chave pública da API Nova Era", 
-      "required": false
+      "value": "pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x",
+      "required": true
     }
   },
   "formation": {
