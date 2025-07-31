@@ -6,8 +6,8 @@ from typing import Dict, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime
 
-# Configurar logging
-logging.basicConfig(level=logging.DEBUG)
+# Configurar logging - Reduzir logs para melhorar performance
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 @dataclass

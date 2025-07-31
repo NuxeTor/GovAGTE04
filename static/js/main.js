@@ -3,18 +3,22 @@
  * Handles interactive functionality and user experience
  */
 
-// Wait for DOM to be fully loaded
+// Lightweight initialization - only load what's needed
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Gov.br clone initialized');
     
-    // Initialize all functionality
+    // Initialize only essential functionality first
     initializeSearch();
-    initializeSharing();
-    initializeAccessibility();
     initializeNavigation();
-    initializeCookieSettings();
-    initializeFooterInteractions();
-    initializeLibrasButton();
+    
+    // Load other features after page load to improve speed
+    window.addEventListener('load', function() {
+        initializeSharing();
+        initializeAccessibility();
+        initializeCookieSettings();
+        initializeFooterInteractions();
+        initializeLibrasButton();
+    });
 });
 
 /**
@@ -498,10 +502,10 @@ function showNotification(message, type = 'info') {
         // Show notification
         notification.classList.remove('hidden');
         
-        // Auto-hide after 3 seconds
+        // Auto-hide after 2 seconds (faster)
         setTimeout(() => {
             notification.classList.add('hidden');
-        }, 3000);
+        }, 2000);
     } else {
         // Fallback to console if notification element doesn't exist
         console.log(`[${type.toUpperCase()}] ${message}`);

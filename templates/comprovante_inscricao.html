@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         statusDiv.innerHTML = '<i class="fas fa-info-circle text-blue-600 mr-2"></i>Salvando dados...';
         statusDiv.classList.remove('hidden');
         
-        // Simular salvamento
+        // Simular salvamento - Reduzir delay para melhor UX
         setTimeout(() => {
             let mensagem = '<i class="fas fa-check-circle text-blue-600 mr-2"></i>E-mail salvo: <strong>' + email + '</strong>';
             if (telefone) {
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Mostrar termos após salvar dados
             mostrarTermosFinais(email);
-        }, 1500);
+        }, 800); // Reduzido de 1500ms para 800ms
     }
     
     function configurarFormatacaoTelefone() {
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 behavior: 'smooth', 
                 block: 'center' 
             });
-        }, 500);
+        }, 200); // Reduzido scroll delay para melhor performance
         
         // Eventos dos checkboxes
         const termo1 = document.getElementById('termo-1');
