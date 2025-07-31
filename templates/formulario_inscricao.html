@@ -494,6 +494,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Obter CPF limpo
         const cpfLimpo = cpfInput.value.replace(/\D/g, '');
         
+        // Evento de lead gerado (usuário iniciou inscrição)
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Lead');
+        }
+        
         // Iniciar processo de validação por etapas
         iniciarValidacaoEtapas(cpfLimpo);
     });
