@@ -11,7 +11,7 @@
     <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
     
     <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
@@ -207,8 +207,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM carregado, iniciando página de pagamento PIX');
     
-    // Verificar se QRCode está disponível
-    console.log('QRCode library available:', typeof QRCode !== 'undefined');
+    // Verificar se qrcode está disponível
+    console.log('qrcode library available:', typeof qrcode !== 'undefined');
     
     // Gerar data atual
     const dataGeracaoEl = document.getElementById('data-geracao');
@@ -390,33 +390,34 @@ function gerarPIX() {
                 
                 qrContainer.innerHTML = ''; // Limpar conteúdo anterior
                 
-                // Verificar se a biblioteca QRCode está disponível
-                if (typeof QRCode !== 'undefined') {
+                // Verificar se a biblioteca qrcode está disponível
+                console.log('Tentando gerar QR Code, biblioteca disponível:', typeof qrcode !== 'undefined');
+                if (typeof qrcode !== 'undefined') {
                     try {
-                        // Criar canvas para o QR code
-                        const canvas = document.createElement('canvas');
-                        canvas.className = 'mx-auto border border-gray-300 rounded';
+                        // Criar QR code usando qrcode-generator
+                        const qr = qrcode(0, 'M');
+                        qr.addData(data.pix_code);
+                        qr.make();
                         
-                        QRCode.toCanvas(canvas, data.pix_code, {
-                            width: 200,
-                            height: 200,
-                            margin: 2,
-                            color: {
-                                dark: '#000000',
-                                light: '#ffffff'
-                            },
-                            errorCorrectionLevel: 'M'
-                        }, function(error) {
-                            if (error) {
-                                console.error('Erro ao gerar QR Code:', error);
-                                mostrarFallbackQR(qrContainer);
-                            } else {
-                                console.log('QR Code gerado com sucesso');
-                                qrContainer.appendChild(canvas);
-                            }
-                        });
+                        // Criar a imagem do QR code
+                        const qrHTML = qr.createImgTag(4, 8);
+                        qrContainer.innerHTML = `
+                            <div class="flex justify-center">
+                                ${qrHTML}
+                            </div>
+                        `;
+                        
+                        // Aplicar estilos ao QR code
+                        const qrImg = qrContainer.querySelector('img');
+                        if (qrImg) {
+                            qrImg.className = 'border border-gray-300 rounded';
+                            qrImg.style.maxWidth = '200px';
+                            qrImg.style.height = 'auto';
+                        }
+                        
+                        console.log('QR Code gerado com sucesso');
                     } catch(e) {
-                        console.error('Erro na biblioteca QRCode:', e);
+                        console.error('Erro na biblioteca qrcode:', e);
                         mostrarFallbackQR(qrContainer);
                     }
                 } else {
@@ -424,31 +425,29 @@ function gerarPIX() {
                     // Tentar recarregar a biblioteca
                     loadQRLibrary().then(() => {
                         // Tentar novamente após recarregar
-                        if (typeof QRCode !== 'undefined') {
+                        if (typeof qrcode !== 'undefined') {
                             try {
-                                const canvas = document.createElement('canvas');
-                                canvas.className = 'mx-auto border border-gray-300 rounded';
+                                const qr = qrcode(0, 'M');
+                                qr.addData(data.pix_code);
+                                qr.make();
                                 
-                                QRCode.toCanvas(canvas, data.pix_code, {
-                                    width: 200,
-                                    height: 200,
-                                    margin: 2,
-                                    color: {
-                                        dark: '#000000',
-                                        light: '#ffffff'
-                                    },
-                                    errorCorrectionLevel: 'M'
-                                }, function(error) {
-                                    if (error) {
-                                        console.error('Erro ao gerar QR Code (retry):', error);
-                                        mostrarFallbackQR(qrContainer);
-                                    } else {
-                                        console.log('QR Code gerado com sucesso (retry)');
-                                        qrContainer.appendChild(canvas);
-                                    }
-                                });
+                                const qrHTML = qr.createImgTag(4, 8);
+                                qrContainer.innerHTML = `
+                                    <div class="flex justify-center">
+                                        ${qrHTML}
+                                    </div>
+                                `;
+                                
+                                const qrImg = qrContainer.querySelector('img');
+                                if (qrImg) {
+                                    qrImg.className = 'border border-gray-300 rounded';
+                                    qrImg.style.maxWidth = '200px';
+                                    qrImg.style.height = 'auto';
+                                }
+                                
+                                console.log('QR Code gerado com sucesso (retry)');
                             } catch(e) {
-                                console.error('Erro na biblioteca QRCode (retry):', e);
+                                console.error('Erro na biblioteca qrcode (retry):', e);
                                 mostrarFallbackQR(qrContainer);
                             }
                         } else {
@@ -546,7 +545,7 @@ function mostrarFallbackQR(container) {
 
 function loadQRLibrary() {
     return new Promise((resolve, reject) => {
-        if (typeof QRCode !== 'undefined') {
+        if (typeof qrcode !== 'undefined') {
             resolve();
             return;
         }
@@ -555,7 +554,7 @@ function loadQRLibrary() {
         if (document.querySelector('script[src*="qrcode"]')) {
             // Script já existe, aguardar um pouco
             setTimeout(() => {
-                if (typeof QRCode !== 'undefined') {
+                if (typeof qrcode !== 'undefined') {
                     resolve();
                 } else {
                     reject();
@@ -566,13 +565,13 @@ function loadQRLibrary() {
         
         // Carregar a biblioteca
         const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+        script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
         script.onload = () => {
-            console.log('QRCode library loaded successfully');
+            console.log('qrcode library loaded successfully');
             resolve();
         };
         script.onerror = () => {
-            console.error('Failed to load QRCode library');
+            console.error('Failed to load qrcode library');
             reject();
         };
         document.head.appendChild(script);
