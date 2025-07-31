@@ -225,6 +225,14 @@ document.addEventListener('DOMContentLoaded', function() {
         e.target.value = value;
     });
 
+    // Permitir busca com Enter
+    cepInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            buscarBtn.click();
+        }
+    });
+
     // Buscar escolas
     buscarBtn.addEventListener('click', function() {
         // Verificar se os termos foram aceitos
@@ -237,8 +245,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (cep.length !== 8) {
             alert('Por favor, digite um CEP válido com 8 dígitos.');
+            cepInput.focus();
             return;
         }
+
+        // Resetar estados anteriores se existirem
+        resultadosBusca.classList.add('hidden');
+        quizCargo.classList.add('hidden');
 
         // Mostrar popup de validação
         mostrarValidacao('Validando CEP...', 'Consultando base de dados dos Correios');
@@ -289,11 +302,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 2400);
             })
             .catch(error => {
-                // Em caso de erro, ainda redirecionar mas com popup de erro
                 setTimeout(() => {
                     mostrarValidacaoErro('CEP não encontrado', 'Verifique o CEP e tente novamente');
+                    // Resetar estado do botão imediatamente
                     buscarBtn.disabled = false;
                     buscarBtn.innerHTML = '<i class="fas fa-search mr-2"></i>Buscar';
+                    
+                    // Limpar campo CEP para permitir nova entrada
+                    cepInput.value = '';
+                    cepInput.focus();
                 }, 1500);
             });
     });
@@ -380,10 +397,25 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Esconder popup de erro após 3 segundos
+        // Esconder popup de erro após 4 segundos e resetar para estado inicial
         setTimeout(() => {
             popup.classList.add('hidden');
-        }, 3000);
+            // Resetar popup para estado inicial
+            popup.innerHTML = `
+                <div class="bg-white border-2 border-gray-800 rounded-lg shadow-lg p-4 min-w-64">
+                    <div class="flex items-center">
+                        <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-800 mr-3"></div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800" id="validation-message">Validando dados...</p>
+                            <p class="text-xs text-gray-600" id="validation-details">Aguarde um momento</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 bg-gray-200 rounded-full h-1">
+                        <div class="bg-gray-800 h-1 rounded-full transition-all duration-500" id="validation-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+            `;
+        }, 4000);
     }
 });
 </script>
