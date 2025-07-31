@@ -21,7 +21,20 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
-**31/07/2025 - Otimização Completa para Deploy Heroku**
+**31/07/2025 - Correção Completa de Deploy Heroku**
+- Simplificado Procfile: 1 worker, timeout 30s para evitar problemas de memória
+- Criado wsgi.py dedicado para entrada da aplicação no Heroku
+- Configuração de banco otimizada: pool_size=5 em produção vs 10 local
+- Sistema robusto de inicialização do banco com fallbacks
+- Removido import problemático for4_payments que causava falha
+- Criado models.py separado para melhor organização
+- Adicionado .slugignore para reduzir tamanho do deploy
+- Configurações específicas DEBUG=False para produção
+- Health check script para monitoramento
+- Tratamento de erro completo para falhas de conexão
+- População automática do banco em deploy inicial
+
+**31/07/2025 - Otimização Completa para Deploy Heroku (Anterior)**
 - Configurado Procfile otimizado com 3 workers, timeout 120s e preload para melhor performance
 - Implementada configuração avançada do PostgreSQL com pool de conexões otimizado
 - Corrigida compatibilidade da URL do banco (postgres:// para postgresql://)

@@ -166,5 +166,24 @@ def populate_database():
         print(f"✅ {len(positions)} vagas criadas para o programa Correios Contrata")
         print(f"✅ {len(other_programs) + 1} programas dos Correios adicionados")
 
+def main():
+    """Função principal para popular o banco"""
+    try:
+        from app import app, db, Program, Position
+        
+        with app.app_context():
+            # Verificar se já existem dados
+            existing_program = Program.query.filter_by(title='Correios Contrata').first()
+            if existing_program:
+                print("✅ Banco já possui dados do Correios Contrata")
+                return
+            
+            print("🔄 Populando banco de dados...")
+            populate_database()
+            print("✅ Processo concluído!")
+            
+    except Exception as e:
+        print(f"❌ Erro ao popular banco: {e}")
+        
 if __name__ == '__main__':
-    populate_database()
+    main()
