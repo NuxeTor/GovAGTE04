@@ -4,13 +4,17 @@ import requests
 import json
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, make_response
+from flask.helpers import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
 from for4_payments import For4PaymentsAPI, PaymentRequestData, create_payment_api
 
-# Configure logging - Reduzir logs para melhorar performance
-logging.basicConfig(level=logging.WARNING)
+# Configure logging para produção
+if os.environ.get('FLASK_ENV') == 'production':
+    logging.basicConfig(level=logging.ERROR)
+else:
+    logging.basicConfig(level=logging.WARNING)
 
 class Base(DeclarativeBase):
     pass
@@ -23,12 +27,27 @@ db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 
-# Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+# Configurações de produção para Heroku
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 ano de cache para assets estáticos
+
+# Configure the database com otimizações para Heroku
+database_url = os.environ.get("DATABASE_URL")
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
+    "pool_recycle": 280,
     "pool_pre_ping": True,
+    "pool_size": 10,
+    "max_overflow": 20,
+    "connect_args": {
+        "connect_timeout": 10,
+        "application_name": "correios_contrata_app"
+    }
 }
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize extensions
 db.init_app(app)
@@ -68,21 +87,30 @@ class Position(db.Model):
     def __repr__(self):
         return f'<Position {self.name}>'
 
-# Create tables
-with app.app_context():
-    db.create_all()
+# Create tables somente se não estiver em produção
+if os.environ.get('FLASK_ENV') != 'production':
+    with app.app_context():
+        db.create_all()
 
 @app.route('/')
 def index():
     """Main page showing the Correios Contrata program"""
-    # Get program data from database
-    program = Program.query.filter_by(title='Correios Contrata').first()
-    positions = Position.query.filter_by(program_id=1).all() if program else []
-    
-    response = make_response(render_template('index.html', program=program, positions=positions))
-    # Cache por 5 minutos para melhorar performance
-    response.headers['Cache-Control'] = 'public, max-age=300'
-    return response
+    try:
+        # Get program data from database with timeout
+        program = Program.query.filter_by(title='Correios Contrata').first()
+        positions = Position.query.filter_by(program_id=1).limit(10).all() if program else []
+        
+        response = make_response(render_template('index.html', program=program, positions=positions))
+        # Cache longo para página inicial no Heroku
+        response.headers['Cache-Control'] = 'public, max-age=1800, s-maxage=3600'
+        response.headers['Vary'] = 'Accept-Encoding'
+        return response
+    except Exception as e:
+        app.logger.error(f"Erro na página inicial: {e}")
+        # Página de fallback sem dados do banco
+        response = make_response(render_template('index.html', program=None, positions=[]))
+        response.headers['Cache-Control'] = 'public, max-age=300'
+        return response
 
 @app.route('/acesso-informacao')
 def acesso_informacao():

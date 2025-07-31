@@ -1,0 +1,55 @@
+{
+  "name": "Correios Contrata Portal",
+  "description": "Portal oficial do programa Correios Contrata do Governo Federal",
+  "keywords": ["flask", "python", "postgresql", "gov.br", "correios"],
+  "website": "https://correios-contrata.herokuapp.com/",
+  "repository": "https://github.com/usuario/correios-contrata",
+  "logo": "https://www.gov.br/pt-br/gov-logo.png",
+  "success_url": "/",
+  "scripts": {
+    "postdeploy": "python populate_database.py"
+  },
+  "env": {
+    "FLASK_ENV": {
+      "description": "Environment for Flask app",
+      "value": "production"
+    },
+    "SESSION_SECRET": {
+      "description": "Secret key for Flask sessions",
+      "generator": "secret"
+    },
+    "DATABASE_URL": {
+      "description": "PostgreSQL database URL",
+      "required": true
+    },
+    "TOKEN_CPF_API": {
+      "description": "Token para API de validação de CPF",
+      "required": false
+    },
+    "NOVA_ERA_SECRET_KEY": {
+      "description": "Chave secreta da API Nova Era",
+      "required": false
+    },
+    "NOVA_ERA_PUBLIC_KEY": {
+      "description": "Chave pública da API Nova Era", 
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:essential-0",
+      "as": "DATABASE"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
