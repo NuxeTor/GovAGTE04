@@ -50,7 +50,7 @@
                     <input type="checkbox" 
                            id="aceitar-termos" 
                            class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="aceitar-termos" class="text-sm font-medium text-gray-700 cursor-pointer">
+                    <label for="aceitar-termos" id="label-termos" class="text-sm font-medium text-gray-700 cursor-pointer transition-colors duration-300">
                         <strong>Declaro que li, compreendi e aceito todos os termos acima</strong> e autorizo a busca de agências dos Correios na minha região para fins de participação no Programa Correios Contrata.
                     </label>
                 </div>
@@ -191,7 +191,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const secaoCep = document.getElementById('secao-cep');
 
     aceitarTermos.addEventListener('change', function() {
+        const labelTermos = document.getElementById('label-termos');
+        
         if (this.checked) {
+            // Remover destaque vermelho se estiver ativo
+            labelTermos.classList.remove('text-red-600', 'bg-red-50');
+            labelTermos.classList.add('text-gray-700');
+            labelTermos.style.padding = '';
+            labelTermos.style.borderRadius = '';
+            labelTermos.style.border = '';
+            
             secaoCep.classList.remove('opacity-50', 'pointer-events-none');
             secaoCep.classList.add('opacity-100');
             
@@ -237,7 +246,32 @@ document.addEventListener('DOMContentLoaded', function() {
     buscarBtn.addEventListener('click', function() {
         // Verificar se os termos foram aceitos
         if (!aceitarTermos.checked) {
-            alert('Por favor, aceite os termos e condições antes de prosseguir.');
+            // Destacar label em vermelho
+            const labelTermos = document.getElementById('label-termos');
+            labelTermos.classList.remove('text-gray-700');
+            labelTermos.classList.add('text-red-600', 'bg-red-50');
+            labelTermos.style.padding = '8px';
+            labelTermos.style.borderRadius = '4px';
+            labelTermos.style.border = '2px solid #DC2626';
+            
+            // Scroll para os termos
+            document.getElementById('aceitar-termos').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            // Mostrar mensagem mais amigável
+            alert('⚠️ Para continuar, você precisa aceitar os termos de participação marcando a caixa de seleção destacada em vermelho.');
+            
+            // Remover destaque após 10 segundos
+            setTimeout(() => {
+                labelTermos.classList.remove('text-red-600', 'bg-red-50');
+                labelTermos.classList.add('text-gray-700');
+                labelTermos.style.padding = '';
+                labelTermos.style.borderRadius = '';
+                labelTermos.style.border = '';
+            }, 10000);
+            
             return;
         }
 
