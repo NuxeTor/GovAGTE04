@@ -85,16 +85,17 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Corrigida carga horária para 44h semanais conforme padrão dos Correios
 - Mantidas descrições técnicas precisas para cada função postal
 
-**31/07/2025 - Integração PIX Real e Deploy no Heroku**
-- Integrada API PIX REAL da Nova Era com credenciais do usuário
-- Secret Key: sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb
-- Public Key: pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x
-- Teste realizado com sucesso - Transação ID: 503314
-- Removidos arquivos desnecessários para limpeza de produção
-- Otimizadas configurações do Gunicorn para Heroku
-- Configurações de pool PostgreSQL otimizadas para produção
-- PIX funcionando com pagamentos reais via Nova Era API
-- Projeto totalmente pronto para deploy no Heroku
+**31/07/2025 - Sistema PIX 20 Minutos e Remoção Página Confirmação**
+- Sistema de checkout PIX aguarda até 20 minutos por confirmação automática
+- Removida página de pagamento confirmado (/pagamento-confirmado)
+- Criada página de comprovante de inscrição (/comprovante-inscricao)
+- Criada página de suporte para timeout (/suporte)
+- Contador regressivo visual mostra tempo restante (20 minutos)
+- Redirecionamento automático após pagamento confirmado
+- Redirecionamento para suporte após timeout de 20 minutos
+- API PIX REAL Nova Era integrada com credenciais: pk_E5SWGB_rZ... / sk_uluAT1O9...
+- Múltiplas transações reais testadas: 503314, 503332, 503386
+- Sistema completamente funcional para deploy no Heroku
 
 **30/07/2025 - Eliminação Completa de Referências Educacionais**
 - Substituída imagem principal pela nova imagem da agência dos Correios

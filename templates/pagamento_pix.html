@@ -223,9 +223,9 @@
         </h3>
         <ul class="text-sm text-blue-700 space-y-2">
             <li>• O pagamento via PIX é processado instantaneamente</li>
-            <li>• Após a confirmação, você receberá o comprovante por email</li>
+            <li>• Sistema aguarda até 20 minutos pela confirmação</li>
             <li>• O código PIX tem validade de 2 horas</li>
-            <li>• Em caso de problemas, entre em contato pelo suporte</li>
+            <li>• Após pagamento confirmado, você será redirecionado automaticamente</li>
             <li>• Taxa de inscrição: R$ 87,40</li>
         </ul>
     </div>
@@ -278,8 +278,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Verificar pagamento automaticamente a cada 10 segundos
-    setInterval(verificarPagamento, 10000);
+    // Verificar pagamento automaticamente - aguardar até 20 minutos
+    let tempoEspera = 0; // em segundos
+    const tempoMaximo = 20 * 60; // 20 minutos em segundos
+    
+    const intervaloPagamento = setInterval(function() {
+        verificarPagamento();
+        tempoEspera += 10;
+        
+        // Atualizar contador de tempo na tela
+        const minutosRestantes = Math.floor((tempoMaximo - tempoEspera) / 60);
+        const segundosRestantes = (tempoMaximo - tempoEspera) % 60;
+        
+        const statusEl = document.getElementById('payment-status');
+        if (statusEl && minutosRestantes >= 0) {
+            statusEl.innerHTML = `
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600 mr-3"></div>
+                <span class="text-yellow-800">Aguardando pagamento... (${minutosRestantes}m ${segundosRestantes}s restantes)</span>
+            `;
+        }
+        
+        // Se passou 20 minutos, parar de verificar e redirecionar
+        if (tempoEspera >= tempoMaximo) {
+            clearInterval(intervaloPagamento);
+            redirecionarAposTimeout();
+        }
+    }, 10000); // Verificar a cada 10 segundos
 });
 
 function toggleDadosUsuario() {
@@ -550,10 +574,10 @@ function verificarPagamento() {
                 });
             }
             
-            // Redirecionar para página de sucesso
+            // Redirecionar para página de comprovante após alguns segundos  
             setTimeout(() => {
-                window.location.href = '/pagamento-confirmado';
-            }, 2000);
+                window.location.href = '/comprovante-inscricao';
+            }, 3000);
         }
     })
     .catch(error => {
@@ -617,6 +641,24 @@ function loadQRLibrary() {
         };
         document.head.appendChild(script);
     });
+}
+
+// Função para redirecionar após timeout de 20 minutos
+function redirecionarAposTimeout() {
+    const statusDiv = document.getElementById('payment-status');
+    if (statusDiv) {
+        statusDiv.innerHTML = `
+            <div class="flex items-center p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <i class="fas fa-clock text-orange-600 mr-3"></i>
+                <span class="text-orange-800">Tempo limite atingido. Redirecionando...</span>
+            </div>
+        `;
+    }
+    
+    // Redirecionar para página de suporte ou nova tentativa após timeout
+    setTimeout(() => {
+        window.location.href = '/suporte';
+    }, 3000);
 }
 </script>
 
