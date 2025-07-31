@@ -21,17 +21,22 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
-**31/07/2025 - Implementação Completa do Facebook Pixel (Meta Pixel)**
+**31/07/2025 - Implementação Completa do Microsoft Clarity e Facebook Pixel**
+- Integrado Microsoft Clarity (ID: snaywck2s5) em TODO o projeto para rastreamento completo
+- Adicionado script Clarity no template base (base.html) para cobertura automática global
+- Implementado Clarity em todas as páginas independentes:
+  * pagamento_pix.html, pagamento_confirmado.html
+  * agendamento_psicotecnico.html, registro_sgte.html
+  * confirmacao_agendamento.html
+- Sistema de tracking heatmap e gravação de sessão ativo
 - Integrado Facebook Pixel (ID: 785028367210803) em todo o projeto
-- Adicionado código Meta Pixel no template base (base.html) para cobertura global
-- Implementado pixel específico em páginas independentes: pagamento_pix.html e pagamento_confirmado.html
 - Configurados eventos de conversão personalizados:
   * PageView: Em todas as páginas automaticamente
   * Lead: Quando usuário inicia processo de inscrição
   * InitiateCheckout: Na página de pagamento PIX
   * AddPaymentInfo: Quando PIX é gerado com sucesso
   * Purchase: Quando pagamento é confirmado (valor: R$ 87,40, moeda: BRL)
-- Sistema de tracking completo implementado para análise de funil de conversão
+- Sistema duplo de analytics: Clarity para UX e Facebook para conversões
 
 **31/07/2025 - Integração Completa da API Nova Era PIX**
 - Substituída API FOR4 PAYMENTS pela API Nova Era para pagamentos PIX
