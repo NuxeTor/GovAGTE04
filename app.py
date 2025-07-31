@@ -3,14 +3,14 @@ import logging
 import requests
 import json
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
 from for4_payments import For4PaymentsAPI, PaymentRequestData, create_payment_api
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
+# Configure logging - Reduzir logs para melhorar performance
+logging.basicConfig(level=logging.WARNING)
 
 class Base(DeclarativeBase):
     pass
@@ -79,7 +79,10 @@ def index():
     program = Program.query.filter_by(title='Correios Contrata').first()
     positions = Position.query.filter_by(program_id=1).all() if program else []
     
-    return render_template('index.html', program=program, positions=positions)
+    response = make_response(render_template('index.html', program=program, positions=positions))
+    # Cache por 5 minutos para melhorar performance
+    response.headers['Cache-Control'] = 'public, max-age=300'
+    return response
 
 @app.route('/acesso-informacao')
 def acesso_informacao():
