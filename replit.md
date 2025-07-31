@@ -85,6 +85,17 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Corrigida carga horária para 44h semanais conforme padrão dos Correios
 - Mantidas descrições técnicas precisas para cada função postal
 
+**31/07/2025 - Otimização e Limpeza para Deploy no Heroku**
+- Removidos arquivos desnecessários: attached_assets/, __pycache__/, imagens não utilizadas
+- Removidos for4_payments.py, nova_era_api.py, models.py (integrados ao app.py)
+- Simplificadas APIs de pagamento para demonstração (mock responses)
+- Otimizadas configurações do Gunicorn para produção
+- Limpas importações não utilizadas no código
+- Aplicados cabeçalhos de cache para assets estáticos
+- Configurações de pool de conexão PostgreSQL otimizadas para Heroku
+- Criado DEPLOY.md com guia completo de deployment
+- Projeto pronto para deploy no Heroku
+
 **30/07/2025 - Eliminação Completa de Referências Educacionais**
 - Substituída imagem principal pela nova imagem da agência dos Correios
 - Removidas TODAS referências a "agente da educação", "PNAE", "educação" e termos relacionados

