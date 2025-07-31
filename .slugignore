@@ -1,0 +1,15 @@
+# Ignore files for Heroku slug compilation
+*.pyc
+__pycache__/
+.git/
+.gitignore
+README.md
+.DS_Store
+*.log
+.env
+.env.*
+node_modules/
+attached_assets/
+.replit
+replit.md
+health_check.py

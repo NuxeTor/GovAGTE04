@@ -8,13 +8,13 @@ from flask.helpers import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
-from for4_payments import For4PaymentsAPI, PaymentRequestData, create_payment_api
+# from for4_payments import For4PaymentsAPI, PaymentRequestData, create_payment_api
 
 # Configure logging para produção
-if os.environ.get('FLASK_ENV') == 'production':
-    logging.basicConfig(level=logging.ERROR)
-else:
-    logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(
+    level=logging.ERROR if os.environ.get('FLASK_ENV') == 'production' else logging.WARNING,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
 
 class Base(DeclarativeBase):
     pass
@@ -28,8 +28,13 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 
 # Configurações de produção para Heroku
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 ano de cache para assets estáticos
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configurações específicas para produção
 if os.environ.get('FLASK_ENV') == 'production':
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 ano de cache para assets estáticos
+    app.config['DEBUG'] = False
+    app.config['TESTING'] = False
 
 # Configure the database com otimizações para Heroku
 database_url = os.environ.get("DATABASE_URL")
@@ -37,17 +42,24 @@ if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 280,
-    "pool_pre_ping": True,
-    "pool_size": 10,
-    "max_overflow": 20,
-    "connect_args": {
-        "connect_timeout": 10,
-        "application_name": "correios_contrata_app"
+
+# Configurações otimizadas para Heroku
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_recycle": 280,
+        "pool_pre_ping": True,
+        "pool_size": 5,
+        "max_overflow": 10,
+        "connect_args": {
+            "connect_timeout": 10,
+            "application_name": "correios_contrata"
+        }
     }
-}
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+else:
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_recycle": 300,
+        "pool_pre_ping": True,
+    }
 
 # Initialize extensions
 db.init_app(app)
@@ -87,10 +99,29 @@ class Position(db.Model):
     def __repr__(self):
         return f'<Position {self.name}>'
 
-# Create tables somente se não estiver em produção
-if os.environ.get('FLASK_ENV') != 'production':
-    with app.app_context():
+# Create tables de forma simplificada
+def init_database():
+    """Inicializar banco de dados"""
+    try:
         db.create_all()
+        print("✅ Tabelas criadas com sucesso")
+        
+        # Verificar se precisa popular dados
+        existing = Program.query.filter_by(title='Correios Contrata').first()
+        if not existing:
+            print("🔄 Populando banco de dados...")
+            try:
+                from populate_database import populate_database
+                populate_database()
+            except:
+                print("⚠️ Erro ao popular banco - continuando sem dados iniciais")
+                
+    except Exception as e:
+        print(f"⚠️ Erro na inicialização: {e}")
+
+# Inicializar quando o app for importado
+with app.app_context():
+    init_database()
 
 @app.route('/')
 def index():
