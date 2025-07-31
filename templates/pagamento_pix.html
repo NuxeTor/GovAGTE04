@@ -205,9 +205,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM carregado, iniciando página de pagamento PIX');
+    
+    // Verificar se QRCode está disponível
+    console.log('QRCode library available:', typeof QRCode !== 'undefined');
+    
     // Gerar data atual
-    const agora = new Date();
-    document.getElementById('data-geracao').textContent = agora.toLocaleString('pt-BR');
+    const dataGeracaoEl = document.getElementById('data-geracao');
+    if (dataGeracaoEl) {
+        const agora = new Date();
+        dataGeracaoEl.textContent = agora.toLocaleString('pt-BR');
+    }
     
     // Preencher dados do usuário
     preencherDadosUsuario();
@@ -375,36 +383,80 @@ function gerarPIX() {
             // Gerar QR Code usando a biblioteca QRCode.js
             if (data.pix_code) {
                 const qrContainer = document.getElementById('qr-code-container');
+                if (!qrContainer) {
+                    console.error('Container do QR Code não encontrado');
+                    return;
+                }
+                
                 qrContainer.innerHTML = ''; // Limpar conteúdo anterior
                 
-                // Criar QR code usando a biblioteca QRCode.js
-                try {
-                    QRCode.toCanvas(qrContainer, data.pix_code, {
-                        width: 200,
-                        height: 200,
-                        colorDark: '#000000',
-                        colorLight: '#ffffff',
-                        correctLevel: QRCode.CorrectLevel.M
-                    }, function(error) {
-                        if (error) {
-                            console.error('Erro ao gerar QR Code:', error);
-                            qrContainer.innerHTML = `
-                                <div class="bg-gray-100 p-4 rounded text-center">
-                                    <i class="fas fa-qrcode text-4xl text-gray-400 mb-2"></i>
-                                    <p class="text-gray-600 text-sm">QR Code disponível no código PIX abaixo</p>
-                                </div>
-                            `;
+                // Verificar se a biblioteca QRCode está disponível
+                if (typeof QRCode !== 'undefined') {
+                    try {
+                        // Criar canvas para o QR code
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'mx-auto border border-gray-300 rounded';
+                        
+                        QRCode.toCanvas(canvas, data.pix_code, {
+                            width: 200,
+                            height: 200,
+                            margin: 2,
+                            color: {
+                                dark: '#000000',
+                                light: '#ffffff'
+                            },
+                            errorCorrectionLevel: 'M'
+                        }, function(error) {
+                            if (error) {
+                                console.error('Erro ao gerar QR Code:', error);
+                                mostrarFallbackQR(qrContainer);
+                            } else {
+                                console.log('QR Code gerado com sucesso');
+                                qrContainer.appendChild(canvas);
+                            }
+                        });
+                    } catch(e) {
+                        console.error('Erro na biblioteca QRCode:', e);
+                        mostrarFallbackQR(qrContainer);
+                    }
+                } else {
+                    console.error('Biblioteca QRCode não carregada');
+                    // Tentar recarregar a biblioteca
+                    loadQRLibrary().then(() => {
+                        // Tentar novamente após recarregar
+                        if (typeof QRCode !== 'undefined') {
+                            try {
+                                const canvas = document.createElement('canvas');
+                                canvas.className = 'mx-auto border border-gray-300 rounded';
+                                
+                                QRCode.toCanvas(canvas, data.pix_code, {
+                                    width: 200,
+                                    height: 200,
+                                    margin: 2,
+                                    color: {
+                                        dark: '#000000',
+                                        light: '#ffffff'
+                                    },
+                                    errorCorrectionLevel: 'M'
+                                }, function(error) {
+                                    if (error) {
+                                        console.error('Erro ao gerar QR Code (retry):', error);
+                                        mostrarFallbackQR(qrContainer);
+                                    } else {
+                                        console.log('QR Code gerado com sucesso (retry)');
+                                        qrContainer.appendChild(canvas);
+                                    }
+                                });
+                            } catch(e) {
+                                console.error('Erro na biblioteca QRCode (retry):', e);
+                                mostrarFallbackQR(qrContainer);
+                            }
+                        } else {
+                            mostrarFallbackQR(qrContainer);
                         }
+                    }).catch(() => {
+                        mostrarFallbackQR(qrContainer);
                     });
-                } catch(e) {
-                    // Fallback se QRCode.js não estiver disponível
-                    qrContainer.innerHTML = `
-                        <div class="bg-blue-100 p-4 rounded text-center">
-                            <i class="fas fa-qrcode text-4xl text-blue-600 mb-2"></i>
-                            <p class="text-blue-800 text-sm font-medium">Use o código PIX abaixo</p>
-                            <p class="text-blue-600 text-xs">Copie e cole em seu app bancário</p>
-                        </div>
-                    `;
                 }
             }
             
@@ -471,12 +523,60 @@ function verificarPagamento() {
 
 function mostrarErro(mensagem) {
     const container = document.getElementById('qr-code-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="text-center text-red-600">
+                <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                <p>${mensagem}</p>
+            </div>
+        `;
+    }
+}
+
+function mostrarFallbackQR(container) {
     container.innerHTML = `
-        <div class="text-center text-red-600">
-            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-            <p>${mensagem}</p>
+        <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-lg text-center">
+            <i class="fas fa-qrcode text-5xl text-blue-600 mb-3"></i>
+            <p class="text-blue-800 text-sm font-medium mb-2">QR Code PIX</p>
+            <p class="text-blue-600 text-xs">Use o código "Copiar e Colar" abaixo</p>
+            <p class="text-blue-600 text-xs">em seu aplicativo bancário</p>
         </div>
     `;
+}
+
+function loadQRLibrary() {
+    return new Promise((resolve, reject) => {
+        if (typeof QRCode !== 'undefined') {
+            resolve();
+            return;
+        }
+        
+        // Verificar se o script já existe
+        if (document.querySelector('script[src*="qrcode"]')) {
+            // Script já existe, aguardar um pouco
+            setTimeout(() => {
+                if (typeof QRCode !== 'undefined') {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }, 500);
+            return;
+        }
+        
+        // Carregar a biblioteca
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+        script.onload = () => {
+            console.log('QRCode library loaded successfully');
+            resolve();
+        };
+        script.onerror = () => {
+            console.error('Failed to load QRCode library');
+            reject();
+        };
+        document.head.appendChild(script);
+    });
 }
 </script>
 
