@@ -16,6 +16,25 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '785028367210803');
+    fbq('track', 'PageView');
+    fbq('track', 'InitiateCheckout'); // Evento de início do checkout
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=785028367210803&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇧🇷</text></svg>">
 </head>
@@ -472,6 +491,11 @@ function gerarPIX() {
                 console.log('Transação ID salvo:', data.transacao_id);
             }
             
+            // Evento de PIX gerado
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'AddPaymentInfo');
+            }
+            
             // Log da resposta para debug
             console.log('PIX gerado com sucesso:', {
                 transacao_id: data.transacao_id,
@@ -508,6 +532,14 @@ function verificarPagamento() {
                     <span class="text-green-800">Pagamento confirmado!</span>
                 </div>
             `;
+            
+            // Evento de conversão de pagamento confirmado
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {
+                    value: 87.40,
+                    currency: 'BRL'
+                });
+            }
             
             // Redirecionar para página de sucesso
             setTimeout(() => {

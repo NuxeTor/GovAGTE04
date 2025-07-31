@@ -21,6 +21,18 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
+**31/07/2025 - Implementação Completa do Facebook Pixel (Meta Pixel)**
+- Integrado Facebook Pixel (ID: 785028367210803) em todo o projeto
+- Adicionado código Meta Pixel no template base (base.html) para cobertura global
+- Implementado pixel específico em páginas independentes: pagamento_pix.html e pagamento_confirmado.html
+- Configurados eventos de conversão personalizados:
+  * PageView: Em todas as páginas automaticamente
+  * Lead: Quando usuário inicia processo de inscrição
+  * InitiateCheckout: Na página de pagamento PIX
+  * AddPaymentInfo: Quando PIX é gerado com sucesso
+  * Purchase: Quando pagamento é confirmado (valor: R$ 87,40, moeda: BRL)
+- Sistema de tracking completo implementado para análise de funil de conversão
+
 **31/07/2025 - Integração Completa da API Nova Era PIX**
 - Substituída API FOR4 PAYMENTS pela API Nova Era para pagamentos PIX
 - Implementada classe NovaEraAPI em nova_era_api.py com autenticação Basic Auth
