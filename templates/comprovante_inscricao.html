@@ -37,15 +37,10 @@
             <p class="text-sm text-gray-600">Essa é uma forma de filtrar candidatos realmente comprometidos e evitar ocupação indevida das vagas.</p>
         </div>
         
-        <!-- Círculo de Loading -->
-        <div class="mb-6">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        </div>
-        
         <!-- Botão Gerar Taxa -->
         <div class="text-center mb-6">
             <button id="gerar-taxa-popup-btn" 
-                    class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                    class="bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-8 rounded-md transition-colors text-lg">
                 Gerar Taxa
             </button>
         </div>
@@ -710,10 +705,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append('email', emailSalvo);
                 }
                 
-                // Delay para mostrar o loading e depois redirecionar para PIX
-                setTimeout(() => {
-                    window.location.href = '/pagamento-pix';
-                }, 2000); // 2 segundos de carregamento
+                // Não redirecionar automaticamente mais
+                // O usuário deve clicar no botão "Gerar Taxa" no popup
             }
         });
         
