@@ -545,10 +545,12 @@ def verificar_pagamento(transacao_id):
         app.logger.error(f"Erro ao verificar pagamento Nova Era REAL: {e}")
         return jsonify({'pago': False, 'message': str(e), 'api_provider': 'Nova Era REAL'}), 500
 
-@app.route('/pagamento-confirmado')
-def pagamento_confirmado():
-    """Payment confirmation page"""
-    return render_template('pagamento_confirmado.html', page_title="Pagamento Confirmado - Correios Contrata")
+
+
+@app.route('/suporte')
+def suporte():
+    """Support page for payment timeout"""
+    return render_template('suporte.html', page_title="Suporte - Correios Contrata")
 
 @app.route('/teste-pix-real')
 def teste_pix_real():
