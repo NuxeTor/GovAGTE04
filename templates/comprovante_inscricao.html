@@ -718,8 +718,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const gerarTaxaPopupBtn = document.getElementById('gerar-taxa-popup-btn');
     if (gerarTaxaPopupBtn) {
         gerarTaxaPopupBtn.addEventListener('click', function() {
+            // Fechar o popup primeiro
+            const loadingPopup = document.getElementById('loading-popup');
+            if (loadingPopup) {
+                loadingPopup.classList.add('hidden');
+            }
             // Redirecionar para a página de pagamento PIX
             window.location.href = '/pagamento-pix';
+        });
+    }
+
+    // Prevenir que o popup feche com ESC ou cliques externos
+    const loadingPopup = document.getElementById('loading-popup');
+    if (loadingPopup) {
+        // Bloquear fechamento com Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !loadingPopup.classList.contains('hidden')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+        
+        // Bloquear fechamento com clique externo
+        loadingPopup.addEventListener('click', function(e) {
+            e.stopPropagation();
+            return false;
         });
     }    
 
