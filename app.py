@@ -27,6 +27,12 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-prod
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 ano de cache para assets estáticos
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Configurações de cache e compressão
+app.config['COMPRESS_MIMETYPES'] = [
+    'text/html', 'text/css', 'text/xml', 'application/json',
+    'application/javascript', 'text/javascript'
+]
+
 # Configurações específicas para produção
 if os.environ.get('FLASK_ENV') == 'production':
     app.config['DEBUG'] = False
@@ -60,6 +66,9 @@ else:
 # Initialize extensions
 db.init_app(app)
 migrate = Migrate(app, db)
+
+# Cache simples em memória
+_cached_data = {}
 
 # Define models directly in app.py to avoid import issues
 class Program(db.Model):
@@ -123,14 +132,22 @@ with app.app_context():
 def index():
     """Main page showing the Correios Contrata program"""
     try:
-        # Get program data from database with timeout
-        program = Program.query.filter_by(title='Correios Contrata').first()
-        positions = Position.query.filter_by(program_id=1).limit(10).all() if program else []
+        # Cache em memória simples para evitar queries desnecessárias
+        global _cached_data
+        if 'index_data' not in _cached_data:
+            program = Program.query.filter_by(title='Correios Contrata').first()
+            positions = Position.query.filter_by(program_id=1).limit(10).all() if program else []
+            _cached_data['index_data'] = {'program': program, 'positions': positions}
+        else:
+            program = _cached_data['index_data']['program']
+            positions = _cached_data['index_data']['positions']
         
         response = make_response(render_template('index.html', program=program, positions=positions))
-        # Cache longo para página inicial no Heroku
-        response.headers['Cache-Control'] = 'public, max-age=1800, s-maxage=3600'
+        # Cache otimizado para melhor performance
+        response.headers['Cache-Control'] = 'public, max-age=3600, s-maxage=7200'
         response.headers['Vary'] = 'Accept-Encoding'
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
         return response
     except Exception as e:
         app.logger.error(f"Erro na página inicial: {e}")
@@ -437,6 +454,9 @@ def validar_cpf():
             }
         })
         
+    except requests.exceptions.Timeout:
+        app.logger.error("Timeout na API de CPF")
+        return jsonify({'error': 'Timeout na validação. Tente novamente.'}), 408
     except requests.exceptions.RequestException as e:
         app.logger.error(f"Erro na API de CPF: {e}")
         return jsonify({'error': 'Erro de conexão com o serviço de validação'}), 500
