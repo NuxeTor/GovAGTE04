@@ -5,29 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Correios Contrata - gov.br{% endblock %}</title>
     
-    <!-- External CSS - Optimized loading -->
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <!-- Font Awesome Icons - Local fallback for better performance -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></noscript>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS - Optimized loading -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    'govbr-blue': '#1351B4',
-                    'govbr-green': '#168821',
-                    'govbr-gray': '#6C757D'
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'govbr-blue': '#1351B4',
+                            'govbr-green': '#168821', 
+                            'govbr-gray': '#6C757D'
+                        }
+                    }
                 }
             }
         }
-    }
+    });
     </script>
     
-    <!-- Custom CSS -->
+    <!-- Custom CSS - Primary styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     
     <!-- SEO and Meta Tags -->

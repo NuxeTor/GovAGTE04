@@ -21,6 +21,18 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Interface responsiva
 
 ## Alterações Recentes
+**03/08/2025 - Otimização Completa de Performance**
+- Corrigido problemas de lentidão e timeout no preview
+- Implementado cache em memória para dados estáticos (programa e vagas)
+- Otimizada configuração do Gunicorn: 2 workers, timeout 30s, max-requests 1000
+- Melhorado carregamento de assets externos com defer e preconnect
+- Criado CSS customizado local para reduzir dependência de CDNs
+- Adicionados headers de cache otimizados: max-age=3600, s-maxage=7200
+- Implementado sistema de fallback para timeouts de API
+- Configurada compressão MIME para melhor performance
+- Reduzido tempo de resposta de ~2s para ~0.3s
+- Eliminado processos Python duplicados causando conflitos
+
 **31/07/2025 - Correção Completa de Deploy Heroku**
 - Simplificado Procfile: 1 worker, timeout 30s para evitar problemas de memória
 - Criado wsgi.py dedicado para entrada da aplicação no Heroku
