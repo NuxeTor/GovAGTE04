@@ -23,6 +23,14 @@ db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 
+# Configurações para funcionar corretamente no Replit
+if not os.environ.get('PORT'):
+    os.environ['PORT'] = '5000'
+
+# Adicionar middleware para CORS e headers necessários no Replit
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
 # Configurações de produção para Heroku
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 ano de cache para assets estáticos
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -147,7 +155,8 @@ def index():
         response.headers['Cache-Control'] = 'public, max-age=3600, s-maxage=7200'
         response.headers['Vary'] = 'Accept-Encoding'
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'DENY'
+        # Remover X-Frame-Options para permitir visualização no preview do Replit
+        # response.headers['X-Frame-Options'] = 'DENY'
         return response
     except Exception as e:
         app.logger.error(f"Erro na página inicial: {e}")
