@@ -235,50 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return `R$ ${minimo.toLocaleString('pt-BR', {minimumFractionDigits: 2})} - R$ ${maximo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
 
-    function tornarCargoAleatorioIndisponivel() {
-        // Lista de cargos disponíveis do IBGE
-        const cargosDisponiveis = [
-            'agente-pesquisa-mapeamento',
-            'supervisor-coleta-qualidade'
-        ];
-        
-        // Selecionar um cargo aleatório
-        const cargoAleatorio = cargosDisponiveis[Math.floor(Math.random() * cargosDisponiveis.length)];
-        const elementoCargo = document.querySelector(`[data-cargo="${cargoAleatorio}"]`);
-        
-        if (elementoCargo) {
-            // Mudar visual para indisponível
-            elementoCargo.classList.remove('bg-gray-50', 'border-gray-300', 'hover:border-blue-500');
-            elementoCargo.classList.add('bg-red-50', 'border-red-300', 'opacity-75');
-            elementoCargo.setAttribute('data-disponivel', 'false');
-            
-            // Adicionar badge de esgotado
-            const titulo = elementoCargo.querySelector('h4');
-            if (titulo && !titulo.querySelector('.bg-red-500')) {
-                const badge = document.createElement('span');
-                badge.className = 'ml-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full';
-                badge.textContent = 'ESGOTADO';
-                titulo.appendChild(badge);
-            }
-            
-            // Adicionar mensagem de vagas esgotadas
-            const flexDiv = elementoCargo.querySelector('.flex-1');
-            if (flexDiv && !flexDiv.querySelector('.text-red-600')) {
-                const mensagem = document.createElement('p');
-                mensagem.className = 'text-red-600 text-sm mt-2';
-                mensagem.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i>Vagas esgotadas para esta região. Tente novamente em 48h.';
-                flexDiv.appendChild(mensagem);
-            }
-            
-            // Desabilitar botão
-            const botao = elementoCargo.querySelector('button');
-            if (botao) {
-                botao.className = 'bg-gray-400 text-gray-600 px-4 py-2 rounded font-medium cursor-not-allowed';
-                botao.textContent = 'Indisponível';
-                botao.disabled = true;
-            }
-        }
-    }
+
 
     function consultarViaCEP() {
         // Obter CEP da URL ou elemento da página
@@ -329,8 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (salarioAgente) salarioAgente.textContent = 'R$ 4.379,00';
     if (salarioSupervisor) salarioSupervisor.textContent = 'R$ 4.978,00';
 
-    // Tornar um cargo aleatório indisponível (além do Secretário Escolar que já é fixo)
-    tornarCargoAleatorioIndisponivel();
+
 
     // Dados da localização já carregados pelo backend via ViaCEP
 
@@ -358,17 +314,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Seleção de cargo
     cargoOptions.forEach(option => {
         option.addEventListener('click', function() {
-            // Verificar se o cargo está disponível
-            if (this.getAttribute('data-disponivel') === 'false') {
-                return; // Não permitir seleção de cargos indisponíveis
-            }
             
             // Remover seleção anterior
             cargoOptions.forEach(opt => {
                 opt.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-                if (opt.getAttribute('data-disponivel') !== 'false') {
-                    opt.classList.add('bg-gray-50');
-                }
+                opt.classList.add('bg-gray-50');
             });
 
             // Selecionar cargo atual
