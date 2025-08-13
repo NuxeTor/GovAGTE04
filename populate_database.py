@@ -92,8 +92,8 @@ def populate_database():
         
         db.session.commit()
         print("✅ Banco de dados populado com sucesso!")
-        print(f"✅ {len(positions)} vagas criadas para o programa Correios Contrata")
-        print(f"✅ {len(other_programs) + 1} programas dos Correios adicionados")
+        print(f"✅ {len(positions)} vagas criadas para o programa IBGE Trabalhe Conosco")
+        print(f"✅ {len(other_programs) + 1} programas do IBGE adicionados")
 
 def main():
     """Função principal para popular o banco"""
@@ -102,9 +102,9 @@ def main():
         
         with app.app_context():
             # Verificar se já existem dados
-            existing_program = Program.query.filter_by(title='Correios Contrata').first()
+            existing_program = Program.query.filter_by(title='IBGE - Trabalhe Conosco').first()
             if existing_program:
-                print("✅ Banco já possui dados do Correios Contrata")
+                print("✅ Banco já possui dados do IBGE Trabalhe Conosco")
                 return
             
             print("🔄 Populando banco de dados...")

@@ -134,7 +134,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    """Main page showing the Correios Contrata program"""
+    """Main page showing the IBGE Trabalhe Conosco program"""
     try:
         # Cache em memória simples para evitar queries desnecessárias
         global _cached_data

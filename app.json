@@ -1,9 +1,9 @@
 {
-  "name": "Correios Contrata Portal",
-  "description": "Portal oficial do programa Correios Contrata do Governo Federal",
-  "keywords": ["flask", "python", "postgresql", "gov.br", "correios"],
-  "website": "https://correios-contrata.herokuapp.com/",
-  "repository": "https://github.com/usuario/correios-contrata",
+  "name": "IBGE Trabalhe Conosco Portal",
+  "description": "Portal oficial do programa IBGE Trabalhe Conosco do Governo Federal",
+  "keywords": ["flask", "python", "postgresql", "gov.br", "ibge"],
+  "website": "https://ibge-trabalhe-conosco.herokuapp.com/",
+  "repository": "https://github.com/usuario/ibge-trabalhe-conosco",
   "logo": "https://www.gov.br/pt-br/gov-logo.png",
   "success_url": "/",
   "scripts": {
