@@ -160,45 +160,60 @@ document.addEventListener('DOMContentLoaded', function() {
         cargo: 'Carteiro'
     };
     
-    // Preencher dados na página
-    document.getElementById('nome-candidato').textContent = dadosInscricao.nome;
-    document.getElementById('cpf-candidato').textContent = dadosInscricao.cpf;
-    document.getElementById('data-nascimento').textContent = dadosInscricao.dataNascimento;
-    document.getElementById('cargo-candidato').textContent = dadosInscricao.cargo;
+    // Preencher dados na página (verificar se elementos existem)
+    const nomeEl = document.getElementById('nome-candidato');
+    const cpfEl = document.getElementById('cpf-candidato');
+    const dataNascEl = document.getElementById('data-nascimento');
+    const cargoEl = document.getElementById('cargo-candidato');
+    const dataAtualEl = document.getElementById('data-atual');
+    
+    if (nomeEl) nomeEl.textContent = dadosInscricao.nome;
+    if (cpfEl) cpfEl.textContent = dadosInscricao.cpf;
+    if (dataNascEl) dataNascEl.textContent = dadosInscricao.dataNascimento;
+    if (cargoEl) cargoEl.textContent = dadosInscricao.cargo;
     
     // Data atual formatada
     const agora = new Date();
-    document.getElementById('data-atual').textContent = agora.toLocaleDateString('pt-BR');
+    if (dataAtualEl) dataAtualEl.textContent = agora.toLocaleDateString('pt-BR');
     
     // Máscara para celular
-    document.getElementById('celular').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        value = value.replace(/(\d{2})(\d)/, '($1) $2');
-        value = value.replace(/(\d{5})(\d)/, '$1-$2');
-        e.target.value = value;
-    });
+    const celularEl = document.getElementById('celular');
+    if (celularEl) {
+        celularEl.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        });
+    }
     
     // Salvar contato e mostrar popup gov.br
-    document.getElementById('btn-salvar-contato').addEventListener('click', function() {
-        const email = document.getElementById('email').value;
-        const celular = document.getElementById('celular').value;
-        
-        if (!email || !celular) {
-            alert('Por favor, preencha email e celular');
-            return;
-        }
-        
-        // Salvar dados no localStorage
-        localStorage.setItem('dadosContato', JSON.stringify({
-            email: email,
-            celular: celular,
-            nome: dadosInscricao.nome,
-            cpf: dadosInscricao.cpf
-        }));
-        
-        // Mostrar popup gov.br de carregamento
-        showGovBrPopup();
-    });
+    const btnSalvarEl = document.getElementById('btn-salvar-contato');
+    if (btnSalvarEl) {
+        btnSalvarEl.addEventListener('click', function() {
+            const emailEl = document.getElementById('email');
+            const celularEl = document.getElementById('celular');
+            
+            const email = emailEl ? emailEl.value : '';
+            const celular = celularEl ? celularEl.value : '';
+            
+            if (!email || !celular) {
+                alert('Por favor, preencha email e celular');
+                return;
+            }
+            
+            // Salvar dados no localStorage
+            localStorage.setItem('dadosContato', JSON.stringify({
+                email: email,
+                celular: celular,
+                nome: dadosInscricao.nome,
+                cpf: dadosInscricao.cpf
+            }));
+            
+            // Mostrar popup gov.br de carregamento
+            showGovBrPopup();
+        });
+    }
     
     function showGovBrPopup() {
         // Criar popup gov.br
