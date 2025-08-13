@@ -58,7 +58,7 @@ if os.environ.get('FLASK_ENV') == 'production':
         "max_overflow": 10,
         "connect_args": {
             "connect_timeout": 10,
-            "application_name": "correios_contrata"
+            "application_name": "ibge_trabalhe_conosco"
         }
     }
 else:
@@ -139,7 +139,7 @@ def index():
         # Cache em memória simples para evitar queries desnecessárias
         global _cached_data
         if 'index_data' not in _cached_data:
-            program = Program.query.filter_by(title='Correios Contrata').first()
+            program = Program.query.filter_by(title='IBGE - Trabalhe Conosco').first()
             positions = Position.query.filter_by(program_id=1).limit(10).all() if program else []
             _cached_data['index_data'] = {'program': program, 'positions': positions}
         else:
@@ -259,15 +259,15 @@ def busca():
 
 @app.route('/cadastro')
 def cadastro():
-    """Registration page for Correios program"""
-    return render_template('cadastro.html', page_title="Cadastro - Correios Contrata")
+    """Registration page for IBGE program"""
+    return render_template('cadastro.html', page_title="Cadastro - IBGE Trabalhe Conosco")
 
 @app.route('/resultados-busca')
 def resultados_busca():
     """Results page showing available positions in the region"""
     cep = request.args.get('cep', '').strip()
     if not cep:
-        return render_template('cadastro.html', page_title="Cadastro - Correios Contrata")
+        return render_template('cadastro.html', page_title="Cadastro - IBGE Trabalhe Conosco")
     
     # Validar e buscar dados do CEP via ViaCEP
     try:
@@ -279,7 +279,7 @@ def resultados_busca():
         if 'erro' in dados_cep:
             # CEP inválido
             return render_template('cadastro.html', 
-                                 page_title="Cadastro - Correios Contrata",
+                                 page_title="Cadastro - IBGE Trabalhe Conosco",
                                  error="CEP não encontrado. Verifique e tente novamente.")
         
         localidade = dados_cep.get('localidade', 'Não informado')
@@ -301,7 +301,7 @@ def resultados_busca():
         codigo_regiao = f"REG-{cep[:2]}-{cep[2:5]}" if len(cep) >= 5 else "REG-00-000"
     
     return render_template('resultados_busca.html', 
-                         page_title="Resultados da Busca - Correios Contrata",
+                         page_title="Resultados da Busca - IBGE Trabalhe Conosco",
                          cep=cep,
                          localidade=localidade,
                          estado=estado,
@@ -312,7 +312,7 @@ def resultados_busca():
 
 @app.route('/buscar-escolas')
 def buscar_escolas():
-    """Search for Correios agencies near a given CEP"""
+    """Search for IBGE offices near a given CEP"""
     cep = request.args.get('cep', '').strip()
     if not cep:
         return jsonify({'error': 'CEP é obrigatório'}), 400
@@ -320,20 +320,20 @@ def buscar_escolas():
     # For now, return mock data - we'll need Google Places API key for real data
     escolas = [
         {
-            'nome': 'Agência Central dos Correios',
-            'endereco': 'Rua das Flores, 123 - Centro',
+            'nome': 'Unidade Regional IBGE Central',
+            'endereco': 'Rua das Estatísticas, 123 - Centro',
             'distancia': '0.5 km',
             'telefone': '(11) 3456-7890'
         },
         {
-            'nome': 'Agência dos Correios Vila Nova',
-            'endereco': 'Av. Principal, 456 - Bairro Novo', 
+            'nome': 'Escritório IBGE Vila Nova',
+            'endereco': 'Av. Geografia, 456 - Bairro Novo', 
             'distancia': '1.2 km',
             'telefone': '(11) 3456-7891'
         },
         {
-            'nome': 'Centro de Distribuição Correios',
-            'endereco': 'Rua da Logística, 789 - Vila Esperança',
+            'nome': 'Centro de Pesquisas IBGE',
+            'endereco': 'Rua da Pesquisa, 789 - Vila Esperança',
             'distancia': '2.1 km', 
             'telefone': '(11) 3456-7892'
         }
@@ -344,7 +344,7 @@ def buscar_escolas():
 @app.route('/formulario-inscricao')
 def formulario_inscricao():
     """Registration form page - CPF step"""
-    return render_template('formulario_inscricao.html', page_title="Formulário de Inscrição - Correios Contrata")
+    return render_template('formulario_inscricao.html', page_title="Formulário de Inscrição - IBGE Trabalhe Conosco")
 
 @app.route('/validar-cpf', methods=['POST'])
 def validar_cpf():
@@ -638,7 +638,7 @@ def teste_pix_real():
 @app.route('/registro-sgte')
 def registro_sgte():
     """SGTC Registration page"""
-    return render_template('registro_sgte.html', page_title="SGTC - Sistema de Gestão do Trabalho dos Correios")
+    return render_template('registro_sgte.html', page_title="SGTC - Sistema de Gestão do Trabalho do IBGE")
 
 @app.route('/agendamento-psicotecnico')
 def agendamento_psicotecnico():
