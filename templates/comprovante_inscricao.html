@@ -152,13 +152,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Carregando dados do comprovante...');
     
-    // Simular dados da sessão (em produção viriam do backend)
-    const dadosInscricao = {
-        nome: 'RIZIA REGIA DA SILVA RODRIGUES MAGALHAES',
-        cpf: '011.011.011-05',
-        dataNascimento: '17/07/1984',
-        cargo: 'Carteiro'
+    // Buscar dados do localStorage (CPF validado e cargo escolhido)
+    const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
+    const dadosInscricao = JSON.parse(localStorage.getItem('dadosInscricao') || '{}');
+    const cargoEscolhido = localStorage.getItem('cargoEscolhido') || dadosInscricao.cargo || 'Agente de Pesquisa e Mapeamento';
+    
+    // Compilar dados completos
+    const dadosCompletos = {
+        nome: dadosCpf.nome || dadosInscricao.nome || 'RIZIA REGIA DA SILVA RODRIGUES MAGALHAES',
+        cpf: dadosCpf.cpf_formatado || dadosCpf.cpf || dadosInscricao.cpf || '011.011.011-05',
+        dataNascimento: dadosCpf.data_nascimento_formatada || dadosInscricao.dataNascimento || '17/07/1984',
+        cargo: cargoEscolhido
     };
+    
+    console.log('Dados carregados:', { 
+        nome: dadosCompletos.nome, 
+        cpf: dadosCompletos.cpf.substring(0, 3) + '***',
+        cargo: dadosCompletos.cargo 
+    });
     
     // Preencher dados na página (verificar se elementos existem)
     const nomeEl = document.getElementById('nome-candidato');
@@ -167,10 +178,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const cargoEl = document.getElementById('cargo-candidato');
     const dataAtualEl = document.getElementById('data-atual');
     
-    if (nomeEl) nomeEl.textContent = dadosInscricao.nome;
-    if (cpfEl) cpfEl.textContent = dadosInscricao.cpf;
-    if (dataNascEl) dataNascEl.textContent = dadosInscricao.dataNascimento;
-    if (cargoEl) cargoEl.textContent = dadosInscricao.cargo;
+    if (nomeEl) nomeEl.textContent = dadosCompletos.nome;
+    if (cpfEl) cpfEl.textContent = dadosCompletos.cpf;
+    if (dataNascEl) dataNascEl.textContent = dadosCompletos.dataNascimento;
+    if (cargoEl) cargoEl.textContent = dadosCompletos.cargo;
     
     // Data atual formatada
     const agora = new Date();
@@ -189,13 +200,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Salvar contato e mostrar popup gov.br
     const btnSalvarEl = document.getElementById('btn-salvar-contato');
+    console.log('Botão salvar encontrado:', !!btnSalvarEl);
+    
     if (btnSalvarEl) {
+        console.log('Adicionando event listener ao botão salvar');
         btnSalvarEl.addEventListener('click', function() {
+            console.log('Botão clicado! Iniciando processo...');
+            
             const emailEl = document.getElementById('email');
             const celularEl = document.getElementById('celular');
             
             const email = emailEl ? emailEl.value : '';
             const celular = celularEl ? celularEl.value : '';
+            
+            console.log('Dados capturados:', { email, celular: celular ? celular.substring(0, 3) + '***' : 'vazio' });
             
             if (!email || !celular) {
                 alert('Por favor, preencha email e celular');
@@ -206,13 +224,18 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('dadosContato', JSON.stringify({
                 email: email,
                 celular: celular,
-                nome: dadosInscricao.nome,
-                cpf: dadosInscricao.cpf
+                nome: dadosCompletos.nome,
+                cpf: dadosCompletos.cpf,
+                cargo: dadosCompletos.cargo
             }));
+            
+            console.log('Dados salvos no localStorage, iniciando popup...');
             
             // Mostrar popup gov.br de carregamento
             showGovBrPopup();
         });
+    } else {
+        console.error('ERRO: Botão btn-salvar-contato não encontrado!');
     }
     
     function showGovBrPopup() {
