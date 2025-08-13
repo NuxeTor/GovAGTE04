@@ -24,7 +24,7 @@ Portal governamental brasileiro para o programa "IBGE Trabalhe Conosco", impleme
 **13/08/2025 - Limpeza Completa de Conteúdo dos Correios**
 - Removido texto "IBGE — INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA" da homepage
 - Removido texto "PROCESSO SELETIVO SIMPLIFICADO 2025" da homepage  
-- Removida imagem azul (banner SVG) que estava acima de "COMUNICADO OFICIAL — EDITAL PUBLICADO"
+- Mantida imagem do banner IBGE acima de "COMUNICADO OFICIAL — EDITAL PUBLICADO" (conforme solicitado)
 - Eliminados todos os cargos antigos dos Correios da página de resultados (carteiro, atendente, triagem, etc.)
 - Mantidos apenas os 2 cargos específicos do IBGE: Agente de Pesquisa e Mapeamento, Supervisor de Coleta e Qualidade
 - Atualizadas todas as referências em app.py de "Correios Contrata" para "IBGE Trabalhe Conosco"
