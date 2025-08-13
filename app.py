@@ -116,7 +116,7 @@ def init_database():
         print("✅ Tabelas criadas com sucesso")
         
         # Verificar se precisa popular dados
-        existing = Program.query.filter_by(title='Correios Contrata').first()
+        existing = Program.query.filter_by(title='IBGE - Trabalhe Conosco').first()
         if not existing:
             print("🔄 Populando banco de dados...")
             try:

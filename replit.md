@@ -1,7 +1,7 @@
-# Correios Contrata - Portal Gov.br
+# IBGE Trabalhe Conosco - Portal Gov.br
 
 ## Visão Geral
-Portal governamental brasileiro para o programa "Correios Contrata", implementando um sistema completo de inscrição e seleção pública para funcionários dos Correios.
+Portal governamental brasileiro para o programa "IBGE Trabalhe Conosco", implementando um sistema completo de inscrição e processo seletivo simplificado para funcionários do Instituto Brasileiro de Geografia e Estatística.
 
 ## Stack Tecnológico
 - **Backend**: Flask (Python)
@@ -17,10 +17,20 @@ Portal governamental brasileiro para o programa "Correios Contrata", implementan
 - Validação de CPF via API externa
 - Pagamento via PIX
 - Agendamento de exames psicotécnicos
-- Sistema direcionado aos Correios
+- Sistema direcionado ao IBGE
 - Interface responsiva
 
 ## Alterações Recentes
+**13/08/2025 - Transformação Completa para Tema IBGE**
+- Transformado projeto completamente de "Correios Contrata" para "IBGE Trabalhe Conosco"
+- Atualizado banco de dados com cargos específicos do IBGE: Agente de Pesquisa e Mapeamento (R$ 4.379,00), Supervisor de Coleta e Qualidade (R$ 4.978,00)
+- Transformados todos os templates HTML: index.html, cadastro.html, formulario_inscricao.html, resultados_busca.html, pagamento_pix.html, e todas as demais páginas
+- Criado novo banner IBGE em SVG substituindo a imagem dos Correios
+- Alteradas todas as referências de ECT/Correios para IBGE/Instituto Brasileiro de Geografia e Estatística
+- Mudado foco de serviços postais para pesquisas estatísticas e mapeamento territorial
+- Mantida toda a funcionalidade técnica: sistema PIX, validação de CPF, agendamento psicotécnico
+- Atualizado sistema SGTE para SGTC (Sistema de Gestão do Trabalho do IBGE)
+- Alterados textos, títulos, descrições e metadados para refletir o novo tema estatístico
 **03/08/2025 - Otimização Completa de Performance**
 - Corrigido problemas de lentidão e timeout no preview
 - Implementado cache em memória para dados estáticos (programa e vagas)

