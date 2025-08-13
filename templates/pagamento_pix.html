@@ -331,39 +331,49 @@ function fecharDadosUsuario() {
 }
 
 function preencherDadosUsuario() {
+    // Buscar dados do comprovante de inscrição
+    const dadosContato = JSON.parse(localStorage.getItem('dadosContato') || '{}');
+    const dadosInscricao = JSON.parse(localStorage.getItem('dadosInscricao') || '{}');
     const dadosCpf = JSON.parse(localStorage.getItem('dadosCpfValidado') || '{}');
     
-    if (dadosCpf.nome) {
-        document.getElementById('nome-usuario').value = dadosCpf.nome;
+    // Nome do usuário (prioridade: dadosContato, dadosInscricao, dadosCpf)
+    const nome = dadosContato.nome || dadosInscricao.nome || dadosCpf.nome || '';
+    if (nome) {
+        document.getElementById('nome-usuario').value = nome;
         
         // Atualizar o botão de login no cabeçalho com o primeiro nome
-        const primeiroNome = dadosCpf.nome.split(' ')[0];
+        const primeiroNome = nome.split(' ')[0];
         const userNameHeader = document.getElementById('user-name-header');
         if (userNameHeader) {
             userNameHeader.textContent = primeiroNome;
         }
     }
     
-    if (dadosCpf.cpf) {
-        // Formatar CPF
-        const cpfFormatado = dadosCpf.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    // CPF do usuário
+    const cpf = dadosContato.cpf || dadosInscricao.cpf || dadosCpf.cpf || '';
+    if (cpf) {
+        // Formatar CPF se não estiver formatado
+        const cpfLimpo = cpf.replace(/\D/g, '');
+        const cpfFormatado = cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         document.getElementById('cpf-usuario').value = cpfFormatado;
     }
     
-    // Tentar buscar email salvo
-    const emailSalvo = localStorage.getItem('emailUsuario') || sessionStorage.getItem('emailUsuario') || '';
-    if (emailSalvo) {
-        document.getElementById('email-usuario').value = emailSalvo;
+    // Email do usuário (do comprovante)
+    const email = dadosContato.email || localStorage.getItem('emailUsuario') || '';
+    if (email) {
+        document.getElementById('email-usuario').value = email;
     }
     
-    // Tentar buscar telefone salvo
-    const telefoneSalvo = localStorage.getItem('telefoneUsuario') || '';
-    if (telefoneSalvo) {
-        document.getElementById('telefone-usuario').value = telefoneSalvo;
+    // Telefone do usuário (do comprovante)
+    const telefone = dadosContato.celular || localStorage.getItem('telefoneUsuario') || '';
+    if (telefone) {
+        document.getElementById('telefone-usuario').value = telefone;
     }
+    
+    console.log('Dados preenchidos:', { nome, cpf: cpf.substring(0, 3) + '***', email, telefone: telefone ? telefone.substring(0, 3) + '***' : '' });
     
     // Gerar PIX automaticamente se tiver todos os dados obrigatórios
-    if (emailSalvo) {
+    if (nome && cpf && email) {
         setTimeout(() => gerarPIX(), 1000);
     }
 }
