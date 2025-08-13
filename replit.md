@@ -21,7 +21,19 @@ Portal governamental brasileiro para o programa "IBGE Trabalhe Conosco", impleme
 - Interface responsiva
 
 ## Alterações Recentes
-**13/08/2025 - Transformação Completa para Tema IBGE**
+**13/08/2025 - Limpeza Completa de Conteúdo dos Correios**
+- Removido texto "IBGE — INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA" da homepage
+- Removido texto "PROCESSO SELETIVO SIMPLIFICADO 2025" da homepage  
+- Removida imagem azul (banner SVG) que estava acima de "COMUNICADO OFICIAL — EDITAL PUBLICADO"
+- Eliminados todos os cargos antigos dos Correios da página de resultados (carteiro, atendente, triagem, etc.)
+- Mantidos apenas os 2 cargos específicos do IBGE: Agente de Pesquisa e Mapeamento, Supervisor de Coleta e Qualidade
+- Atualizadas todas as referências em app.py de "Correios Contrata" para "IBGE Trabalhe Conosco"
+- Substituídas referências de "Agências dos Correios" por "Escritórios IBGE" no código
+- Corrigidos comentários e strings no JavaScript para refletir tema IBGE
+- Atualizado nome da aplicação no banco de dados de "correios_contrata" para "ibge_trabalhe_conosco"
+- Limpeza completa de todos os vestígios do projeto anterior dos Correios
+
+**13/08/2025 - Transformação Completa para Tema IBGE (Anterior)**
 - Transformado projeto completamente de "Correios Contrata" para "IBGE Trabalhe Conosco"
 - Atualizado banco de dados com cargos específicos do IBGE: Agente de Pesquisa e Mapeamento (R$ 4.379,00), Supervisor de Coleta e Qualidade (R$ 4.978,00)
 - Transformados todos os templates HTML: index.html, cadastro.html, formulario_inscricao.html, resultados_busca.html, pagamento_pix.html, e todas as demais páginas
