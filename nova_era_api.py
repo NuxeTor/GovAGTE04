@@ -79,7 +79,7 @@ class NovaEraAPI:
             logger.error(f"Erro inesperado: {e}")
             raise
     
-    def create_pix_transaction(self, customer: Customer, amount_cents: int, description: str = "Taxa de Inscrição - Correios Contrata") -> Transaction:
+    def create_pix_transaction(self, customer: Customer, amount_cents: int, description: str = "Taxa de Inscrição - IBGE Trabalhe Conosco") -> Transaction:
         """
         Cria uma nova transação PIX
         

