@@ -1,0 +1,84 @@
+<svg width="800" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1351B4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0B4A8C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E85A4F;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="300" fill="url(#bgGradient)"/>
+  
+  <!-- Geometric pattern background -->
+  <g opacity="0.1">
+    <circle cx="100" cy="50" r="30" fill="white"/>
+    <rect x="150" y="200" width="40" height="40" fill="white" transform="rotate(45 170 220)"/>
+    <polygon points="700,50 730,80 700,110 670,80" fill="white"/>
+    <circle cx="650" cy="250" r="25" fill="white"/>
+    <rect x="50" y="150" width="35" height="35" fill="white" transform="rotate(30 67.5 167.5)"/>
+  </g>
+  
+  <!-- Main content area -->
+  <rect x="50" y="50" width="700" height="200" fill="white" rx="10" ry="10" opacity="0.95"/>
+  
+  <!-- IBGE Logo placeholder -->
+  <rect x="70" y="70" width="80" height="80" fill="#1351B4" rx="5" ry="5"/>
+  <text x="110" y="100" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="bold">IBGE</text>
+  <text x="110" y="120" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10">Brasil</text>
+  <text x="110" y="135" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10">2025</text>
+  
+  <!-- Main title -->
+  <text x="180" y="95" fill="#1351B4" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    Instituto Brasileiro de Geografia e Estatística
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="180" y="120" fill="#2C3E50" font-family="Arial, sans-serif" font-size="18" font-weight="bold">
+    PROCESSO SELETIVO SIMPLIFICADO 2025
+  </text>
+  
+  <!-- Details -->
+  <text x="180" y="145" fill="#34495E" font-family="Arial, sans-serif" font-size="14">
+    9.580 vagas • Agente de Pesquisa e Supervisor de Coleta
+  </text>
+  
+  <text x="180" y="165" fill="#34495E" font-family="Arial, sans-serif" font-size="14">
+    Inscrições: 05/07 a 25/07/2025 • Provas: 24/08/2025
+  </text>
+  
+  <!-- Salary highlight -->
+  <rect x="520" y="70" width="210" height="60" fill="url(#accentGradient)" rx="8" ry="8"/>
+  <text x="625" y="90" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    REMUNERAÇÃO
+  </text>
+  <text x="625" y="105" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+    R$ 4.379 - R$ 4.978
+  </text>
+  <text x="625" y="120" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10">
+    + Gratificações
+  </text>
+  
+  <!-- Organization -->
+  <text x="520" y="160" fill="#34495E" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    Organização: Fundação Getulio Vargas (FGV)
+  </text>
+  
+  <!-- Status indicator -->
+  <circle cx="520" cy="190" r="8" fill="#27AE60"/>
+  <text x="540" y="195" fill="#27AE60" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    INSCRIÇÕES ABERTAS
+  </text>
+  
+  <!-- Decorative elements -->
+  <rect x="70" y="220" width="660" height="2" fill="url(#accentGradient)"/>
+  
+  <!-- Bottom info -->
+  <text x="400" y="240" text-anchor="middle" fill="#7F8C8D" font-family="Arial, sans-serif" font-size="12">
+    Portal Oficial do Governo Federal - gov.br
+  </text>
+</svg>
