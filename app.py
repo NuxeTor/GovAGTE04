@@ -504,9 +504,9 @@ def pagamento_pix():
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
-    """Generate PIX payment using real Nova Era API"""
+    """Generate PIX payment using Vexy Payments API"""
     try:
-        from nova_era_api import create_nova_era_client, Customer
+        from vexy_payments_api import create_payment_api
         
         dados = request.get_json()
         
@@ -528,70 +528,143 @@ def gerar_pix():
             }), 400
         
         # Log dos dados recebidos para debug
-        app.logger.info(f"Gerando PIX Nova Era REAL para: {nome}, {email}, CPF: {cpf[:3]}***")
+        app.logger.info(f"Gerando PIX Vexy Payments para: {nome}, {email}, CPF: {cpf[:3]}***")
         
-        # Criar cliente da API Nova Era com credenciais reais
-        api = create_nova_era_client()
+        # Criar cliente da API Vexy Payments
+        payment_api = create_payment_api()
         
-        # Criar objeto Customer
-        customer = Customer(
-            name=nome,
-            email=email,
-            phone=telefone or "(11) 99999-9999",  # Telefone padrão se não fornecido
-            cpf=cpf
-        )
+        # Preparar dados do pagamento
+        payment_data = {
+            'name': nome,
+            'email': email,
+            'cpf': cpf,
+            'phone': telefone or "(11) 99999-9999",
+            'amount': valor,
+            'description': dados.get('descricao', 'Taxa de Inscrição - IBGE Trabalhe Conosco')
+        }
         
-        # Criar transação PIX REAL
-        valor_centavos = int(valor * 100)  # Converter para centavos
-        descricao = dados.get('descricao', 'Taxa de Inscrição - IBGE Trabalhe Conosco')
+        # Criar transação PIX via Vexy Payments
+        response = payment_api.create_pix_payment(payment_data)
         
-        transaction = api.create_pix_transaction(customer, valor_centavos, descricao)
-        
-        return jsonify({
-            'success': True,
-            'transacao_id': transaction.id,
-            'pix_code': transaction.qr_code,
-            'qr_code': transaction.qr_code,  # Compatibilidade
-            'status': transaction.status,
-            'expires_at': transaction.expires_at,
-            'valor': f"R$ {valor:.2f}",
-            'api_provider': 'Nova Era REAL'
-        })
+        if response.get('success'):
+            return jsonify({
+                'success': True,
+                'transacao_id': response.get('id'),
+                'pix_code': response.get('pixCode'),
+                'qr_code': response.get('pixQrCode'),  # Compatibilidade
+                'status': response.get('status'),
+                'expires_at': response.get('expiresAt'),
+                'valor': f"R$ {valor:.2f}",
+                'api_provider': 'Vexy Payments'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': response.get('error', 'Erro desconhecido')
+            }), 500
         
     except ValueError as e:
         app.logger.error(f"Erro de validação: {e}")
         return jsonify({'success': False, 'message': str(e)}), 400
     except Exception as e:
-        app.logger.error(f"Erro ao gerar PIX Nova Era REAL: {e}")
+        app.logger.error(f"Erro ao gerar PIX Vexy Payments: {e}")
         return jsonify({'success': False, 'message': f'Erro na API: {str(e)}'}), 500
 
 @app.route('/api/verificar-pagamento/<string:transacao_id>')
 def verificar_pagamento(transacao_id):
-    """Verify PIX payment status using real Nova Era API"""
+    """Verify PIX payment status using Vexy Payments API"""
     try:
-        from nova_era_api import create_nova_era_client
+        from vexy_payments_api import create_payment_api
         
-        # Criar cliente da API Nova Era com credenciais reais
-        api = create_nova_era_client()
+        # Criar cliente da API Vexy Payments
+        payment_api = create_payment_api()
         
-        # Verificar status REAL da transação
-        status_data = api.get_transaction_status(transacao_id)
+        # Verificar status da transação
+        status_data = payment_api.check_payment_status(transacao_id)
         
-        # Determinar se foi pago baseado no status real
-        pago = status_data.get('status', '').lower() in ['paid', 'completed']
+        # Determinar se foi pago baseado no status
+        pago = status_data.get('status', '').lower() in ['paid', 'completed', 'success']
         
         return jsonify({
             'pago': pago,
-            'status': status_data.get('status', 'unknown'),
-            'transacao_id': status_data.get('id', transacao_id),
+            'status': status_data.get('status', 'pending'),
+            'transacao_id': status_data.get('transaction_id', transacao_id),
             'valor': status_data.get('amount', 0),
             'paid_at': status_data.get('paid_at'),
-            'api_provider': 'Nova Era REAL'
+            'api_provider': 'Vexy Payments'
         })
         
     except Exception as e:
-        app.logger.error(f"Erro ao verificar pagamento Nova Era REAL: {e}")
-        return jsonify({'pago': False, 'message': str(e), 'api_provider': 'Nova Era REAL'}), 500
+        app.logger.error(f"Erro ao verificar pagamento Vexy Payments: {e}")
+        return jsonify({'pago': False, 'message': str(e), 'api_provider': 'Vexy Payments'}), 500
+
+@app.route('/api/webhook/vexy', methods=['POST'])
+def webhook_vexy():
+    """Webhook para notificações da Vexy Payments"""
+    try:
+        data = request.get_json()
+        
+        transaction_id = data.get('transactionId')
+        status = data.get('status')
+        amount = data.get('amount')
+        external_id = data.get('external_id')
+        
+        app.logger.info(f"🔔 Webhook Vexy: {transaction_id} - Status: {status}")
+        
+        if status == 'PAID':
+            app.logger.info(f"✅ Pagamento confirmado: R$ {amount}")
+            
+            # Aqui você pode:
+            # 1. Atualizar banco de dados
+            # 2. Enviar email de confirmação
+            # 3. Liberar produto/serviço
+            # 4. Redirecionar usuário
+            
+        return jsonify({'success': True}), 200
+        
+    except Exception as e:
+        app.logger.error(f"❌ Erro no webhook: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/teste-vexy', methods=['GET', 'POST'])
+def teste_vexy():
+    """Endpoint para testar integração Vexy Payments"""
+    try:
+        from vexy_payments_api import create_payment_api
+        
+        if request.method == 'GET':
+            return jsonify({
+                'status': 'Vexy Payments API disponível',
+                'endpoint': '/api/teste-vexy',
+                'method': 'POST',
+                'sample_data': {
+                    'name': 'João Silva',
+                    'email': 'joao@teste.com',
+                    'cpf': '12345678901',
+                    'amount': 87.40
+                }
+            })
+        
+        # POST - Criar transação de teste
+        data = request.get_json() or {
+            'name': 'Cliente Teste',
+            'email': 'teste@ibge.gov.br',
+            'cpf': '12345678901',
+            'amount': 87.40
+        }
+        
+        payment_api = create_payment_api()
+        result = payment_api.create_pix_payment(data)
+        
+        return jsonify({
+            'test_result': result,
+            'api_provider': 'Vexy Payments',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Erro no teste Vexy: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 
