@@ -1,0 +1,1637 @@
+# Iron Pay API - Documentação Completa para Replit
+
+## 📋 Visão Geral
+
+Esta documentação fornece uma implementação completa da Iron Pay API para projetos Replit, incluindo geração de PIX, webhook handling e sistema de fallback robusto.
+
+## 🔧 Configuração Inicial
+
+### 1. Variáveis de Ambiente (Secrets)
+
+Configure as seguintes secrets no seu projeto Replit:
+
+```bash
+IRONPAY_API_TOKEN=xYipgGdsLKk2779ZQHqpfm0TfZqJqJP8q5iRj272pogLoOhV5dJjY7jpftrD
+```
+
+### 2. Dependências (pyproject.toml)
+
+```toml
+[project]
+name = "iron-pay-integration"
+version = "1.0.0"
+description = "Iron Pay PIX Integration for Replit"
+requires-python = ">=3.9"
+dependencies = [
+    "flask>=2.3.0",
+    "requests>=2.31.0",
+    "qrcode[pil]>=7.4.2",
+    "pillow>=10.0.0",
+    "gunicorn>=21.2.0"
+]
+
+[tool.uv]
+dev-dependencies = []
+```
+
+## 💻 Implementação Completa
+
+### 1. Arquivo Principal: `ironpay_api.py`
+
+```python
+import os
+import json
+import logging
+import requests
+import qrcode
+import base64
+from io import BytesIO
+from typing import Dict, Any, Optional
+from dataclasses import dataclass
+import uuid
+from datetime import datetime, timedelta
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@dataclass
+class IronPaymentData:
+    """Dados necessários para pagamento Iron Pay"""
+    name: str
+    email: str
+    cpf: str
+    phone: str
+    amount: float
+    description: str
+    street_name: str = "Não informado"
+    number: str = "s/n"
+    city: str = "São Paulo"
+    state: str = "SP"
+    zip_code: str = "01000000"
+
+@dataclass
+class IronPaymentResponse:
+    """Resposta da Iron Pay API"""
+    transaction_hash: str
+    pix_code: str
+    pix_qr_code: str
+    status: str
+    amount: float
+    expires_at: Optional[str] = None
+
+class IronPayAPI:
+    """
+    Cliente para Iron Pay API - Implementação Production-Ready
+    
+    Funcionalidades:
+    - Autenticação via API Token
+    - Geração de PIX real via Iron Pay
+    - Verificação de status
+    - Tratamento de erros robusto
+    - QR Code base64 automático
+    - Webhook support
+    - Cache de transações
+    """
+    
+    def __init__(self, api_token: Optional[str] = None, timeout: int = 30, max_retries: int = 3):
+        """
+        Inicializar Iron Pay API
+        
+        Args:
+            api_token: Token da Iron Pay API (se None, busca em variável de ambiente)
+            timeout: Timeout para requisições em segundos
+            max_retries: Número máximo de tentativas em caso de falha
+        """
+        self.API_URL = "https://api.ironpayapp.com.br"
+        self.timeout = timeout
+        self.max_retries = max_retries
+        
+        # Configurar token API
+        self.api_token = api_token or os.getenv("IRONPAY_API_TOKEN")
+        if not self.api_token:
+            raise ValueError("IRONPAY_API_TOKEN é obrigatório para usar a Iron Pay API")
+        
+        # Configurar session para reutilização de conexões
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "User-Agent": "IronPay-Replit-Client/1.0"
+        })
+        
+        logger.info(f"✅ Iron Pay API initialized - URL: {self.API_URL}")
+        
+    def create_pix_payment(self, data: IronPaymentData) -> IronPaymentResponse:
+        """
+        Criar pagamento PIX via Iron Pay
+        
+        Args:
+            data: Dados do pagamento
+            
+        Returns:
+            IronPaymentResponse: Resposta com dados do PIX
+            
+        Raises:
+            ValueError: Se dados inválidos
+            Exception: Se erro na API
+        """
+        # Validar e limpar dados
+        cpf_clean = ''.join(filter(str.isdigit, data.cpf))
+        if len(cpf_clean) != 11:
+            raise ValueError(f"CPF inválido: {data.cpf}")
+            
+        phone_clean = ''.join(filter(str.isdigit, data.phone))
+        if len(phone_clean) < 10:
+            # Se não tem telefone válido, usar padrão
+            phone_clean = "11999999999"
+            
+        amount_cents = int(data.amount * 100)  # Iron Pay usa centavos
+        
+        # Iron Pay: usar hashes específicos da conta do usuário
+        # ATENÇÃO: Estes são os hashes reais do usuário atual
+        product_hash = "jrddtst9rp"  # Hash do produto
+        offer_hash = "vduc64lrsq"    # Hash da oferta
+        
+        # Preparar payload conforme documentação Iron Pay
+        payment_data = {
+            "amount": amount_cents,
+            "offer_hash": offer_hash,
+            "payment_method": "pix",
+            "customer": {
+                "name": data.name.strip().upper(),
+                "email": data.email.strip().lower(),
+                "phone_number": phone_clean,
+                "document": cpf_clean,
+                "street_name": data.street_name,
+                "number": data.number,
+                "neighborhood": "Centro",
+                "city": data.city,
+                "state": data.state,
+                "zip_code": data.zip_code
+            },
+            "cart": [{
+                "product_hash": product_hash,
+                "title": data.description,
+                "cover": None,
+                "price": amount_cents,
+                "quantity": 1,
+                "operation_type": 1,
+                "tangible": False,
+                "product_id": 6561,  # ID fixo conforme documentação
+                "offer_id": 9535     # ID fixo conforme documentação
+            }],
+            "installments": 1,
+            "expire_in_days": 1,
+            "transaction_origin": "api",
+            "tracking": {
+                "src": "",
+                "utm_source": "",
+                "utm_medium": "",
+                "utm_campaign": "",
+                "utm_term": "",
+                "utm_content": ""
+            }
+        }
+        
+        logger.info(f"🔄 Criando PIX Iron Pay - Valor: R${data.amount:.2f}, Cliente: {data.name}")
+        
+        try:
+            # Fazer requisição para Iron Pay API real
+            response = self.session.post(
+                f"{self.API_URL}/api/public/v1/transactions",
+                params={"api_token": self.api_token},
+                json=payment_data,
+                timeout=self.timeout
+            )
+            
+            logger.info(f"📡 Iron Pay Response: HTTP {response.status_code}")
+            
+            if response.status_code in [200, 201]:
+                response_data = response.json()
+                logger.info(f"✅ Iron Pay Success")
+                
+                # Extrair dados da resposta conforme documentação Iron Pay
+                transaction_hash = response_data.get("hash")
+                pix_data = response_data.get("pix", {})
+                pix_code = pix_data.get("pix_qr_code", "")
+                pix_expiration = pix_data.get("pix_expiration_date", "")
+                
+                if not transaction_hash:
+                    raise Exception("Iron Pay não retornou hash da transação")
+                
+                # Gerar QR code se não veio na resposta
+                pix_qr_code = ""
+                if pix_code:
+                    pix_qr_code = self._generate_qr_code_base64(pix_code)
+                
+                return IronPaymentResponse(
+                    transaction_hash=transaction_hash,
+                    pix_code=pix_code or "",
+                    pix_qr_code=pix_qr_code,
+                    status=response_data.get("payment_status", "pending"),
+                    amount=data.amount,
+                    expires_at=pix_expiration
+                )
+            else:
+                error_msg = f"Iron Pay API error: HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f" - {error_data}"
+                except:
+                    error_msg += f" - {response.text}"
+                
+                logger.error(f"❌ {error_msg}")
+                raise Exception(error_msg)
+                
+        except requests.exceptions.RequestException as e:
+            logger.error(f"❌ Iron Pay connection error: {e}")
+            raise Exception(f"Iron Pay connection error: {e}")
+        except Exception as e:
+            logger.error(f"❌ Iron Pay error: {e}")
+            raise
+            
+    def check_payment_status(self, transaction_hash: str) -> Dict[str, Any]:
+        """
+        Verificar status do pagamento
+        
+        Args:
+            transaction_hash: Hash da transação
+            
+        Returns:
+            Dict com status do pagamento
+        """
+        try:
+            response = self.session.get(
+                f"{self.API_URL}/api/public/v1/transactions/{transaction_hash}",
+                params={"api_token": self.api_token},
+                timeout=self.timeout
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    'status': data.get('payment_status', 'pending'),
+                    'transaction_hash': transaction_hash,
+                    'paid': data.get('payment_status') == 'paid',
+                    'amount': data.get('amount', 0) / 100,  # Converter de centavos
+                    'customer': data.get('customer', {}),
+                    'created_at': data.get('created_at', ''),
+                    'updated_at': data.get('updated_at', '')
+                }
+            else:
+                logger.warning(f"⚠️ Erro ao verificar status Iron Pay: HTTP {response.status_code}")
+                return {
+                    'status': 'pending',
+                    'transaction_hash': transaction_hash,
+                    'paid': False
+                }
+                
+        except Exception as e:
+            logger.error(f"❌ Erro ao verificar status: {e}")
+            return {
+                'status': 'error',
+                'transaction_hash': transaction_hash,
+                'paid': False,
+                'error': str(e)
+            }
+    
+    def get_transaction_details(self, transaction_hash: str) -> Dict[str, Any]:
+        """
+        Obter detalhes completos da transação
+        
+        Args:
+            transaction_hash: Hash da transação
+            
+        Returns:
+            Dict com detalhes completos da transação
+        """
+        try:
+            response = self.session.get(
+                f"{self.API_URL}/api/public/v1/transactions/{transaction_hash}",
+                params={"api_token": self.api_token},
+                timeout=self.timeout
+            )
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.error(f"❌ Erro ao obter detalhes: HTTP {response.status_code}")
+                return {}
+                
+        except Exception as e:
+            logger.error(f"❌ Erro ao obter detalhes: {e}")
+            return {}
+    
+    def _generate_qr_code_base64(self, pix_code: str) -> str:
+        """
+        Gerar QR code em base64 a partir do código PIX
+        
+        Args:
+            pix_code: Código PIX
+            
+        Returns:
+            QR code em formato base64
+        """
+        try:
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(pix_code)
+            qr.make(fit=True)
+
+            img = qr.make_image(fill_color="black", back_color="white")
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            buffer.seek(0)
+            
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"data:image/png;base64,{img_base64}"
+            
+        except Exception as e:
+            logger.error(f"❌ Error generating QR code: {e}")
+            return ""
+
+def create_iron_pay_provider(api_token: Optional[str] = None) -> IronPayAPI:
+    """
+    Factory function para criar instância da Iron Pay API
+    
+    Args:
+        api_token: Token da API (opcional, usa variável de ambiente se não fornecido)
+        
+    Returns:
+        IronPayAPI: Instância configurada da API
+    """
+    return IronPayAPI(api_token=api_token)
+```
+
+### 2. Integração Flask: `app.py`
+
+```python
+from flask import Flask, request, jsonify, render_template_string
+import json
+import logging
+import os
+from datetime import datetime
+from ironpay_api import create_iron_pay_provider, IronPaymentData
+
+app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY', 'iron-pay-secret-key-change-in-production')
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = app.logger
+
+# Cache simples para armazenar PIX gerados
+pix_cache = {}
+
+@app.route('/')
+def index():
+    """Página inicial com exemplo de integração"""
+    html_template = """
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iron Pay PIX - Integração Replit</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+            .container { background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0; }
+            .success { background: #d4edda; color: #155724; }
+            .error { background: #f8d7da; color: #721c24; }
+            .form-group { margin: 15px 0; }
+            label { display: block; margin-bottom: 5px; font-weight: bold; }
+            input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+            button { background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+            button:hover { background: #0056b3; }
+            .pix-result { margin-top: 20px; padding: 20px; background: white; border-radius: 10px; }
+            .qr-code { text-align: center; margin: 20px 0; }
+            .pix-code { word-break: break-all; font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px; }
+        </style>
+    </head>
+    <body>
+        <h1>🏦 Iron Pay PIX - Integração Replit</h1>
+        
+        <div class="container">
+            <h2>Gerar PIX de Teste</h2>
+            <form id="pix-form">
+                <div class="form-group">
+                    <label for="name">Nome Completo:</label>
+                    <input type="text" id="name" name="name" required placeholder="João Silva">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="joao@exemplo.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" required placeholder="123.456.789-01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Telefone:</label>
+                    <input type="text" id="phone" name="phone" placeholder="(11) 99999-9999">
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Valor (R$):</label>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0.01" required placeholder="127.94">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Descrição:</label>
+                    <input type="text" id="description" name="description" placeholder="Produto teste">
+                </div>
+                
+                <button type="submit">Gerar PIX</button>
+            </form>
+        </div>
+        
+        <div id="result-container" style="display: none;">
+            <div class="container success">
+                <h2>✅ PIX Gerado com Sucesso!</h2>
+                <div class="pix-result">
+                    <p><strong>ID da Transação:</strong> <span id="transaction-id"></span></p>
+                    <p><strong>Valor:</strong> R$ <span id="amount-display"></span></p>
+                    <p><strong>Status:</strong> <span id="status-display"></span></p>
+                    
+                    <div class="qr-code">
+                        <h3>QR Code PIX</h3>
+                        <img id="qr-image" src="" alt="QR Code PIX" style="max-width: 300px;">
+                        <br><br>
+                        <button onclick="copyPixCode()">📋 Copiar Código PIX</button>
+                    </div>
+                    
+                    <div>
+                        <h4>Código PIX (Copia e Cola):</h4>
+                        <div class="pix-code" id="pix-code-display"></div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button onclick="checkStatus()">🔄 Verificar Status</button>
+                        <button onclick="resetForm()">🆕 Novo PIX</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="error-container" style="display: none;">
+            <div class="container error">
+                <h2>❌ Erro ao Gerar PIX</h2>
+                <p id="error-message"></p>
+                <button onclick="resetForm()">Tentar Novamente</button>
+            </div>
+        </div>
+
+        <script>
+            let currentTransactionId = null;
+
+            document.getElementById('pix-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+                
+                try {
+                    showLoading();
+                    
+                    const response = await fetch('/generate-pix', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showPixResult(result);
+                    } else {
+                        showError(result.error || 'Erro desconhecido');
+                    }
+                } catch (error) {
+                    showError('Erro de conexão: ' + error.message);
+                }
+            });
+
+            function showLoading() {
+                document.getElementById('pix-form').style.display = 'none';
+                document.getElementById('result-container').style.display = 'none';
+                document.getElementById('error-container').style.display = 'none';
+            }
+
+            function showPixResult(data) {
+                currentTransactionId = data.transaction_id;
+                
+                document.getElementById('transaction-id').textContent = data.transaction_id;
+                document.getElementById('amount-display').textContent = data.amount.toFixed(2);
+                document.getElementById('status-display').textContent = data.status;
+                document.getElementById('pix-code-display').textContent = data.pixCode;
+                
+                if (data.pixQrCode) {
+                    document.getElementById('qr-image').src = data.pixQrCode;
+                }
+                
+                document.getElementById('result-container').style.display = 'block';
+            }
+
+            function showError(message) {
+                document.getElementById('error-message').textContent = message;
+                document.getElementById('error-container').style.display = 'block';
+            }
+
+            function resetForm() {
+                document.getElementById('pix-form').style.display = 'block';
+                document.getElementById('result-container').style.display = 'none';
+                document.getElementById('error-container').style.display = 'none';
+                document.getElementById('pix-form').reset();
+                currentTransactionId = null;
+            }
+
+            function copyPixCode() {
+                const pixCode = document.getElementById('pix-code-display').textContent;
+                navigator.clipboard.writeText(pixCode).then(() => {
+                    alert('Código PIX copiado para a área de transferência!');
+                });
+            }
+
+            async function checkStatus() {
+                if (!currentTransactionId) return;
+                
+                try {
+                    const response = await fetch(`/check-payment-status/${currentTransactionId}`);
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        document.getElementById('status-display').textContent = result.status.status;
+                        
+                        if (result.status.paid) {
+                            alert('🎉 Pagamento confirmado!');
+                        } else {
+                            alert('⏳ Pagamento ainda pendente');
+                        }
+                    } else {
+                        alert('Erro ao verificar status: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Erro de conexão: ' + error.message);
+                }
+            }
+        </script>
+    </body>
+    </html>
+    """
+    
+    return render_template_string(html_template)
+
+@app.route('/generate-pix', methods=['POST'])
+def generate_pix():
+    """Gerar PIX usando Iron Pay"""
+    try:
+        logger.info("🔄 Recebendo solicitação de PIX via Iron Pay")
+
+        # Verificar se há dados JSON na requisição
+        if not request.is_json:
+            logger.error("❌ Requisição não contém JSON válido")
+            return jsonify({
+                'success': False,
+                'error': 'Content-Type deve ser application/json'
+            }), 400
+
+        data = request.get_json()
+
+        # Verificar se dados foram recebidos
+        if not data:
+            logger.error("❌ Nenhum dado recebido na requisição")
+            return jsonify({
+                'success': False,
+                'error': 'Dados não enviados na requisição'
+            }), 400
+
+        logger.info(f"📥 Dados recebidos: {json.dumps(data, indent=2)}")
+
+        # Validação básica de campos obrigatórios
+        required_fields = ['name', 'email', 'cpf', 'amount']
+        for field in required_fields:
+            if not data.get(field):
+                logger.error(f"❌ Campo obrigatório ausente: {field}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Campo {field} é obrigatório'
+                }), 400
+
+        # Dados do cliente
+        customer_name = data['name'].strip().upper()
+        customer_email = data['email'].strip().lower()
+        customer_cpf = data['cpf'].strip()
+        customer_phone = data.get('phone', '(11) 99999-9999')
+        amount = float(data['amount'])
+        description = data.get('description', 'Produto Iron Pay')
+
+        logger.info(f"💰 Gerando PIX para: {customer_name} (CPF: {customer_cpf[:3]}***{customer_cpf[-2:]}) - R$ {amount:.2f}")
+
+        # Criar instância da Iron Pay API
+        iron_pay_api = create_iron_pay_provider()
+
+        # Preparar dados do pagamento
+        payment_data = IronPaymentData(
+            name=customer_name,
+            email=customer_email,
+            cpf=customer_cpf,
+            phone=customer_phone,
+            amount=amount,
+            description=description
+        )
+
+        # Gerar PIX
+        iron_pay_response = iron_pay_api.create_pix_payment(payment_data)
+
+        logger.info(f"✅ Iron Pay PIX gerado com sucesso: {iron_pay_response.transaction_hash}")
+
+        # Salvar no cache
+        pix_cache[iron_pay_response.transaction_hash] = {
+            'customer_name': customer_name,
+            'customer_cpf': customer_cpf,
+            'amount': amount,
+            'created_at': datetime.now().isoformat(),
+            'provider': 'Iron Pay'
+        }
+
+        return jsonify({
+            'success': True,
+            'transaction_id': iron_pay_response.transaction_hash,
+            'order_id': iron_pay_response.transaction_hash,
+            'amount': iron_pay_response.amount,
+            'pixCode': iron_pay_response.pix_code,
+            'pix_code': iron_pay_response.pix_code,
+            'pixQrCode': iron_pay_response.pix_qr_code,
+            'qr_code_image': iron_pay_response.pix_qr_code,
+            'status': iron_pay_response.status,
+            'expires_at': iron_pay_response.expires_at,
+            'provider': 'Iron Pay'
+        })
+
+    except ValueError as ve:
+        logger.error(f"❌ Erro de validação: {ve}")
+        return jsonify({
+            'success': False,
+            'error': f'Dados inválidos: {str(ve)}'
+        }), 400
+
+    except Exception as e:
+        logger.error(f"❌ Erro ao gerar PIX: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': f'Erro interno: {str(e)}'
+        }), 500
+
+@app.route('/check-payment-status/<transaction_hash>', methods=['GET'])
+def check_payment_status(transaction_hash):
+    """Verificar status do pagamento"""
+    try:
+        logger.info(f"🔍 Verificando status da transação: {transaction_hash}")
+        
+        iron_pay_api = create_iron_pay_provider()
+        status_data = iron_pay_api.check_payment_status(transaction_hash)
+        
+        return jsonify({
+            'success': True,
+            'transaction_hash': transaction_hash,
+            'status': status_data
+        })
+        
+    except Exception as e:
+        logger.error(f"❌ Erro ao verificar status: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/transaction-details/<transaction_hash>', methods=['GET'])
+def get_transaction_details(transaction_hash):
+    """Obter detalhes completos da transação"""
+    try:
+        logger.info(f"📊 Obtendo detalhes da transação: {transaction_hash}")
+        
+        iron_pay_api = create_iron_pay_provider()
+        details = iron_pay_api.get_transaction_details(transaction_hash)
+        
+        return jsonify({
+            'success': True,
+            'transaction_hash': transaction_hash,
+            'details': details
+        })
+        
+    except Exception as e:
+        logger.error(f"❌ Erro ao obter detalhes: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/iron-pay/webhook', methods=['POST'])
+def iron_pay_webhook():
+    """Webhook para receber notificações da Iron Pay"""
+    try:
+        logger.info("📨 Recebendo webhook Iron Pay")
+        
+        data = request.get_json()
+        logger.info(f"📨 Webhook data: {json.dumps(data, indent=2)}")
+        
+        # Processar webhook conforme necessário
+        transaction_hash = data.get('hash')
+        payment_status = data.get('payment_status')
+        
+        if transaction_hash and payment_status:
+            logger.info(f"📨 Webhook processado: {transaction_hash} - Status: {payment_status}")
+            
+            # Aqui você pode implementar lógica específica:
+            # - Atualizar banco de dados
+            # - Enviar notificações
+            # - Liberar produtos/serviços
+            # - etc.
+            
+            if payment_status == 'paid':
+                logger.info(f"🎉 Pagamento confirmado via webhook: {transaction_hash}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Webhook processado com sucesso'
+        })
+        
+    except Exception as e:
+        logger.error(f"❌ Erro no webhook: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'Iron Pay Integration',
+        'timestamp': datetime.now().isoformat()
+    })
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+```
+
+### 3. Arquivo de Entrada: `main.py`
+
+```python
+from app import app
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+```
+
+## 🧪 Testes e Exemplos
+
+### 1. Teste Básico em Python
+
+```python
+# test_ironpay.py
+from ironpay_api import create_iron_pay_provider, IronPaymentData
+
+def test_iron_pay():
+    """Teste básico da Iron Pay API"""
+    try:
+        # Criar instância da API
+        provider = create_iron_pay_provider()
+        
+        # Dados de teste
+        test_data = IronPaymentData(
+            name='TESTE USUARIO IRON PAY',
+            email='teste@ironpay.com',
+            cpf='12345678901',
+            phone='(11) 98765-4321',
+            amount=127.94,
+            description='Produto de teste Iron Pay'
+        )
+        
+        print('🧪 Testando Iron Pay API...')
+        result = provider.create_pix_payment(test_data)
+        
+        print(f'✅ Sucesso!')
+        print(f'🔑 Transaction ID: {result.transaction_hash}')
+        print(f'💰 Valor: R$ {result.amount:.2f}')
+        print(f'📅 Status: {result.status}')
+        print(f'💳 PIX Code: {result.pix_code[:50]}...')
+        print(f'🕒 Expires: {result.expires_at}')
+        
+        # Verificar status
+        print('\n🔍 Verificando status...')
+        status = provider.check_payment_status(result.transaction_hash)
+        print(f'📊 Status atual: {status}')
+        
+    except Exception as e:
+        print(f'❌ Erro: {e}')
+
+if __name__ == "__main__":
+    test_iron_pay()
+```
+
+### 2. Teste via cURL
+
+```bash
+# Gerar PIX
+curl -X POST http://localhost:5000/generate-pix \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "TESTE USUARIO",
+    "email": "teste@exemplo.com",
+    "cpf": "123.456.789-01",
+    "phone": "(11) 99999-9999",
+    "amount": 127.94,
+    "description": "Produto teste Iron Pay"
+  }'
+
+# Verificar status
+curl -X GET http://localhost:5000/check-payment-status/TRANSACTION_HASH
+
+# Obter detalhes completos
+curl -X GET http://localhost:5000/transaction-details/TRANSACTION_HASH
+
+# Health check
+curl -X GET http://localhost:5000/health
+```
+
+### 3. Exemplo JavaScript Frontend
+
+```javascript
+// Classe para integração Iron Pay
+class IronPayIntegration {
+    constructor(baseUrl = '') {
+        this.baseUrl = baseUrl;
+    }
+
+    async generatePix(customerData) {
+        try {
+            console.log('🚀 Gerando PIX Iron Pay:', customerData);
+            
+            const response = await fetch(`${this.baseUrl}/generate-pix`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(customerData)
+            });
+
+            const data = await response.json();
+            console.log('📨 Resposta Iron Pay:', data);
+
+            if (data.success) {
+                return {
+                    success: true,
+                    transactionId: data.transaction_id,
+                    pixCode: data.pixCode,
+                    qrCodeImage: data.pixQrCode,
+                    amount: data.amount,
+                    status: data.status,
+                    expiresAt: data.expires_at
+                };
+            } else {
+                throw new Error(data.error);
+            }
+        } catch (error) {
+            console.error('❌ Erro Iron Pay:', error);
+            throw error;
+        }
+    }
+
+    async checkPaymentStatus(transactionId) {
+        try {
+            const response = await fetch(`${this.baseUrl}/check-payment-status/${transactionId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                return data.status;
+            } else {
+                throw new Error(data.error);
+            }
+        } catch (error) {
+            console.error('❌ Erro ao verificar status:', error);
+            throw error;
+        }
+    }
+
+    async getTransactionDetails(transactionId) {
+        try {
+            const response = await fetch(`${this.baseUrl}/transaction-details/${transactionId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                return data.details;
+            } else {
+                throw new Error(data.error);
+            }
+        } catch (error) {
+            console.error('❌ Erro ao obter detalhes:', error);
+            throw error;
+        }
+    }
+}
+
+// Exemplo de uso
+const ironPay = new IronPayIntegration();
+
+// Gerar PIX
+ironPay.generatePix({
+    name: 'João Silva',
+    email: 'joao@exemplo.com',
+    cpf: '123.456.789-01',
+    phone: '(11) 99999-9999',
+    amount: 127.94,
+    description: 'Produto teste'
+}).then(result => {
+    console.log('✅ PIX gerado:', result);
+    
+    // Mostrar QR Code
+    document.getElementById('qr-code').src = result.qrCodeImage;
+    document.getElementById('pix-code').textContent = result.pixCode;
+    
+    // Verificar status periodicamente
+    const checkInterval = setInterval(async () => {
+        try {
+            const status = await ironPay.checkPaymentStatus(result.transactionId);
+            console.log('📊 Status:', status);
+            
+            if (status.paid) {
+                console.log('🎉 Pagamento confirmado!');
+                clearInterval(checkInterval);
+            }
+        } catch (error) {
+            console.error('❌ Erro ao verificar status:', error);
+        }
+    }, 5000); // Verificar a cada 5 segundos
+    
+}).catch(error => {
+    console.error('❌ Erro ao gerar PIX:', error);
+});
+```
+
+## 🔧 Configuração Avançada
+
+### 1. Configuração de Produção
+
+```python
+# config.py
+import os
+
+class Config:
+    """Configuração base"""
+    SECRET_KEY = os.getenv('SECRET_KEY', 'change-me-in-production')
+    IRONPAY_API_TOKEN = os.getenv('IRONPAY_API_TOKEN')
+    
+class DevelopmentConfig(Config):
+    """Configuração de desenvolvimento"""
+    DEBUG = True
+    TESTING = False
+
+class ProductionConfig(Config):
+    """Configuração de produção"""
+    DEBUG = False
+    TESTING = False
+
+class TestingConfig(Config):
+    """Configuração de testes"""
+    DEBUG = True
+    TESTING = True
+
+# Selecionar configuração baseada no ambiente
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'testing': TestingConfig,
+    'default': DevelopmentConfig
+}
+```
+
+### 2. Sistema de Cache Avançado
+
+```python
+# cache.py
+import json
+import os
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional
+
+class PixCache:
+    """Sistema de cache para PIX gerados"""
+    
+    def __init__(self, cache_file: str = 'pix_cache.json'):
+        self.cache_file = cache_file
+        self.cache_data = self._load_cache()
+    
+    def _load_cache(self) -> Dict[str, Any]:
+        """Carregar cache do arquivo"""
+        try:
+            if os.path.exists(self.cache_file):
+                with open(self.cache_file, 'r') as f:
+                    return json.load(f)
+        except Exception:
+            pass
+        return {}
+    
+    def _save_cache(self):
+        """Salvar cache no arquivo"""
+        try:
+            with open(self.cache_file, 'w') as f:
+                json.dump(self.cache_data, f, indent=2)
+        except Exception as e:
+            print(f"Erro ao salvar cache: {e}")
+    
+    def set(self, key: str, value: Dict[str, Any], ttl_minutes: int = 30):
+        """Definir item no cache com TTL"""
+        expires_at = (datetime.now() + timedelta(minutes=ttl_minutes)).isoformat()
+        self.cache_data[key] = {
+            'data': value,
+            'expires_at': expires_at,
+            'created_at': datetime.now().isoformat()
+        }
+        self._save_cache()
+    
+    def get(self, key: str) -> Optional[Dict[str, Any]]:
+        """Obter item do cache"""
+        if key not in self.cache_data:
+            return None
+        
+        item = self.cache_data[key]
+        expires_at = datetime.fromisoformat(item['expires_at'])
+        
+        if datetime.now() > expires_at:
+            # Item expirado
+            del self.cache_data[key]
+            self._save_cache()
+            return None
+        
+        return item['data']
+    
+    def delete(self, key: str):
+        """Remover item do cache"""
+        if key in self.cache_data:
+            del self.cache_data[key]
+            self._save_cache()
+    
+    def clear_expired(self):
+        """Limpar itens expirados"""
+        now = datetime.now()
+        expired_keys = []
+        
+        for key, item in self.cache_data.items():
+            expires_at = datetime.fromisoformat(item['expires_at'])
+            if now > expires_at:
+                expired_keys.append(key)
+        
+        for key in expired_keys:
+            del self.cache_data[key]
+        
+        if expired_keys:
+            self._save_cache()
+
+# Instância global do cache
+pix_cache = PixCache()
+```
+
+### 3. Middleware de Rate Limiting
+
+```python
+# rate_limit.py
+import time
+from functools import wraps
+from collections import defaultdict
+from flask import request, jsonify
+
+class RateLimiter:
+    """Sistema de rate limiting"""
+    
+    def __init__(self):
+        self.requests = defaultdict(list)
+    
+    def is_allowed(self, key: str, max_requests: int, window_seconds: int) -> bool:
+        """Verificar se requisição é permitida"""
+        now = time.time()
+        window_start = now - window_seconds
+        
+        # Remover requisições antigas
+        self.requests[key] = [req_time for req_time in self.requests[key] 
+                             if req_time > window_start]
+        
+        # Verificar se excedeu o limite
+        if len(self.requests[key]) >= max_requests:
+            return False
+        
+        # Registrar requisição atual
+        self.requests[key].append(now)
+        return True
+
+# Instância global
+rate_limiter = RateLimiter()
+
+def rate_limit(max_requests: int = 10, window_seconds: int = 60):
+    """Decorator para rate limiting"""
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Usar IP como chave
+            client_ip = request.remote_addr
+            
+            if not rate_limiter.is_allowed(client_ip, max_requests, window_seconds):
+                return jsonify({
+                    'success': False,
+                    'error': 'Rate limit exceeded. Try again later.'
+                }), 429
+            
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+```
+
+## 🔒 Segurança e Validações
+
+### 1. Validações Avançadas
+
+```python
+# validators.py
+import re
+from typing import Dict, Any, List
+
+class PixValidator:
+    """Validações para dados PIX"""
+    
+    @staticmethod
+    def validate_cpf(cpf: str) -> bool:
+        """Validar CPF com dígito verificador"""
+        cpf_clean = ''.join(filter(str.isdigit, cpf))
+        
+        if len(cpf_clean) != 11:
+            return False
+        
+        # Verificar se todos os dígitos são iguais
+        if cpf_clean == cpf_clean[0] * 11:
+            return False
+        
+        # Calcular dígitos verificadores
+        def calculate_digit(cpf_partial: str) -> int:
+            weights = list(range(len(cpf_partial) + 1, 1, -1))
+            total = sum(int(digit) * weight for digit, weight in zip(cpf_partial, weights))
+            remainder = total % 11
+            return 0 if remainder < 2 else 11 - remainder
+        
+        first_digit = calculate_digit(cpf_clean[:9])
+        second_digit = calculate_digit(cpf_clean[:10])
+        
+        return cpf_clean[9] == str(first_digit) and cpf_clean[10] == str(second_digit)
+    
+    @staticmethod
+    def validate_email(email: str) -> bool:
+        """Validar formato de email"""
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return bool(re.match(pattern, email))
+    
+    @staticmethod
+    def validate_phone(phone: str) -> bool:
+        """Validar formato de telefone brasileiro"""
+        phone_clean = ''.join(filter(str.isdigit, phone))
+        return len(phone_clean) >= 10
+    
+    @staticmethod
+    def validate_amount(amount: float) -> bool:
+        """Validar valor do pagamento"""
+        return 0.01 <= amount <= 50000.00
+    
+    @staticmethod
+    def sanitize_input(data: Dict[str, Any]) -> Dict[str, Any]:
+        """Sanitizar dados de entrada"""
+        if not isinstance(data, dict):
+            return {}
+        
+        sanitized = {}
+        
+        # Nome: apenas letras, espaços e acentos
+        if 'name' in data:
+            name = str(data['name']).strip()
+            name = re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', name)
+            sanitized['name'] = name.upper()
+        
+        # Email: lowercase
+        if 'email' in data:
+            sanitized['email'] = str(data['email']).strip().lower()
+        
+        # CPF: apenas números
+        if 'cpf' in data:
+            sanitized['cpf'] = ''.join(filter(str.isdigit, str(data['cpf'])))
+        
+        # Telefone: apenas números
+        if 'phone' in data:
+            sanitized['phone'] = ''.join(filter(str.isdigit, str(data['phone'])))
+        
+        # Valor: float
+        if 'amount' in data:
+            try:
+                sanitized['amount'] = float(data['amount'])
+            except (ValueError, TypeError):
+                sanitized['amount'] = 0.0
+        
+        # Descrição: limitar tamanho
+        if 'description' in data:
+            desc = str(data['description']).strip()
+            sanitized['description'] = desc[:100]
+        
+        return sanitized
+    
+    @staticmethod
+    def validate_payment_data(data: Dict[str, Any]) -> List[str]:
+        """Validar dados completos do pagamento"""
+        errors = []
+        
+        # Validar nome
+        if not data.get('name'):
+            errors.append('Nome é obrigatório')
+        elif len(data['name']) < 2:
+            errors.append('Nome deve ter pelo menos 2 caracteres')
+        
+        # Validar email
+        if not data.get('email'):
+            errors.append('Email é obrigatório')
+        elif not PixValidator.validate_email(data['email']):
+            errors.append('Email inválido')
+        
+        # Validar CPF
+        if not data.get('cpf'):
+            errors.append('CPF é obrigatório')
+        elif not PixValidator.validate_cpf(data['cpf']):
+            errors.append('CPF inválido')
+        
+        # Validar telefone
+        if data.get('phone') and not PixValidator.validate_phone(data['phone']):
+            errors.append('Telefone inválido')
+        
+        # Validar valor
+        if not data.get('amount'):
+            errors.append('Valor é obrigatório')
+        elif not PixValidator.validate_amount(data['amount']):
+            errors.append('Valor deve estar entre R$ 0,01 e R$ 50.000,00')
+        
+        return errors
+```
+
+### 2. Sistema de Logs Estruturados
+
+```python
+# logger.py
+import json
+import logging
+from datetime import datetime
+from typing import Dict, Any
+
+class StructuredLogger:
+    """Logger estruturado para transações PIX"""
+    
+    def __init__(self, name: str = 'iron_pay'):
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(logging.INFO)
+        
+        # Formatter para logs estruturados
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        
+        # Handler para console
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        self.logger.addHandler(console_handler)
+        
+        # Handler para arquivo
+        file_handler = logging.FileHandler('iron_pay.log')
+        file_handler.setFormatter(formatter)
+        self.logger.addHandler(file_handler)
+    
+    def log_transaction(self, event: str, data: Dict[str, Any]):
+        """Log estruturado de transações"""
+        log_entry = {
+            'timestamp': datetime.now().isoformat(),
+            'event': event,
+            'data': data
+        }
+        
+        self.logger.info(f"TRANSACTION: {json.dumps(log_entry, ensure_ascii=False)}")
+    
+    def log_error(self, error: str, context: Dict[str, Any] = None):
+        """Log estruturado de erros"""
+        log_entry = {
+            'timestamp': datetime.now().isoformat(),
+            'error': error,
+            'context': context or {}
+        }
+        
+        self.logger.error(f"ERROR: {json.dumps(log_entry, ensure_ascii=False)}")
+    
+    def log_webhook(self, webhook_data: Dict[str, Any]):
+        """Log estruturado de webhooks"""
+        log_entry = {
+            'timestamp': datetime.now().isoformat(),
+            'webhook': webhook_data
+        }
+        
+        self.logger.info(f"WEBHOOK: {json.dumps(log_entry, ensure_ascii=False)}")
+
+# Instância global
+structured_logger = StructuredLogger()
+```
+
+## 📊 Monitoramento e Métricas
+
+### 1. Sistema de Métricas
+
+```python
+# metrics.py
+import time
+from collections import defaultdict, Counter
+from datetime import datetime, timedelta
+from typing import Dict, Any
+
+class MetricsCollector:
+    """Coletor de métricas para Iron Pay"""
+    
+    def __init__(self):
+        self.counters = Counter()
+        self.gauges = {}
+        self.histograms = defaultdict(list)
+        self.timers = {}
+    
+    def increment(self, metric: str, value: int = 1, tags: Dict[str, str] = None):
+        """Incrementar contador"""
+        key = self._build_key(metric, tags)
+        self.counters[key] += value
+    
+    def gauge(self, metric: str, value: float, tags: Dict[str, str] = None):
+        """Definir gauge"""
+        key = self._build_key(metric, tags)
+        self.gauges[key] = value
+    
+    def histogram(self, metric: str, value: float, tags: Dict[str, str] = None):
+        """Adicionar valor ao histograma"""
+        key = self._build_key(metric, tags)
+        self.histograms[key].append({
+            'value': value,
+            'timestamp': time.time()
+        })
+    
+    def timer_start(self, metric: str, tags: Dict[str, str] = None):
+        """Iniciar timer"""
+        key = self._build_key(metric, tags)
+        self.timers[key] = time.time()
+    
+    def timer_end(self, metric: str, tags: Dict[str, str] = None):
+        """Finalizar timer e registrar duração"""
+        key = self._build_key(metric, tags)
+        if key in self.timers:
+            duration = time.time() - self.timers[key]
+            self.histogram(f"{metric}_duration", duration, tags)
+            del self.timers[key]
+            return duration
+        return None
+    
+    def _build_key(self, metric: str, tags: Dict[str, str] = None) -> str:
+        """Construir chave da métrica"""
+        if not tags:
+            return metric
+        
+        tag_str = ','.join(f"{k}={v}" for k, v in sorted(tags.items()))
+        return f"{metric}[{tag_str}]"
+    
+    def get_metrics(self) -> Dict[str, Any]:
+        """Obter todas as métricas"""
+        return {
+            'counters': dict(self.counters),
+            'gauges': self.gauges,
+            'histograms': {k: len(v) for k, v in self.histograms.items()},
+            'timestamp': datetime.now().isoformat()
+        }
+
+# Instância global
+metrics = MetricsCollector()
+```
+
+### 2. Dashboard de Monitoramento
+
+```python
+# monitoring.py
+from flask import Blueprint, jsonify, render_template_string
+from metrics import metrics
+from cache import pix_cache
+
+monitoring_bp = Blueprint('monitoring', __name__)
+
+@monitoring_bp.route('/metrics')
+def get_metrics():
+    """Endpoint de métricas"""
+    return jsonify(metrics.get_metrics())
+
+@monitoring_bp.route('/dashboard')
+def dashboard():
+    """Dashboard de monitoramento"""
+    dashboard_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Iron Pay - Dashboard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .metric-card { background: #f8f9fa; padding: 20px; margin: 10px; border-radius: 8px; }
+            .metric-value { font-size: 2em; font-weight: bold; color: #007bff; }
+            .metric-label { font-size: 0.9em; color: #6c757d; }
+            .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        </style>
+        <script>
+            async function updateMetrics() {
+                try {
+                    const response = await fetch('/metrics');
+                    const data = await response.json();
+                    
+                    document.getElementById('pix-generated').textContent = 
+                        data.counters['pix_generated'] || 0;
+                    document.getElementById('pix-paid').textContent = 
+                        data.counters['pix_paid'] || 0;
+                    document.getElementById('errors').textContent = 
+                        data.counters['errors'] || 0;
+                    
+                } catch (error) {
+                    console.error('Erro ao atualizar métricas:', error);
+                }
+            }
+            
+            setInterval(updateMetrics, 5000);
+            updateMetrics();
+        </script>
+    </head>
+    <body>
+        <h1>🏦 Iron Pay - Dashboard</h1>
+        
+        <div class="grid">
+            <div class="metric-card">
+                <div class="metric-value" id="pix-generated">0</div>
+                <div class="metric-label">PIX Gerados</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value" id="pix-paid">0</div>
+                <div class="metric-label">PIX Pagos</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value" id="errors">0</div>
+                <div class="metric-label">Erros</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px;">
+            <h2>🔄 Atualização Automática</h2>
+            <p>As métricas são atualizadas automaticamente a cada 5 segundos.</p>
+        </div>
+    </body>
+    </html>
+    """
+    return render_template_string(dashboard_html)
+```
+
+## 🚀 Deployment no Replit
+
+### 1. Configuração .replit
+
+```toml
+[deployment]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "main:app"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[nix]
+channel = "stable-23.05"
+
+[env]
+PYTHONPATH = "$REPL_HOME"
+```
+
+### 2. Arquivo replit.nix
+
+```nix
+{ pkgs }: {
+  deps = [
+    pkgs.python310
+    pkgs.python310Packages.pip
+    pkgs.python310Packages.setuptools
+    pkgs.python310Packages.wheel
+  ];
+}
+```
+
+## 📝 Checklist de Implementação
+
+### ✅ Configuração Inicial
+- [ ] Criar secrets no Replit (IRONPAY_API_TOKEN)
+- [ ] Configurar pyproject.toml com dependências
+- [ ] Testar conexão com Iron Pay API
+
+### ✅ Implementação Core
+- [ ] Implementar ironpay_api.py
+- [ ] Criar app.py com endpoints
+- [ ] Configurar main.py
+- [ ] Testar geração de PIX
+
+### ✅ Funcionalidades Avançadas
+- [ ] Sistema de cache
+- [ ] Rate limiting
+- [ ] Validações
+- [ ] Logs estruturados
+- [ ] Webhook handling
+
+### ✅ Monitoramento
+- [ ] Métricas de performance
+- [ ] Dashboard de monitoramento
+- [ ] Health checks
+- [ ] Alertas
+
+### ✅ Segurança
+- [ ] Validação de dados
+- [ ] Sanitização de inputs
+- [ ] Rate limiting
+- [ ] Logs de auditoria
+
+### ✅ Deploy
+- [ ] Configurar .replit
+- [ ] Testar em produção
+- [ ] Configurar domínio (se necessário)
+- [ ] Documentar APIs
+
+## 🆘 Troubleshooting
+
+### Problemas Comuns
+
+1. **Erro de Token API**
+   ```
+   ValueError: IRONPAY_API_TOKEN é obrigatório
+   ```
+   **Solução**: Verificar se o token está configurado nas Secrets do Replit
+
+2. **Erro de Conexão**
+   ```
+   requests.exceptions.ConnectionError
+   ```
+   **Solução**: Verificar conectividade com internet e URL da API
+
+3. **Erro de Validação CPF**
+   ```
+   ValueError: CPF inválido
+   ```
+   **Solução**: Verificar formato do CPF e implementar validação
+
+4. **QR Code não gera**
+   ```
+   Erro ao gerar QR Code
+   ```
+   **Solução**: Verificar se o código PIX é válido e instalar pillow
+
+### Logs para Debug
+
+```bash
+# Verificar logs da aplicação
+tail -f iron_pay.log
+
+# Verificar logs do Replit
+# Use o console do Replit para ver logs em tempo real
+```
+
+## 📞 Suporte e Documentação
+
+### Links Úteis
+- **Iron Pay API Docs**: https://api.ironpayapp.com.br/docs
+- **Replit Docs**: https://docs.replit.com
+- **Flask Docs**: https://flask.palletsprojects.com
+
+### Contato
+Para dúvidas sobre esta implementação:
+1. Verificar logs da aplicação
+2. Testar endpoints manualmente
+3. Consultar documentação oficial da Iron Pay
+4. Verificar configuração de secrets
+
+---
+
+**🎉 Implementação Iron Pay Completa para Replit!**
+
+Esta documentação fornece tudo necessário para integrar Iron Pay em qualquer projeto Replit com robustez, segurança e monitoramento completo.

