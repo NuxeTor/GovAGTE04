@@ -1,0 +1,31 @@
+-----> Building on the Heroku-24 stack
+-----> Deleting 3 files matching .slugignore patterns.
+-----> Using buildpack: heroku/python
+-----> Python app detected
+-----> Using Python 3.11 specified in .python-version
+-----> Restoring cache
+-----> Using cached install of Python 3.11.13
+-----> Installing pip 25.2, setuptools 70.3.0 and wheel 0.45.1
+-----> Installing dependencies using 'pip install -r requirements.txt'
+       Requirement already satisfied: Flask==3.0.3 (from -r requirements.txt (line 1)) (3.0.3)
+       Requirement already satisfied: gunicorn==23.0.0 (from -r requirements.txt (line 2)) (23.0.0)
+       Requirement already satisfied: requests==2.32.3 (from -r requirements.txt (line 3)) (2.32.3)
+       Requirement already satisfied: Werkzeug>=3.0.0 (from Flask==3.0.3->-r requirements.txt (line 1)) (3.1.3)
+       Requirement already satisfied: Jinja2>=3.1.2 (from Flask==3.0.3->-r requirements.txt (line 1)) (3.1.6)
+       Requirement already satisfied: itsdangerous>=2.1.2 (from Flask==3.0.3->-r requirements.txt (line 1)) (2.2.0)
+       Requirement already satisfied: click>=8.1.3 (from Flask==3.0.3->-r requirements.txt (line 1)) (8.2.1)
+       Requirement already satisfied: blinker>=1.6.2 (from Flask==3.0.3->-r requirements.txt (line 1)) (1.9.0)
+       Requirement already satisfied: packaging (from gunicorn==23.0.0->-r requirements.txt (line 2)) (25.0)
+       Requirement already satisfied: charset-normalizer<4,>=2 (from requests==2.32.3->-r requirements.txt (line 3)) (3.4.3)
+       Requirement already satisfied: idna<4,>=2.5 (from requests==2.32.3->-r requirements.txt (line 3)) (3.10)
+       Requirement already satisfied: urllib3<3,>=1.21.1 (from requests==2.32.3->-r requirements.txt (line 3)) (2.5.0)
+       Requirement already satisfied: certifi>=2017.4.17 (from requests==2.32.3->-r requirements.txt (line 3)) (2025.8.3)
+       Requirement already satisfied: MarkupSafe>=2.0 (from Jinja2>=3.1.2->Flask==3.0.3->-r requirements.txt (line 1)) (3.0.2)
+-----> Saving cache
+-----> Discovering process types
+       Procfile declares types -> web
+-----> Compressing...
+       Done: 25M
+-----> Launching...
+       Released v25
+       https://iiibbbbgggeee-7782579a07b2.herokuapp.com/ deployed to Heroku
