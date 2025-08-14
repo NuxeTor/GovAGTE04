@@ -1,54 +1,31 @@
 {
-  "name": "IBGE Trabalhe Conosco Portal",
-  "description": "Portal oficial do programa IBGE Trabalhe Conosco do Governo Federal",
-  "keywords": ["flask", "python", "postgresql", "gov.br", "ibge"],
-  "website": "https://ibge-trabalhe-conosco.herokuapp.com/",
-  "repository": "https://github.com/usuario/ibge-trabalhe-conosco",
-  "logo": "https://www.gov.br/pt-br/gov-logo.png",
-  "success_url": "/",
-  "scripts": {
-    "postdeploy": "python populate_database.py"
-  },
+  "name": "IBGE Trabalhe Conosco",
+  "description": "Portal de processo seletivo do IBGE - Instituto Brasileiro de Geografia e Estatística",
+  "repository": "https://github.com/user/ibge-trabalhe-conosco",
+  "logo": "https://www.gov.br/planalto/pt-br/conheca-a-presidencia/biblioteca-da-pr/simbolos-nacionais/brasao-da-republica/brasaooficialcolorido.png",
+  "keywords": ["flask", "ibge", "gov.br", "processo-seletivo", "pix"],
   "env": {
-    "FLASK_ENV": {
-      "description": "Environment for Flask app",
-      "value": "production"
-    },
     "SESSION_SECRET": {
-      "description": "Secret key for Flask sessions",
+      "description": "Chave secreta para sessões Flask",
       "generator": "secret"
     },
-    "DATABASE_URL": {
-      "description": "PostgreSQL database URL",
-      "required": true
-    },
-    "TOKEN_CPF_API": {
-      "description": "Token para API de validação de CPF",
-      "required": false
-    },
     "NOVA_ERA_SECRET_KEY": {
-      "description": "Chave secreta da API Nova Era",
-      "value": "sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb",
-      "required": true
+      "description": "Chave secreta da API Nova Era PIX",
+      "value": "sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb"
     },
     "NOVA_ERA_PUBLIC_KEY": {
-      "description": "Chave pública da API Nova Era", 
-      "value": "pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x",
-      "required": true
+      "description": "Chave pública da API Nova Era PIX", 
+      "value": "pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x"
     }
   },
   "formation": {
     "web": {
       "quantity": 1,
-      "size": "basic"
+      "size": "free"
     }
   },
-  "addons": [
-    {
-      "plan": "heroku-postgresql:essential-0",
-      "as": "DATABASE"
-    }
-  ],
+  "image": "heroku/python",
+  "stack": "heroku-22",
   "buildpacks": [
     {
       "url": "heroku/python"
