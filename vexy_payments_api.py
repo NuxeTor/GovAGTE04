@@ -80,13 +80,15 @@ class VexyPaymentsAPI:
             return False
     
     def create_deposit(self, payment_data: VexyPaymentData) -> VexyPaymentResponse:
-        """Cria um depósito PIX via Vexy Payments"""
+        """Cria um depósito PIX via Vexy Payments - API Real"""
         
         # Autenticar se necessário
         if not self.auth_token:
             if not self.authenticate():
-                logger.warning("⚠️ Falha na autenticação Vexy - usando PIX mock para desenvolvimento")
-                return self._create_mock_pix(payment_data)
+                return VexyPaymentResponse(
+                    success=False,
+                    error_message="Falha na autenticação Vexy Payments"
+                )
         
         try:
             deposit_url = f"{self.base_url}/api/payments/deposit"
@@ -94,10 +96,11 @@ class VexyPaymentsAPI:
             # Limpar CPF (apenas números)
             clean_document = ''.join(filter(str.isdigit, payment_data.document))
             
-            # Gerar external_id único
+            # Gerar external_id único baseado na documentação
             timestamp = int(datetime.now().timestamp())
-            external_id_unique = f"{payment_data.external_id}_{timestamp}"
+            external_id_unique = f"ibge_{clean_document}_{timestamp}"
             
+            # Payload conforme documentação oficial
             payload = {
                 "amount": float(payment_data.amount),
                 "external_id": external_id_unique,
@@ -114,69 +117,63 @@ class VexyPaymentsAPI:
                 "Content-Type": "application/json"
             }
             
-            logger.info(f"💰 Criando depósito Vexy: {deposit_url}")
+            logger.info(f"💰 Criando depósito PIX real via Vexy: {deposit_url}")
+            logger.info(f"📋 External ID: {external_id_unique}")
+            logger.info(f"💵 Valor: R$ {payment_data.amount:.2f}")
             
             response = requests.post(deposit_url, json=payload, headers=headers, timeout=30)
             
-            logger.info(f"📡 Status criação depósito: {response.status_code}")
+            logger.info(f"📡 Status resposta: {response.status_code}")
+            logger.info(f"📡 Resposta completa: {response.text}")
             
             if response.status_code == 200 or response.status_code == 201:
                 data = response.json()
+                logger.info(f"✅ Depósito criado - dados recebidos: {data}")
                 
-                # Extrair dados da estrutura específica da Vexy Payments
-                qr_response = data.get('qrCodeResponse', {})
+                # A documentação não especifica a estrutura exata da resposta
+                # Vamos adaptar baseado na resposta real da API
+                transaction_id = data.get('transaction_id') or data.get('id') or external_id_unique
+                qr_code = data.get('qr_code') or data.get('qrcode') or data.get('pix_code')
+                amount = data.get('amount', payment_data.amount)
+                status = data.get('status', 'PENDING').lower()
                 
-                # O QR code e transaction ID estão dentro de qrCodeResponse
-                transaction_id = qr_response.get('transactionId')
-                qr_code = qr_response.get('qrcode')
-                amount = qr_response.get('amount')
-                status = qr_response.get('status', 'PENDING').lower()
-                
-                logger.info(f"📋 PIX Vexy criado com sucesso: {transaction_id}")
-                
-                return VexyPaymentResponse(
-                    success=True,
-                    transaction_id=transaction_id,
-                    amount=amount,
-                    pix_code=qr_code,
-                    qr_code=qr_code,
-                    status=status
-                )
+                if qr_code:
+                    logger.info(f"✅ PIX Real criado com sucesso!")
+                    logger.info(f"🔗 Transaction ID: {transaction_id}")
+                    logger.info(f"💰 Valor: R$ {amount:.2f}")
+                    
+                    return VexyPaymentResponse(
+                        success=True,
+                        transaction_id=transaction_id,
+                        amount=amount,
+                        pix_code=qr_code,
+                        qr_code=qr_code,
+                        status=status
+                    )
+                else:
+                    error_msg = f"API retornou dados sem QR code: {data}"
+                    logger.error(f"❌ {error_msg}")
+                    return VexyPaymentResponse(
+                        success=False,
+                        error_message=error_msg
+                    )
             else:
-                # Se há erro na API Vexy, usar mock para desenvolvimento
-                logger.warning(f"⚠️ Erro Vexy API: {response.status_code} - usando PIX mock")
-                return self._create_mock_pix(payment_data)
+                error_msg = f"Erro HTTP {response.status_code}: {response.text}"
+                logger.error(f"❌ {error_msg}")
+                return VexyPaymentResponse(
+                    success=False,
+                    error_message=error_msg
+                )
                 
         except Exception as e:
-            logger.warning(f"⚠️ Erro na comunicação Vexy: {e} - usando PIX mock")
-            return self._create_mock_pix(payment_data)
+            error_msg = f"Erro na comunicação com Vexy API: {e}"
+            logger.error(f"❌ {error_msg}")
+            return VexyPaymentResponse(
+                success=False,
+                error_message=error_msg
+            )
     
-    def _create_mock_pix(self, payment_data: VexyPaymentData) -> VexyPaymentResponse:
-        """Cria um PIX mock funcional para desenvolvimento"""
-        
-        # Gerar transaction ID único
-        timestamp = int(datetime.now().timestamp())
-        transaction_id = f"VEXY_MOCK_{timestamp}"
-        
-        # Gerar código PIX válido (formato simplificado mas funcional)
-        pix_code = f"00020126580014br.gov.bcb.pix0136{transaction_id}520400005303986540{payment_data.amount:.2f}5802BR5925{payment_data.name[:25]}6009SAO PAULO62070503***6304"
-        
-        # Calcular dígito verificador simples
-        checksum = sum(ord(c) for c in pix_code) % 9999
-        pix_code_final = f"{pix_code}{checksum:04d}"
-        
-        logger.info(f"🔧 PIX Mock criado para desenvolvimento: {transaction_id}")
-        logger.info(f"💰 Valor: R$ {payment_data.amount:.2f}")
-        logger.info(f"👤 Pagador: {payment_data.name}")
-        
-        return VexyPaymentResponse(
-            success=True,
-            transaction_id=transaction_id,
-            amount=payment_data.amount,
-            pix_code=pix_code_final,
-            qr_code=pix_code_final,
-            status="pending"
-        )
+
     
     def check_payment_status(self, transaction_id: str) -> Dict[str, Any]:
         """Verifica o status de um pagamento"""

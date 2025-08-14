@@ -1,0 +1,124 @@
+URL Base
+https://api.vexypayments.com
+
+Autenticação
+O endpoint de autenticação permite que os usuários façam login utilizando suas credenciais, recebendo um token JWT que deverá ser enviado no cabeçalho das requisições protegidas.
+
+POST
+/api/auth/login
+curl -X POST https://api.vexypayments.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "seu_cliente_id",
+    "client_secret": "seu_cliente_secreto"
+  }'
+Parâmetros da Requisição
+Atributo	Descrição	Tipo
+client_id	ID do cliente (fornecido durante o cadastro)	string
+client_secret	Chave secreta do cliente para autenticação	string
+Depósito
+Este endpoint permite criar um depósito e gerar um QR Code PIX para efetuar o pagamento.
+
+POST
+/api/payments/deposit
+Requer Autenticação
+curl -X POST https://api.vexypayments.com/api/payments/deposit \
+  -H "Authorization: Bearer seu_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 100.00,
+    "external_id": "id_unico_12345",
+    "clientCallbackUrl": "https://seuservidor.com/callback",
+    "payer": {
+      "name": "João da Silva",
+      "email": "joao@example.com",
+      "document": "12345678901"
+    }
+  }'
+Parâmetros da Requisição
+Atributo	Descrição	Tipo
+amount	Valor do depósito	number
+external_id	ID único da transação externa (para controle idempotente)	string
+clientCallbackUrl	URL para envio de notificações de status do depósito	string
+payer	Dados do pagador (name, email, document)	object
+Saque
+O endpoint de saque permite a solicitação de saque através de uma chave PIX, realizando a verificação de saldo, cálculo de taxas e atualização do status da transação.
+
+POST
+/api/withdrawals/withdraw
+Requer Autenticação
+curl -X POST https://api.vexypayments.com/api/withdrawals/withdraw \
+  -H "Authorization: Bearer seu_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 50.00,
+    "external_id": "external-12345",
+    "pix_key": "exemplo@pix.com",
+    "key_type": "EMAIL",
+    "description": "Saque referente ao pedido #123",
+    "clientCallbackUrl": "https://seuservidor.com/callback"
+  }'
+Parâmetros da Requisição
+Atributo	Descrição	Tipo
+amount	Valor do saque	number
+external_id	ID único da transação externa	string
+pix_key	Chave PIX do destinatário	string
+key_type	Tipo da chave PIX (EMAIL, CPF, CNPJ, PHONE)	string
+description	Descrição opcional do saque	string
+clientCallbackUrl	URL para envio de notificações de status do saque	string
+Webhooks
+Os webhooks permitem que seu sistema receba notificações em tempo real sobre mudanças no status das transações de depósito e saque. Ao criar um depósito ou solicitação de saque, informe uma URL de callback (clientCallbackUrl) onde o sistema enviará atualizações.
+
+Callback de Depósito
+{
+  "transaction_id": "id_da_transacao",
+  "status": "COMPLETED",
+  "amount": 100.00,
+  "fee": -1.05,
+  "net_amout": 98.95
+}
+Callback de Saque
+{
+  "transaction_id": "transaction-67890",
+  "status": "COMPLETED",
+  "amount": 50.00,
+  "fee": -1.05,
+  "ispb": 123456,
+  "nome_recebedor": "Fulano Silva",
+  "cpf_recebedor": "***212.43*-**"
+}
+Webhook de MED (Medida Cautelar)
+O webhook de MED é um POST enviado para a URL de callback configurada quando uma transação é submetida a uma medida cautelar de bloqueio. Este webhook notifica sobre o status de retenção da transação para fins de conformidade e auditoria.
+
+Estrutura do Payload
+{
+  "transaction_id": "id_da_transacao",
+  "status": "RETIDO"
+}
+Recomendação Técnica
+É altamente recomendado implementar um sistema de logging robusto para registrar todos os webhooks de MED recebidos. Isso facilita a auditoria, debugging e conformidade com regulamentações financeiras. Considere armazenar timestamp, IP de origem, payload completo e status de processamento.
+
+Exemplo de Implementação de Log
+// Exemplo de log recomendado
+{
+  "timestamp": "2024-02-20T15:30:22Z",
+  "webhook_type": "MED",
+  "transaction_id": "id_da_transacao",
+  "status": "RETIDO",
+  "source_ip": "192.168.1.1",
+  "processed_at": "2024-02-20T15:30:23Z",
+  "processing_status": "SUCCESS"
+}
+Tratamento de Erros
+A API utiliza códigos de status HTTP para indicar o resultado de cada operação:
+
+400
+Bad Request - Dados inválidos ou campos obrigatórios ausentes
+401
+Unauthorized - Credenciais inválidas ou token JWT não enviado
+403
+Forbidden - Acesso negado (IP não autorizado ou conta banida)
+404
+Not Found - Recurso não encontrado
+500
+Internal Server Error - Erro no servidor
