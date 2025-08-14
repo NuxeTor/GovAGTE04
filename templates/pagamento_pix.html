@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Gerar PIX quando o email for preenchido
     document.getElementById('email-usuario').addEventListener('blur', function() {
-        if (this.value && this.value.includes('@')) {
+        if (this.value && this.value.includes('@') && !window.pixJaGerado) {
             gerarPIX();
         }
     });
@@ -373,12 +373,21 @@ function preencherDadosUsuario() {
     console.log('Dados preenchidos:', { nome, cpf: cpf.substring(0, 3) + '***', email, telefone: telefone ? telefone.substring(0, 3) + '***' : '' });
     
     // Gerar PIX automaticamente se tiver todos os dados obrigatórios
-    if (nome && cpf && email) {
+    if (nome && cpf && email && !window.pixJaGerado) {
         setTimeout(() => gerarPIX(), 1000);
     }
 }
 
 function gerarPIX() {
+    // Verificar se o PIX já está sendo gerado para evitar duplicação
+    if (window.pixJaGerado || window.gerandoPix) {
+        console.log('PIX já foi gerado ou está sendo gerado, ignorando nova chamada');
+        return;
+    }
+    
+    // Marcar que está gerando PIX
+    window.gerandoPix = true;
+    
     // Fechar a seção de dados do usuário sempre que gerar PIX
     fecharDadosUsuario();
     
@@ -441,6 +450,11 @@ function gerarPIX() {
     .then(response => response.json())
     .then(data => {
         console.log('Resposta da API:', data);
+        
+        // Marcar PIX como gerado com sucesso
+        window.pixJaGerado = true;
+        window.gerandoPix = false;
+        
         if (data.success) {
             // Gerar QR Code usando a biblioteca QRCode.js
             if (data.pix_code) {
@@ -553,6 +567,9 @@ function gerarPIX() {
     .catch(error => {
         console.error('Erro de conexão:', error);
         mostrarErro('Erro ao conectar com o servidor: ' + error.message);
+        
+        // Liberar para nova tentativa em caso de erro
+        window.gerandoPix = false;
     });
 }
 
