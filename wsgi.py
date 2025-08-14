@@ -7,7 +7,7 @@ import os
 os.environ.setdefault('FLASK_ENV', 'production')
 
 # Import the simplified Flask app
-from app_simple import app
+from heroku_app import app
 
 # This is what Heroku will use
 application = app
