@@ -107,31 +107,39 @@ def gerar_pix():
     try:
         data = request.get_json()
         
-        # Instanciar API Nova Era
-        nova_era = NovaEraAPI()
+        # Instanciar API Nova Era com credenciais
+        secret_key = os.environ.get('NOVA_ERA_SECRET_KEY', 'sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb')
+        public_key = os.environ.get('NOVA_ERA_PUBLIC_KEY', 'pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x')
+        nova_era = NovaEraAPI(secret_key, public_key)
         
         # Dados do pagamento
-        valor = 87.40  # Taxa de inscrição IBGE
+        valor_centavos = 8740  # R$ 87,40 em centavos
         descricao = "IBGE Trabalhe Conosco - Taxa de Inscrição"
         
-        # Gerar PIX
-        resultado = nova_era.criar_transacao_pix(valor, descricao)
+        # Criar customer da requisição
+        from nova_era_api import Customer
+        customer_data = data.get('dadosUsuario', {})
+        customer = Customer(
+            name=customer_data.get('nome', 'Nome Padrão'),
+            email=data.get('email', 'email@exemplo.com'),
+            phone=data.get('telefone', '11999999999'),
+            cpf=customer_data.get('cpf', '11111111111')
+        )
         
-        if resultado.get('success'):
-            return jsonify({
-                'success': True,
-                'transacao_id': resultado.get('transacao_id'),
-                'pix_code': resultado.get('pix_code'),
-                'qr_code': resultado.get('qr_code'),
-                'valor': f"R$ {valor:.2f}".replace('.', ','),
-                'status': resultado.get('status'),
-                'api_provider': 'Nova Era REAL'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': resultado.get('message', 'Erro ao gerar PIX')
-            })
+        # Gerar PIX
+        resultado = nova_era.create_pix_transaction(customer, valor_centavos, descricao)
+        
+        # Resultado é um objeto Transaction
+        return jsonify({
+            'success': True,
+            'transacao_id': resultado.id,
+            'pix_code': resultado.qr_code,
+            'qr_code': resultado.qr_code,
+            'valor': f"R$ 87,40",
+            'status': resultado.status,
+            'api_provider': 'Nova Era REAL',
+            'expires_at': resultado.expires_at
+        })
             
     except Exception as e:
         return jsonify({
@@ -143,10 +151,17 @@ def gerar_pix():
 def verificar_pagamento(transacao_id):
     """Verificar status do pagamento PIX"""
     try:
-        nova_era = NovaEraAPI()
-        resultado = nova_era.verificar_pagamento(transacao_id)
+        secret_key = os.environ.get('NOVA_ERA_SECRET_KEY', 'sk_uluAT1O9I6FGTQAcXzccr2H_eAQ9IOzYoY_LLDfR8U6Uv2Xb')
+        public_key = os.environ.get('NOVA_ERA_PUBLIC_KEY', 'pk_E5SWGB_rZ-mZowMITdSr5w8zhOdY8TDImLhOM-s9gmJPoc9x')
+        nova_era = NovaEraAPI(secret_key, public_key)
+        resultado = nova_era.get_transaction_status(str(transacao_id))
         
-        return jsonify(resultado)
+        return jsonify({
+            'success': True,
+            'status': resultado.get('status'),
+            'paid_at': resultado.get('paid_at'),
+            'id': resultado.get('id')
+        })
         
     except Exception as e:
         return jsonify({
