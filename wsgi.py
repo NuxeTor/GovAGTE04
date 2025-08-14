@@ -6,7 +6,11 @@ import os
 # Configurar variáveis de ambiente para produção
 os.environ.setdefault('FLASK_ENV', 'production')
 
-from app import app
+# Import the simplified Flask app
+from app_simple import app
+
+# This is what Heroku will use
+application = app
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

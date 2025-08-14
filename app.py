@@ -120,8 +120,34 @@ def init_database():
         if not existing:
             print("🔄 Populando banco de dados...")
             try:
-                from populate_database import populate_database
-                populate_database()
+                # Popular dados básicos diretamente
+                ibge_program = Program()
+                ibge_program.title = 'IBGE - Trabalhe Conosco'
+                ibge_program.description = 'Processo Seletivo Simplificado 2025 - Instituto Brasileiro de Geografia e Estatística'
+                ibge_program.ministry = 'Ministério do Planejamento e Orçamento'
+                ibge_program.program_type = 'seletivo'
+                db.session.add(ibge_program)
+                db.session.commit()
+                
+                # Adicionar cargos IBGE
+                cargos = [
+                    {'name': 'Agente de Pesquisa e Mapeamento', 'salary_min': 4379.00, 'salary_max': 4379.00},
+                    {'name': 'Supervisor de Coleta e Qualidade', 'salary_min': 4978.00, 'salary_max': 4978.00}
+                ]
+                
+                for cargo_data in cargos:
+                    cargo = Position()
+                    cargo.name = cargo_data['name']
+                    cargo.description = f"Oportunidade no IBGE para {cargo_data['name']}"
+                    cargo.salary_min = cargo_data['salary_min']
+                    cargo.salary_max = cargo_data['salary_max']
+                    cargo.workload_hours = 44
+                    cargo.work_type = 'CLT'
+                    cargo.program_id = ibge_program.id
+                    db.session.add(cargo)
+                
+                db.session.commit()
+                print("✅ Dados IBGE populados com sucesso")
             except:
                 print("⚠️ Erro ao popular banco - continuando sem dados iniciais")
                 
