@@ -11,6 +11,6 @@ The application follows a client-server architecture. The backend is developed u
 
 ## External Dependencies
 The project integrates with the following external services:
-- **VEXY PAYMENTS API**: For processing PIX payments, including token authentication, PIX generation, and payment verification.
+- **IRON PAY API**: Production PIX payment processor with token `xYipgGdsLKk2779ZQHqpfm0TfZqJqJP8q5iRj272pogLoOhV5dJjY7jpftrD`. Handles real PIX transactions, QR code generation, and payment verification for IBGE recruitment fees.
 - **CPF Validation API**: `https://consulta.fontesderenda.blog` for real-time CPF validation.
 - **ViaCEP**: For address lookup and validation (although not explicitly detailed in functionality, it's a standard Brazilian integration).
