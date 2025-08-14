@@ -21,13 +21,17 @@ Portal governamental brasileiro para o programa "IBGE Trabalhe Conosco", impleme
 - Interface responsiva
 
 ## Alterações Recentes
-**14/08/2025 - ✅ CORREÇÕES HEROKU DEPLOY OTIMIZADO - Avisos Python/Gunicorn RESOLVIDOS**
+**14/08/2025 - ✅ CORREÇÕES HEROKU DEPLOY + ERROR 500 RESOLVIDO**
 - Substituído runtime.txt por .python-version seguindo nova recomendação Heroku
 - Atualizado Python de 3.11.10 para 3.11 (permite auto-atualização de segurança)
 - Atualizado Gunicorn de 21.2.0 para 23.0.0 (versão mais recente)
 - Atualizado requests de 2.31.0 para 2.32.3 (correções de segurança)
 - Removido arquivo runtime.txt depreciado conforme orientação Heroku
-- Deploy agora sem avisos e com dependências otimizadas
+- Criado heroku_app_simple.py - versão ultra-minimalista sem dependência de templates
+- Corrigido erro 500 Internal Server Error removendo dependências problemáticas
+- HTML inline com Tailwind CSS via CDN para máxima compatibilidade Heroku
+- Procfile e wsgi.py atualizados para heroku_app_simple:app
+- Deploy agora sem avisos e funcional no Heroku
 
 **14/08/2025 - ✅ DEPLOY HEROKU 100% FUNCIONAL - Internal Server Error RESOLVIDO (Anterior)**
 - Criada nova aplicação heroku_app.py ultra-simplificada para Heroku
