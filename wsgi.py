@@ -6,8 +6,8 @@ import os
 # Configurar variáveis de ambiente para produção
 os.environ.setdefault('FLASK_ENV', 'production')
 
-# Import the ultra-simplified Flask app
-from heroku_app_simple import app
+# Import the main Flask app
+from app import app
 
 # This is what Heroku will use
 application = app
